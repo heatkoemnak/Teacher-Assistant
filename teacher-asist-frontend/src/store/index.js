@@ -1,14 +1,12 @@
 import { createStore } from "vuex";
+import adminStore from "./admin";
+import userStore from "./user";
 
 const store = createStore({
-  state() {
-    return {
-      user: "Koemnak",
-    };
+  modules: {
+    admin: adminStore,
+    user: userStore,
   },
-  mutations: {},
-  actions: {},
-  getters: {},
 });
 
 export default store;

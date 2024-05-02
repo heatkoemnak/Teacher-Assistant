@@ -1,6 +1,7 @@
 <template>
   <div>
-    <p>User Created: {{ user }} just testing</p>
+    <h2 class="text-center">Welcome to home page</h2>
+    <p class="text-center">User Created: {{ user }} <br />just testing</p>
   </div>
 </template>
 
@@ -12,7 +13,7 @@ export default {
   setup() {
     const store = useStore();
 
-    const user = computed(() => store.state.user);
+    const user = computed(() => store.state.user.user);
     return { user };
   },
 };

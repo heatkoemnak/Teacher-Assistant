@@ -1,8 +1,13 @@
 <template>
-  <navbar-view />
-  <h2>Hello This Home page</h2>
-  <home-view />
+  <v-app>
+    <navbar-view />
+    <home-view />
+  </v-app>
 </template>
-<script setup>
-//
+<script>
+export default {
+  setup() {
+    return {};
+  },
+};
 </script>

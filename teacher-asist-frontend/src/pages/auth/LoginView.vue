@@ -72,9 +72,13 @@
   </div>
 </template>
 <script>
+import { ref } from "vue";
 export default {
-  data: () => ({
-    visible: false,
-  }),
+  setup() {
+    const visible = ref(false);
+    return {
+      visible,
+    };
+  },
 };
 </script>
