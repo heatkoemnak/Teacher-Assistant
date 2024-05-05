@@ -1,6 +1,6 @@
 <template>
   <v-data-table-server
-  :headers="headers"
+    :headers="headers"
     :items="serverItems"
     :items-length="totalItems"
     :loading="loading"
@@ -15,9 +15,11 @@
   >
     <template #item.actions="{ item }">
       <div class="d-flex justify-start align-center">
-        <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+        <v-chip append-icon="mdi-open-in-new" color="orange"> </v-chip>
       </div>
+    </template>
+    <template v-slot:item.present="{ item }">
+      <v-chip :color="getStatusColor(item.present)">{{ item.present }}</v-chip>
     </template>
     <template v-slot:top>
       <div class="d-flex align-center">
@@ -61,18 +63,9 @@
 <script>
 function generateData() {
   const data = [];
-  const genders = [
-    "",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
+  const statusPresent = [
+    10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 10, 20, 30, 40, 50, 60, 70, 80, 90,
+    100,
   ];
   const desserts = [
     "",
@@ -94,21 +87,15 @@ function generateData() {
     // const randomGenderIndex = Math.floor(Math.random() * genders.length);
     const student_id = `STU00${i}`;
     const name = desserts[i];
-    const email = `student${i}@gmail.com`;
-    const classes = `M ${i}`;
-    const date_of_birth = `${Math.floor(Math.random() * 28) + 1}/0${
-      Math.floor(Math.random() * 9) + 1
-    }/199${Math.floor(Math.random() * 10)}`;
-    const gender = genders[i];
+    const class_name = `M${i}`;
+    const present = `${statusPresent[i]}%`;
 
     data.push({
       id: i,
       name,
       student_id,
-      email,
-      classes,
-      date_of_birth,
-      gender,
+      present,
+      class_name,
     });
   }
   return data;
@@ -154,19 +141,17 @@ export default {
     itemsPerPage: 6,
     headers: [
       { title: "No.", key: "id" },
-      { title: "Name", key: "name" },
+      { title: "Student Name", key: "name" },
       { title: "Student.ID", key: "student_id" },
       {
-        title: "Email",
-        key: "email",
+        title: "From Class",
+        key: "class_name",
       },
       {
-        title: "Class",
-        key: "classes",
+        title: "Present(%)",
+        key: "present",
       },
-      { title: "Date Of Birth", key: "date_of_birth" },
-      { title: "Gender", key: "gender" },
-      { title: "Action", key: "actions", filterable: false, sortable: false },
+      { title: "Details", key: "actions", filterable: false, sortable: false },
     ],
     serverItems: [],
     loading: true,
@@ -198,6 +183,12 @@ export default {
       confirm("Are you sure you want to delete this item?") &&
         this.serverItems.splice(index, 1);
     },
+    getStatusColor(present) {
+      if (present == `${100}%`) return "green";
+      else if ((present >= `${50}%`) & (present < `${95}%`)) return "orange";
+      else return "red";
+    },
+
     loadItems({ page, itemsPerPage, sortBy }) {
       this.loading = true;
       FakeAPI.fetch({

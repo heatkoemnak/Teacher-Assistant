@@ -1,13 +1,17 @@
 <template>
   <v-data-table-server
-    :items-per-page="itemsPerPage"
-    :headers="headers"
+  :headers="headers"
     :items="serverItems"
     :items-length="totalItems"
     :loading="loading"
     :search="search"
     item-value="name"
     @update:options="loadItems"
+    fixed-header
+    height="420"
+    disable-pagination
+    disable-sort
+    hide-default-footer
   >
     <template v-slot:item.actions="{ item }">
       <div class="d-flex justify-start align-center">
@@ -16,27 +20,25 @@
       </div>
     </template>
     <template v-slot:top>
-      <v-toolbar flat color="white">
-        <div class="d-flex align-center w-100">
-          <v-text-field
-            v-model="name"
-            append-icon="mdi-magnify"
-            label="Search Name"
-            dense
-            class="mt-2"
-            hide-details
-            variant="outlined"
-          ></v-text-field>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="white"
-            class="bg-primary ml-2 white--text"
-            @click="addNew"
-          >
-            <v-icon dark>mdi-plus</v-icon>Add
-          </v-btn>
-        </div>
-      </v-toolbar>
+      <div class="d-flex align-center">
+        <v-text-field
+          v-model="name"
+          class="ma-2"
+          density="compact"
+          placeholder="Search name..."
+          hide-details
+          width="20"
+          variant="outlined"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="white"
+          class="bg-primary ml-2 white--text"
+          @click="addNew"
+        >
+          <v-icon dark>mdi-plus</v-icon>Add
+        </v-btn>
+      </div>
     </template>
   </v-data-table-server>
 </template>

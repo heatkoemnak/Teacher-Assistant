@@ -10,8 +10,8 @@
     >
       <v-list-item
         class="pa-5"
-        prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-        title="John Leider"
+        prepend-avatar="https://randomuser.me/api/portraits/men/86.jpg"
+        title="Mr. Koemnak"
         nav
       >
         <template v-slot:append>
@@ -24,7 +24,6 @@
       </v-list-item>
 
       <v-divider></v-divider>
-
       <v-list density="compact" nav>
         <v-list-item
           prepend-icon="mdi-home-city"
@@ -66,6 +65,10 @@
           value="notifications"
         ></v-list-item>
       </v-list>
+      <v-chip elevated class="ma-2 bg-orange" color="white" label>
+        LOGOUT
+        <v-icon @click="logout" icon="mdi-logout" end></v-icon>
+      </v-chip>
     </v-navigation-drawer>
     <v-main style="height: 100vh">
       <v-toolbar color="blue-blue-darken-3">
@@ -80,7 +83,7 @@
         >
           <v-icon>mdi-menu</v-icon>
         </v-btn>
-        <span class="mx-5">Admin Dashboard</span>
+        <span class="mx-5">Teacher Assistant Dashboard</span>
 
         <v-spacer></v-spacer>
 
@@ -100,23 +103,26 @@
           </v-badge>
         </v-btn>
       </v-toolbar>
+      <breadcrumbs-cmpnt />
       <v-content app>
         <v-container fluid style="height: 84%">
           <router-view></router-view>
         </v-container>
         <v-divider></v-divider>
       </v-content>
-      <v-card-text class="bg-red white--text">
+      <!-- <v-card-text class="bg-red white--text">
         Copyright 1993 - {{ new Date().getFullYear() }}
         <a class="white--text" href="https://codepen.io/jettaz">Jettaz</a> | It
         is free for use
-      </v-card-text>
+      </v-card-text> -->
     </v-main>
   </v-layout>
 </template>
 <script>
 import { ref } from "vue";
+import BreadcrumbsCmpnt from "./components/BreadcrumbsCmpnt.vue";
 export default {
+  components: { BreadcrumbsCmpnt },
   setup() {
     const drawer = ref(true);
     const rail = ref(false);
@@ -145,7 +151,7 @@ export default {
         id: 4,
         title: "Attendance",
         icon: "mdi-calendar-check",
-        route: "/attendance",
+        route: "attendance",
       },
       {
         id: 5,

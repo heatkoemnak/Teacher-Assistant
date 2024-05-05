@@ -10,6 +10,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import ManagementLayout from "@/pages/admin/contents/managements/ManagementLayout.vue";
 import DepartmentContent from "@/pages/admin/contents/managements/DepartmentContent.vue";
 import ClassManagement from "@/pages/admin/contents/managements/ClassManagement.vue";
+import AttendanceManagement from "@/pages/admin/contents/managements/AttendanceManagement.vue";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -47,6 +48,10 @@ const router = createRouter({
             {
               path: "classes",
               component: ClassManagement,
+            },
+            {
+              path: "attendance",
+              component: AttendanceManagement,
             },
             {
               path: "departments",

@@ -1,6 +1,5 @@
 <template>
   <v-data-table-server
-    :items-per-page="itemsPerPage"
     :headers="headers"
     :items="serverItems"
     :items-length="totalItems"
@@ -8,28 +7,38 @@
     :search="search"
     item-value="name"
     @update:options="loadItems"
+    fixed-header
+    height="420"
+    disable-pagination
+    disable-sort
+    hide-default-footer
   >
-    <template v-slot:tfoot>
-      <tr>
-        <td colspan="2">
-          <v-text-field
-            v-model="name"
-            class="ma-2"
-            density="compact"
-            placeholder="Search name..."
-            hide-details
-          ></v-text-field>
-        </td>
-        <td colspan="2">
-          <v-text-field
-            v-model="student_id"
-            class="ma-2"
-            density="compact"
-            placeholder="Search by studentID..."
-            hide-details
-          ></v-text-field>
-        </td>
-      </tr>
+    <template #item.actions="{ item }">
+      <div class="d-flex justify-start align-center">
+        <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      </div>
+    </template>
+    <template v-slot:top>
+      <div class="d-flex align-center">
+        <v-text-field
+          v-model="name"
+          class="ma-2"
+          density="compact"
+          placeholder="Search name..."
+          hide-details
+          width="20"
+          variant="outlined"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="white"
+          class="bg-primary ml-2 white--text"
+          @click="addNew"
+        >
+          <v-icon dark>mdi-plus</v-icon>Add
+        </v-btn>
+      </div>
     </template>
   </v-data-table-server>
 </template>
@@ -58,8 +67,6 @@ function generateData() {
     const dept_head = `Head Name${i}`;
     const total_students = Math.floor(Math.random() * desserts.length + 1240);
     const total_teachers = Math.floor(Math.random() * desserts.length + 270);
-    const edit = "Edit";
-    const del = "Delete";
 
     data.push({
       id: i,
@@ -68,8 +75,6 @@ function generateData() {
       dept_head,
       total_students,
       total_teachers,
-      edit,
-      delete: del,
     });
   }
   return data;
@@ -130,8 +135,7 @@ export default {
         title: "Total Teacher",
         key: "total_teachers",
       },
-      { title: "Edit", key: "edit", filterable: false, sortable: false },
-      { title: "Delete", key: "delete", filterable: false, sortable: false },
+      { title: "Action", key: "actions", filterable: false, sortable: false },
     ],
     generatedData: [],
     serverItems: [],
