@@ -1,59 +1,142 @@
 // Sample student data
-let teachers = []; // Changed to let to allow reassignment
-let students = []; // Changed to let to allow reassignment
+let teachers = [];
+let students = [];
+let department = [];
 
-const dummyDataTeacher = [];
-const dummyDataStudent = [];
-const minYear = 1950;
-const maxYear = new Date().getFullYear() - 18;
-const year = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
-const month = Math.floor(Math.random() * 12) + 1;
-const maxDay = new Date(year, month, 0).getDate();
-const day = Math.floor(Math.random() * maxDay) + 1;
-const formattedMonth = month < 10 ? `0${month}` : month;
-const formattedDay = day < 10 ? `0${day}` : day;
-const birthdate = `${formattedMonth}/${formattedDay}/${year}`;
-const generateDummyTeachers = () => {
-  for (let i = 1; i <= 8; i++) {
-    const teacher = {
-      id: i,
-      teacher_id: `TC00${i}`,
-      name: `Teacher ${i}`,
-      email: `teacher${i}@example.com`,
-      date_of_birth: birthdate,
-      gender: Math.floor(Math.random() * 2) === 0 ? "Male" : "Female",
-      edit: "Edit",
-      delete: "Delete",
-    };
-    dummyDataTeacher.push(teacher);
-  }
-  return dummyDataTeacher;
-};
-teachers = generateDummyTeachers();
+const dummyDataTeacher = [
+  {
+    id: 1,
+    teacher_id: "TC001",
+    name: "Teacher 1",
+    email: "teacher1@example.com",
+    date_of_birth: "01/01/1980",
+    gender: "Male",
+    class_id: 1,
+    department_id: 2,
+  },
+  {
+    id: 2,
+    teacher_id: "TC002",
+    name: "Teacher 2",
+    email: "teacher2@example.com",
+    date_of_birth: "02/02/1981",
+    gender: "Female",
+    class_id: 1,
+    department_id: 1,
+  },
+  {
+    id: 3,
+    teacher_id: "TC003",
+    name: "Teacher 3",
+    email: "teacher3@example.com",
+    date_of_birth: "02/02/1984",
+    gender: "Female",
+    class_id: 4,
+    department_id: 1,
+  },
+  {
+    id: 4,
+    teacher_id: "TC004",
+    name: "Teacher 4",
+    email: "teacher3@example.com",
+    date_of_birth: "02/02/1982",
+    gender: "Female",
+    class_id: 1,
+    department_id: 1,
+  },
+  // Add more teachers as needed
+];
+const dummyDataDepartment = [
+  {
+    id: 1,
+    deptId: 1,
+    department_name: "Computer Science",
+  },
+  {
+    id: 2,
+    deptId: 2,
+    department_name: "Data Analysis",
+  },
+  {
+    id: 3,
+    deptId: 3,
+    department_name: "Software Engineer",
+  },
+  {
+    id: 4,
+    deptId: 4,
+    department_name: "English",
+  },
+  {
+    id: 5,
+    deptId: 5,
+    department_name: "ITE",
+  },
+];
 
-const generateDummyStudents = () => {
-  for (let i = 1; i <=6; i++) {
-    const student = {
-      id: i,
-      student_id: `TC00${i}`,
-      name: `Student ${i}`,
-      email: `student${i}@example.com`,
-      date_of_birth: birthdate,
-      gender: Math.floor(Math.random() * 2) === 0 ? "Male" : "Female",
-      edit: "Edit",
-      delete: "Delete",
-    };
-    dummyDataStudent.push(student);
-  }
-  return dummyDataStudent;
-};
+const dummyDataStudent = [
+  {
+    id: 1,
+    student_id: "STU001",
+    name: "Student 1",
+    email: "student1@example.com",
+    date_of_birth: "03/03/2000",
+    gender: "Male",
+    class_id: 1,
+    department_id: 1,
+  },
+  {
+    id: 2,
+    student_id: "STU002",
+    name: "Student 2",
+    email: "student2@example.com",
+    date_of_birth: "04/04/2001",
+    gender: "Female",
+    class_id: 1,
+    department_id: 1,
+  },
+  {
+    id: 3,
+    student_id: "STU003",
+    name: "Student 3",
+    email: "student2@example.com",
+    date_of_birth: "04/04/2001",
+    gender: "Female",
+    class_id: 2,
+    department_id: 3,
+  },
+  {
+    id: 4,
+    student_id: "STU004",
+    name: "Student 4",
+    email: "studen4@example.com",
+    date_of_birth: "04/04/2001",
+    gender: "Female",
+    class_id: 1,
+    department_id: 3,
+  },
+  {
+    id: 5,
+    student_id: "STU002",
+    name: "Student 4",
+    email: "student2@example.com",
+    date_of_birth: "04/04/2001",
+    gender: "Female",
+    class_id: 1,
+    department_id: 2,
+  },
+  // Add more students as needed
+];
 
-students = generateDummyStudents(); // Assign the generated dummy data to teachers
+teachers = dummyDataTeacher;
+students = dummyDataStudent;
+department = dummyDataDepartment;
 
 // Define endpoints
 const endpoints = {
   "/api/students": students,
   "/api/teachers": teachers,
+  "/api/departments": department,
 };
 
 // Fake Data API

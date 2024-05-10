@@ -1,6 +1,6 @@
 <template>
   <v-data-table-server
-  :headers="headers"
+    :headers="headers"
     :items="serverItems"
     :items-length="totalItems"
     :loading="loading"
@@ -23,14 +23,29 @@
       <div class="d-flex align-center">
         <v-text-field
           v-model="name"
-          class="ma-2"
+          class="ma-2 hidden-sm-and-down"
           density="compact"
           placeholder="Search name..."
           hide-details
           width="20"
           variant="outlined"
+          prepend-inner-icon="mdi-magnify"
         ></v-text-field>
-        <v-spacer></v-spacer>
+        <v-select
+          v-model="selectedDepartment"
+          :items="departments"
+          class="mt-5"
+          density="compact"
+          item-title="All "
+          label="Find by Department"
+        ></v-select>
+        <v-select
+          v-model="selectedClass"
+          :items="classes"
+          class="mt-5"
+          density="compact"
+          label="Find by Class"
+        ></v-select>
         <v-btn
           color="white"
           class="bg-primary ml-2 white--text"
@@ -40,73 +55,63 @@
         </v-btn>
       </div>
     </template>
-
-    <!-- <template #item="{ item }">
-      <tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.student_id }}</td>
-        <td>{{ item.email }}</td>
-        <td>{{ item.classes }}</td>
-        <td>{{ item.date_of_birth }}</td>
-        <td>{{ item.gender }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-          <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-        </td>
-      </tr>
-    </template> -->
   </v-data-table-server>
 </template>
+
 <script>
 function generateData() {
   const data = [];
-  const genders = [
+  const genders = ["", "Male", "Female"];
+  const departments = [
     "",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
+    "Department C",
+    "Department A",
+    "Department B",
+    "Department C",
+    "Department A",
+    "Department B",
+    "Department C",
+    "Department A",
+    "Department B",
+    "Department C",
+    "Department A",
+    "Department B",
   ];
-  const desserts = [
+  const classes = [
     "",
-    "Frozen Yogurt",
-    "Jelly bean",
-    "KitKat",
-    "Eclair",
-    "Gingerbread",
-    "Ice cream sandwich",
-    "Lollipop",
-    "Cupcake",
-    "Honeycomb",
-    "Donut",
-    "Combo",
-    "Donn",
+    "Class 1",
+    "Class 2",
+    "Class 3",
+    "Class 1",
+    "Class 2",
+    "Class 3",
+    "Class 1",
+    "Class 2",
+    "Class 3",
+    "Class 1",
+    "Class 2",
+    "Class 3",
   ];
 
   for (let i = 1; i <= 12; i++) {
-    // const randomGenderIndex = Math.floor(Math.random() * genders.length);
     const student_id = `STU00${i}`;
-    const name = desserts[i];
+    const name = `Student ${i}`;
     const email = `student${i}@gmail.com`;
-    const classes = `M ${i}`;
+    const department =
+      departments[Math.floor(Math.random() * departments.length)];
+    const _class = classes[Math.floor(Math.random() * classes.length)];
     const date_of_birth = `${Math.floor(Math.random() * 28) + 1}/0${
       Math.floor(Math.random() * 9) + 1
     }/199${Math.floor(Math.random() * 10)}`;
-    const gender = genders[i];
+    const gender = genders[Math.floor(Math.random() * departments.length)];
 
     data.push({
       id: i,
       name,
       student_id,
       email,
-      classes,
+      department,
+      class: _class,
       date_of_birth,
       gender,
     });
@@ -127,6 +132,12 @@ const FakeAPI = {
               search.name &&
               !item.name.toLowerCase().includes(search.name.toLowerCase())
             ) {
+              return false;
+            }
+            if (search.department && item.department !== search.department) {
+              return false;
+            }
+            if (search.class && item.class !== search.class) {
               return false;
             }
             return true;
@@ -156,44 +167,41 @@ export default {
       { title: "No.", key: "id" },
       { title: "Name", key: "name" },
       { title: "Student.ID", key: "student_id" },
-      {
-        title: "Email",
-        key: "email",
-      },
-      {
-        title: "Class",
-        key: "classes",
-      },
+      { title: "Email", key: "email" },
+      { title: "Department", key: "department" },
+      { title: "Class", key: "class" },
       { title: "Date Of Birth", key: "date_of_birth" },
       { title: "Gender", key: "gender" },
       { title: "Action", key: "actions", filterable: false, sortable: false },
     ],
+    departments: [
+      "All Departments",
+      "Department A",
+      "Department B",
+      "Department C",
+    ],
+    classes: ["All Classes", "Class 1", "Class 2", "Class 3"],
+    selectedDepartment: "",
+    selectedClass: "",
     serverItems: [],
     loading: true,
     totalItems: 0,
     name: "",
-    student_id: "",
     search: "",
-
-    editedIndex: -1,
-    editedItem: {
-      id: 0,
-      name: "",
-      calories: 0,
-    },
   }),
   watch: {
     name() {
       this.search = String(Date.now());
     },
-    student_id() {
+    selectedDepartment() {
+      this.search = String(Date.now());
+    },
+    selectedClass() {
       this.search = String(Date.now());
     },
   },
-
   methods: {
     deleteItem(item) {
-      console.log(item);
       const index = this.serverItems.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
         this.serverItems.splice(index, 1);
@@ -204,7 +212,11 @@ export default {
         page,
         itemsPerPage,
         sortBy,
-        search: { name: this.name, student_id: this.student_id },
+        search: {
+          name: this.name,
+          department: this.selectedDepartment,
+          class: this.selectedClass,
+        },
       }).then(({ items, total }) => {
         this.serverItems = items;
         this.totalItems = total;

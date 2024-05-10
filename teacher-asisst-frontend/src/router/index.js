@@ -12,6 +12,11 @@ import DepartmentContent from "@/pages/admin/contents/managements/DepartmentCont
 import ClassManagement from "@/pages/admin/contents/managements/ClassManagement.vue";
 import AttendanceManagement from "@/pages/admin/contents/managements/AttendanceManagement.vue";
 
+import UsersManagement from "@/pages/admin/contents/managements/user/UsersManagement.vue";
+import RolesManagement from "@/pages/admin/contents/managements/roles/RolesManagement.vue";
+import PermissionsManagement from "@/pages/admin/contents/managements/permissions/PermissionsManagement.vue";
+import FakeComponent from "@/pages/admin/contents/managements/FakeComponent.vue";
+
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
@@ -56,6 +61,22 @@ const router = createRouter({
             {
               path: "departments",
               component: DepartmentContent,
+            },
+            {
+              path: "fake-data",
+              component: FakeComponent,
+            },
+            {
+              path: "user",
+              component: UsersManagement,
+            },
+            {
+              path: "role",
+              component: RolesManagement,
+            },
+            {
+              path: "permissions",
+              component: PermissionsManagement,
             },
           ],
         },

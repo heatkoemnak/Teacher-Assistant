@@ -36,7 +36,7 @@
             <v-list-item
               prepend-icon="mdi-cogs"
               v-bind="props"
-              title="Management"
+              title="School Management"
             ></v-list-item>
           </template>
           <v-list-item
@@ -49,6 +49,23 @@
           ></v-list-item>
         </v-list-group>
 
+        <v-list-group value="Management User">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              prepend-icon="mdi-cogs"
+              v-bind="props"
+              title="User Management"
+            ></v-list-item>
+          </template>
+          <v-list-item
+            v-for="(management, i) in user_managements"
+            :key="i"
+            :prepend-icon="management.icon"
+            :title="management.title"
+            :value="management.title"
+            :to="`/admin/management/${management.route}`"
+          ></v-list-item>
+        </v-list-group>
         <v-list-item
           prepend-icon="mdi-lock"
           title="Change Password"
@@ -181,7 +198,27 @@ export default {
       //   icon: "mdi-key",
       // },
     ]);
-    return { drawer, rail, managements, expend };
+    const user_managements = ref([
+      {
+        id: 1,
+        title: "Users",
+        icon: "mdi-account-multiple-outline",
+        route: "user",
+      },
+      {
+        id: 2,
+        title: "Roles",
+        icon: "mdi-briefcase-account",
+        route: "role",
+      },
+      {
+        id: 3,
+        title: "Permissions",
+        icon: "mdi-key",
+        route: "permissions",
+      },
+    ]);
+    return { drawer, rail, managements, user_managements, expend };
   },
 };
 </script>

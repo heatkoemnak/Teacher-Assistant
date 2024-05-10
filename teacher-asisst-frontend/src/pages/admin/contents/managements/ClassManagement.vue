@@ -32,6 +32,8 @@
           hide-details
           width="20"
           variant="outlined"
+          prepend-inner-icon="mdi-magnify"
+
         ></v-text-field>
         <v-spacer></v-spacer>
         <v-btn

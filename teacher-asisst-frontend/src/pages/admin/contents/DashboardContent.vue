@@ -50,18 +50,22 @@ export default {
         title: "Classes",
         icon: "mdi-school",
         backgroundGradient: "linear-gradient(45deg, #FF416C, #FF416D)",
+        route: "/admin/management/classes",
       },
       {
         id: 4,
         title: "Attendance",
         icon: "mdi-calendar-check",
         backgroundGradient: "linear-gradient(45deg, #1D2B64, #1D2B63)",
+        route: "/admin/management/attendance",
       },
       {
         id: 5,
         title: "Departments",
         icon: "mdi-domain",
         backgroundGradient: "linear-gradient(45deg, #363795, #363795)",
+        route: "/admin/management/departments",
+
       },
       {
         id: 6,
