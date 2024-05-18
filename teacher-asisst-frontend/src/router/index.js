@@ -1,6 +1,7 @@
 import HomeLayout from "@/pages/HomeLayout.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
 import AdminLayout from "@/pages/admin/AdminLayout.vue";
+import UserLayout from "@/pages/user/UserLayout.vue";
 import DashboardContent from "@/pages/admin/contents/DashboardContent.vue";
 import TeacherContent from "@/pages/admin/contents/managements/TeacherContent.vue";
 import StudentContent from "@/pages/admin/contents/managements/StudentContent.vue";
@@ -112,6 +113,50 @@ const router = createRouter({
               component: ChangeUserPassword,
             },
           ],
+        },
+      ],
+    },
+    {
+      path: "/home",
+      name: "home",
+      component: import('../pages/user/AllClass.vue')
+    },
+    {
+      path: "/user",
+      name: "dashboard",
+      component: UserLayout,
+      children: [
+        {
+          path: "dashboard",
+          name: "dashboard",
+          component: import("../pages/user/contents/DashboardContent.vue"),
+          meta: {
+            RouteName: 'Dashboard'
+          }
+        },
+        {
+          path: "attendance",
+          name: "attendance",
+          component: import("../pages/user/contents/AttendanceManage.vue"),
+          meta: {
+            RouteName: 'Attendance'
+          }
+        },
+        {
+          path: "score-grading",
+          name: "Score Grading",
+          component: import("../pages/user/contents/ScoreGrading.vue"),
+          meta: {
+            RouteName: 'Score Grading'
+          }
+        },
+        {
+          path: "Generate-report",
+          name: "Generate Report",
+          component: ProfileContent,
+          meta: {
+            RouteName: 'Generate Report'
+          }
         },
       ],
     },
