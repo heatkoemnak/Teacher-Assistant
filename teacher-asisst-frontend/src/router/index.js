@@ -2,8 +2,8 @@ import HomeLayout from "@/pages/HomeLayout.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
 import AdminLayout from "@/pages/admin/AdminLayout.vue";
 import DashboardContent from "@/pages/admin/contents/DashboardContent.vue";
-import TeacherContent from "@/pages/admin/contents/TeacherContent.vue";
-import StudentContent from "@/pages/admin/contents/StudentContent.vue";
+import TeacherContent from "@/pages/admin/contents/managements/TeacherContent.vue";
+import StudentContent from "@/pages/admin/contents/managements/StudentContent.vue";
 import ProfileContent from "@/pages/admin/contents/ProfileContent.vue";
 import LoginView from "@/pages/auth/LoginView.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -16,6 +16,11 @@ import UsersManagement from "@/pages/admin/contents/managements/user/UsersManage
 import RolesManagement from "@/pages/admin/contents/managements/roles/RolesManagement.vue";
 import PermissionsManagement from "@/pages/admin/contents/managements/permissions/PermissionsManagement.vue";
 import FakeComponent from "@/pages/admin/contents/managements/FakeComponent.vue";
+import UserProfile from "@/pages/admin/contents/profile/UserProfile.vue";
+import EditUserProfile from "@/pages/admin/contents/profile/EditUserProfile.vue";
+import UserAccount from "@/pages/admin/contents/profile/account/UserAccount.vue";
+import ChangeUserPassword from "@/pages/admin/contents/profile/account/ChangeUserPassword.vue";
+import SampleTable from "@/pages/admin/contents/SampleTable.vue";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -78,12 +83,35 @@ const router = createRouter({
               path: "permissions",
               component: PermissionsManagement,
             },
+            {
+              path: "sample",
+              component: SampleTable,
+            },
           ],
         },
 
         {
           path: "profile",
           component: ProfileContent,
+          children: [
+            {
+              path: "baseinfo", //个人
+
+              component: UserProfile,
+            },
+            {
+              path: "account", //个人
+              component: UserAccount,
+            },
+            {
+              path: "edit", //个人
+              component: EditUserProfile,
+            },
+            {
+              path: "change-account-password", //个人
+              component: ChangeUserPassword,
+            },
+          ],
         },
       ],
     },
