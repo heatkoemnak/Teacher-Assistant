@@ -73,8 +73,9 @@
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-account-circle"
-          title="Profile Setting"
+          title="Profile"
           value="profile"
+          to="/admin/profile/baseinfo"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-bell"
@@ -125,13 +126,7 @@
         <v-container fluid style="height: 84%">
           <router-view></router-view>
         </v-container>
-        <v-divider></v-divider>
       </v-content>
-      <!-- <v-card-text class="bg-red white--text">
-        Copyright 1993 - {{ new Date().getFullYear() }}
-        <a class="white--text" href="https://codepen.io/jettaz">Jettaz</a> | It
-        is free for use
-      </v-card-text> -->
     </v-main>
   </v-layout>
 </template>
