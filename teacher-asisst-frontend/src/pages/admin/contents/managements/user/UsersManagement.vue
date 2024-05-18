@@ -40,7 +40,7 @@
                       label="Type"
                     ></v-combobox>
                   </v-col>
-                  <v-col cols="12"  md="12" sm="6">
+                  <v-col cols="12" md="12" sm="6">
                     <v-combobox
                       v-model="select"
                       :items="items"
@@ -103,6 +103,15 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <template v-slot:item.account="{ item }">
+      <v-chip
+        append-icon="mdi-open-in-new"
+        color="orange"
+        to="/admin/profile/account"
+      >
+        <span>Account</span>
+      </v-chip>
+    </template>
     <template v-slot:item.permissions="{ item }">
       <v-chip
         append-icon="mdi-open-in-new"
@@ -143,13 +152,15 @@ export default {
       { title: "User Name", key: "name" },
       { title: "User Type", key: "type" },
       { title: "Permissions", key: "permissions" },
+      { title: "Accounts", key: "account" },
       { title: "Actions", key: "actions", sortable: false },
     ],
     select: ["Read", "Update"],
-    items: ["Create","Read", "Update", "Delete", "Vuetify"],
+    items: ["Create", "Read", "Update", "Delete", "Vuetify"],
     desserts: [],
     types: ["Admin", "User"],
     editedIndex: -1,
+    teachers: [],
     editedItem: {
       id: 0,
       name: "",
@@ -213,14 +224,43 @@ export default {
           name: "Jelly bean",
           type: "User",
         },
+        {
+          id: 7,
+          name: "Frozen Yogurt",
+          type: "User",
+        },
+        {
+          id: 8,
+          name: "Ice cream sandwich",
+          type: "User",
+        },
+        {
+          id: 9,
+          name: "Eclair",
+          type: "Admin",
+        },
+        {
+          id: 10,
+          name: "Cupcake",
+          type: "User",
+        },
+        {
+          id: 11,
+          name: "Gingerbread",
+          type: "Admin",
+        },
+        {
+          id: 12,
+          name: "Jelly bean",
+          type: "User",
+        },
       ];
     },
 
     editItem(item) {
-      console.log(item);
-      // this.dessert += 1;
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      console.log(this.editedItem.name);
       this.dialog = true;
     },
 
