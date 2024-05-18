@@ -11,7 +11,7 @@ import { useRoute } from "vue-router";
 
 //formatting route
 function formatRoutePath(path) {
-  const parts = path.split("/");
+  const parts = path.split("/admin/");
 
   const formattedParts = parts.map((part) => {
     return part.charAt(0).toUpperCase() + part.slice(1);
@@ -19,7 +19,7 @@ function formatRoutePath(path) {
   if (formattedParts[0] === "") {
     formattedParts.shift();
   }
-  return "" + formattedParts.join(" / ");
+  return " " + formattedParts.join(" / ");
 }
 // get last route path
 
@@ -28,11 +28,12 @@ function formatRoutePath(path) {
 export default {
   setup() {
     const route = useRoute();
-    const currentRouteUrl = ref("");
+    let currentRouteUrl = ref(route.path);
     watch(
       () => route.path,
       (val) => {
         currentRouteUrl.value = val;
+        console.log(val);
       }
     );
     // const updateCurrentRoutePath = () => {
