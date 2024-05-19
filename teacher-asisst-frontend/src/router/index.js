@@ -5,7 +5,9 @@ import DashboardContent from "@/pages/admin/contents/DashboardContent.vue";
 import TeacherContent from "@/pages/admin/contents/TeacherContent.vue";
 import StudentContent from "@/pages/admin/contents/StudentContent.vue";
 import ProfileContent from "@/pages/admin/contents/ProfileContent.vue";
-import LoginView from "@/pages/auth/LoginView.vue";
+import LoginViewAdmin from "@/pages/auth/adminScreen/LoginViewAdmin.vue";
+import LoginViewUser from "@/pages/auth/userScreen/LoginViewUser.vue";
+import SignupViewAdmin from "@/pages/auth/adminScreen/SignupViewAdmin.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import ManagementLayout from "@/pages/admin/contents/managements/ManagementLayout.vue";
 import DepartmentContent from "@/pages/admin/contents/managements/DepartmentContent.vue";
@@ -21,9 +23,19 @@ const router = createRouter({
       component: HomeLayout,
     },
     {
-      path: "/login",
-      name: "login",
-      component: LoginView,
+      path: "/admin/signup",
+      name: "signup",
+      component: SignupViewAdmin,
+    },
+    {
+      path: "/admin/login",
+      name: "loginAdmin",
+      component: LoginViewAdmin,
+    },
+    {
+      path: "/user/login",
+      name: "loginUser",
+      component: LoginViewUser,
     },
     {
       path: "/admin",
