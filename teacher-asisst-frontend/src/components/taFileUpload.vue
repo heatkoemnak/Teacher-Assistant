@@ -39,8 +39,8 @@ const handleFileChange = (event) => {
 
 .upload-label {
   display: block;
-  width: 350px;
-  height: 350px;
+  width: 400px;
+  height: 300px;
   border: 2px dashed #ccc;
   border-radius: 10px;
   text-align: center;
