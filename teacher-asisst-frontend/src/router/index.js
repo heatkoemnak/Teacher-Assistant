@@ -22,6 +22,7 @@ import EditUserProfile from "@/pages/admin/contents/profile/EditUserProfile.vue"
 import UserAccount from "@/pages/admin/contents/profile/account/UserAccount.vue";
 import ChangeUserPassword from "@/pages/admin/contents/profile/account/ChangeUserPassword.vue";
 import SampleTable from "@/pages/admin/contents/SampleTable.vue";
+import DepartmentCards from "@/pages/admin/components/DepartmentCards.vue";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -49,7 +50,15 @@ const router = createRouter({
           component: ManagementLayout,
           children: [
             {
+              path: "department-cards",
+              component: DepartmentCards,
+            },
+            {
               path: "teachers",
+              component: TeacherContent,
+            },
+            {
+              path: "teachers/department/:id",
               component: TeacherContent,
             },
             {
@@ -119,7 +128,7 @@ const router = createRouter({
     {
       path: "/home",
       name: "home",
-      component: import('../pages/user/AllClass.vue')
+      component: import("../pages/user/AllClass.vue"),
     },
     {
       path: "/user",
@@ -131,32 +140,32 @@ const router = createRouter({
           name: "dashboard",
           component: import("../pages/user/contents/DashboardContent.vue"),
           meta: {
-            RouteName: 'Dashboard'
-          }
+            RouteName: "Dashboard",
+          },
         },
         {
           path: "attendance",
           name: "attendance",
           component: import("../pages/user/contents/AttendanceManage.vue"),
           meta: {
-            RouteName: 'Attendance'
-          }
+            RouteName: "Attendance",
+          },
         },
         {
           path: "score-grading",
           name: "Score Grading",
           component: import("../pages/user/contents/ScoreGrading.vue"),
           meta: {
-            RouteName: 'Score Grading'
-          }
+            RouteName: "Score Grading",
+          },
         },
         {
           path: "Generate-report",
           name: "Generate Report",
           component: ProfileContent,
           meta: {
-            RouteName: 'Generate Report'
-          }
+            RouteName: "Generate Report",
+          },
         },
       ],
     },
