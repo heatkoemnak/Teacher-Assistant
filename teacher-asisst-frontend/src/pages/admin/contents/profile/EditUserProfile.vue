@@ -136,13 +136,9 @@
       </v-row>
     </v-form>
   </v-container>
-  <v-divider></v-divider>
-  <user-account />
 </template>
 <script>
-import UserAccount from "./account/UserAccount.vue";
 export default {
-  components: { UserAccount },
   data: () => ({
     valid: false,
     calenderModal: false,

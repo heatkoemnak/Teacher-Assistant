@@ -306,9 +306,9 @@ const fakeDataAPI = {
         let items = endpoints[url];
         if (url === "/api/teachers" || url === "/api/students") {
           // Apply sorting
-          if (params.departmentId) {
-            items = items.filter((item) => item.dep_id === params.departmentId);
-          }
+          // if (params.departmentId) {
+          //   items = items.filter((item) => item.dep_id === params.departmentId);
+          // }
           if (params.sortBy && params.sortBy.length) {
             const sortKey = params.sortBy[0];
             const sortOrder = params.sortDesc[0];

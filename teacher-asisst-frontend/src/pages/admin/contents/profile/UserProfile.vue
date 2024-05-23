@@ -3,43 +3,43 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
         <v-col cols="12" class="d-flex">
-
-          <div class="headline">Profile Info</div>
+          <div class="headline">Personal Details</div>
           <v-spacer></v-spacer>
-            <v-btn
-              color="red"
-              class="text-none"
-              size="small"
-              to='/admin/profile/edit'
-            >
-              Edit Profile
-            </v-btn>
+          <v-btn
+            color="red"
+            class="text-none"
+            size="small"
+            to="/admin/profile/edit"
+          >
+            Edit
+          </v-btn>
         </v-col>
+
         <v-col cols="12" md="6" class="mb-0">
           <v-text-field
             density="compact"
-            label="First Name"
+            label="Full Name"
             prepend-inner-icon="mdi-account-arrow-right-outline"
-            v-model="formData.firstName"
+            v-model="data.name"
             variant="outlined"
-            :rules="requiredRules"
+            readonly
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             density="compact"
-            label="Last Name"
+            label="Code"
             prepend-inner-icon="mdi-account-arrow-right-outline"
-            v-model="formData.lastName"
+            v-model="data.teacher_id"
             variant="outlined"
-            :rules="requiredRules"
+            readonly
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             density="compact"
             label="E-Mail"
-            v-model="formData.email"
+            v-model="data.email"
             variant="outlined"
             :rules="emailRules"
             prepend-inner-icon="mdi-email-outline"
@@ -49,7 +49,7 @@
           <v-text-field
             density="compact"
             label="Phone Number"
-            v-model="formData.phoneNumber"
+            v-model="data.phone"
             variant="outlined"
             counter="10"
             :rules="numberRules"
@@ -60,7 +60,7 @@
           <v-text-field
             label="Gender*"
             density="compact"
-            v-model="formData.firstName"
+            v-model="data.gender"
             variant="outlined"
             :rules="requiredRules"
           />
@@ -69,26 +69,17 @@
           <v-text-field
             density="compact"
             label="Date of birth"
-            v-model="formData.lastName"
+            v-model="data.date_of_birth"
             variant="outlined"
             :rules="requiredRules"
           />
         </v-col>
-        <v-col cols="12" md="6" class="mb-0">
-          <v-text-field
-            density="compact"
-            label="Role *"
-            v-model="formData.firstName"
-            variant="outlined"
-            prepend-inner-icon="mdi-account-arrow-right-outline"
-            :rules="requiredRules"
-          />
-        </v-col>
+
         <v-col cols="12" md="6">
           <v-text-field
             ref="address"
             label="Address*"
-            v-model="formData.lastName"
+            v-model="data.address"
             variant="outlined"
             prepend-inner-icon="mdi-account-arrow-left-outline"
             :rules="[
@@ -106,28 +97,19 @@
   </v-container>
 </template>
 <script>
+import fakeDataAPI from "../../fakedata";
+
 export default {
   data: () => ({
     valid: false,
     calenderModal: false,
     formLoading: false,
-    positions: [
-      "Trainee",
-      "Working Student",
-      "Intern",
-      "Junior",
-      "Senior",
-      "V-Level",
-      "C-Level",
-    ],
-    formData: {
-      jobs: [{}],
-    },
+    data: "",
     requiredRules: [(v) => !!v || "Please fill out this field!"],
-    numberRules: [
-      (v) => !!v || "Please fill out this field!",
-      (v) => Number.isInteger(Number(v)) || "Please enter numbers only!",
-    ],
+    // numberRules: [
+    //   (v) => !!v || "Please fill out this field!",
+    //   (v) => Number.isInteger(Number(v)) || "Please enter numbers only!",
+    // ],
     emailRules: [
       (v) => !!v || "Please fill out the field!",
       (v) =>
@@ -136,47 +118,32 @@ export default {
         "E-mail must be valid",
     ],
   }),
+  created() {
+    this.loadItems();
+  },
   methods: {
-    deleteRow(index) {
-      this.formData.jobs.splice([index], 1);
-    },
-    addRow() {
-      this.formData.jobs.push({});
-    },
-    moveUp(index) {
-      let temp1 = this.formData.jobs[index];
-      let temp2 = this.formData.jobs[index - 1];
-      this.$set(this.formData.jobs, index, temp2);
-      this.$set(this.formData.jobs, index - 1, temp1);
-    },
-    moveDown(index) {
-      let temp1 = this.formData.jobs[index];
-      let temp2 = this.formData.jobs[index + 1];
-      this.$set(this.formData.jobs, index, temp2);
-      this.$set(this.formData.jobs, index + 1, temp1);
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        console.log("submit");
-        this.formLoading = true;
-        // Timeout Function only for showing loading progress
-        setTimeout(() => {
-          alert(JSON.stringify(this.formData));
-          this.formLoading = false;
-          this.reset();
-        }, 4000);
+    loadItems(
+      options = {
+        page: 1,
+        itemsPerPage: 10,
+        sortBy: [],
+        sortDesc: [],
+        search: "",
+        departmentId: this.$route.params.id,
       }
-    },
-    validateDate(dateRange) {
-      if (dateRange.length === 2) {
-        this.calenderModal = false;
-      }
-    },
-    reset() {
-      this.$refs.form.reset();
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation();
+    ) {
+      this.loading = true;
+      fakeDataAPI.get("/api/teachers", { params: options }).then((response) => {
+        if (this.$route.params.id) {
+          this.data = response.data.items.find(
+            (item) => item.id == this.$route.params.id
+          );
+          console.log(this.$route.params.id);
+          console.log(this.data);
+        } else {
+          this.data = response.data.items;
+        }
+      });
     },
   },
 };

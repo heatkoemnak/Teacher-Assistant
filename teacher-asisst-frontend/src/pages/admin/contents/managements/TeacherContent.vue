@@ -12,6 +12,7 @@
     disable-pagination
     disable-sort
     hide-default-footer
+    class="table-server"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -150,6 +151,22 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <template v-slot:item.image="{ item }">
+      <v-card class="my-2" elevation="2" rounded>
+        <v-img
+          :src="`https://cdn.vuetifyjs.com/images/john.jpg`"
+          height="64"
+          cover
+        ></v-img>
+      </v-card>
+    </template>
+    <template v-slot:item.details="{ item }">
+      <v-list>
+        <v-list-item :to="`/admin/profile/baseinfo/${item.id}`"
+          ><v-chip color="blue">details</v-chip></v-list-item
+        >
+      </v-list>
+    </template>
     <template v-slot:item.actions="{ item }">
       <v-icon color="blue" class="me-2" size="small" @click="editItem(item)">
         mdi-pencil
@@ -158,7 +175,9 @@
         mdi-delete
       </v-icon>
     </template>
-    <template v-slot:no-data> Loading... </template>
+    <template v-slot:no-data
+      ><v-progress-circular color="primary" indeterminate></v-progress-circular>
+    </template>
   </v-data-table-server>
 </template>
 
@@ -170,14 +189,15 @@ export default {
     dialog: false,
     dialogDelete: false,
     headers: [
-      { text: "No.", value: "id" },
-      { text: "Name", value: "name" },
-      { text: "Teacher ID", value: "teacher_id" },
-      { text: "Email", value: "email" },
-      { text: "Subjects", value: "subject" },
-      { text: "Date Of Birth", value: "date_of_birth" },
-      { text: "Gender", value: "gender" },
-      { text: "Action", value: "actions", filterable: false, sortable: false },
+      { title: "No.", value: "id" },
+      { title: "Image", value: "image" },
+      { title: "Name", value: "name" },
+      { title: "Teacher ID", value: "teacher_id" },
+      { title: "Email", value: "email" },
+      { title: "Subjects", value: "subject" },
+      { title: "Gender", value: "gender" },
+      { title: "Details", value: "details" },
+      { title: "Action", value: "actions", filterable: false, sortable: false },
     ],
     serverItems: [],
     editedIndex: -1,
@@ -282,11 +302,6 @@ export default {
           this.totalItems = response.data.totalItems;
           this.loading = false;
         }
-        console.log(response.data.start);
-          console.log(response.data.end);
-        // this.serverItems = response.data.items;
-        // this.totalItems = response.data.totalItems;
-        // this.loading = false;
       });
     },
   },
@@ -309,5 +324,11 @@ export default {
 <style scoped>
 .v-data-table-server {
   height: 100%;
+}
+.details {
+  cursor: pointer;
+}
+.table-server {
+  cursor: pointer;
 }
 </style>

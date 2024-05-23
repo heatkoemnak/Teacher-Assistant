@@ -122,6 +122,11 @@ const router = createRouter({
               component: UserProfile,
             },
             {
+              path: "baseinfo/:id", //个人
+
+              component: UserProfile,
+            },
+            {
               path: "account", //个人
               component: UserAccount,
             },
