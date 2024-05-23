@@ -12,6 +12,8 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "01/01/1980",
     gender: "Male",
+    phone: "+855-120-234-123",
+    dep_id: 1,
   },
   {
     id: 2,
@@ -21,6 +23,8 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1981",
     gender: "Female",
+    phone: "+855-120-234-123",
+    dep_id: 2,
   },
   {
     id: 3,
@@ -30,6 +34,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1984",
     gender: "Female",
+    dep_id: 1,
   },
   {
     id: 4,
@@ -39,6 +44,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1982",
     gender: "Female",
+    dep_id: 2,
   },
   {
     id: 5,
@@ -48,6 +54,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "01/01/1980",
     gender: "Male",
+    dep_id: 3,
   },
   {
     id: 6,
@@ -57,6 +64,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1981",
     gender: "Female",
+    dep_id: 3,
   },
   {
     id: 7,
@@ -66,6 +74,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1984",
     gender: "Female",
+    dep_id: 1,
   },
   {
     id: 8,
@@ -75,6 +84,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1982",
     gender: "Female",
+    dep_id: 1,
   },
   {
     id: 9,
@@ -84,6 +94,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "01/01/1980",
     gender: "Male",
+    dep_id: 3,
   },
   {
     id: 10,
@@ -93,6 +104,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1981",
     gender: "Female",
+    dep_id: 1,
   },
   {
     id: 11,
@@ -102,6 +114,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1984",
     gender: "Female",
+    dep_id: 3,
   },
   {
     id: 12,
@@ -111,6 +124,7 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1982",
     gender: "Female",
+    dep_id: 4,
   },
 
   // Add more teachers as needed
@@ -118,29 +132,87 @@ const dummyDataTeacher = [
 const dummyDataDepartment = [
   {
     id: 1,
-    deptId: 1,
-    department_name: "Computer Science",
+    image: "https://cdn.vuetifyjs.com/docs/images/chips/globe.png",
+    title: "Department of Computer Science",
+    category: "Computer Science",
+    keyword: "CS",
   },
   {
     id: 2,
-    deptId: 2,
-    department_name: "Data Analysis",
+    image: "https://cdn.vuetifyjs.com/docs/images/chips/cpu.png",
+    title: "Department of Information Technology Engineering",
+    category: "Technology",
+    keyword: "ITE",
   },
   {
     id: 3,
-    deptId: 3,
-    department_name: "Software Engineer",
+    image: "https://cdn.vuetifyjs.com/docs/images/chips/rocket.png",
+    title: "Department of Chemistry",
+    category: "Media",
+    keyword: "CHE",
   },
   {
     id: 4,
-    deptId: 4,
-    department_name: "English",
+    image: "https://cdn.vuetifyjs.com/docs/images/chips/bulb.png",
+    title: "Department of Mathematics",
+    category: "Technology",
+    keyword: "MATH",
   },
   {
     id: 5,
-    deptId: 5,
-    department_name: "ITE",
+    image: "https://cdn.vuetifyjs.com/docs/images/chips/raft.png",
+    title: "Department of Higher Education Development and Management",
+    category: "Travel",
+    keyword: "HED",
   },
+  {
+    id: 6,
+    image: "https://cdn.vuetifyjs.com/docs/images/chips/bulb.png",
+    title: "Department of Data Science Engineering",
+    category: "Travel",
+    keyword: "DSE",
+  },
+  // {
+  //   id: 1,
+  //   deptId: 1,
+  //   name: "Computer Science",
+  // },
+  // {
+  //   id: 2,
+  //   deptId: 2,
+  //   name: "Data Analysis",
+  // },
+  // {
+  //   id: 3,
+  //   deptId: 3,
+  //   name: "SE",
+  //   fullname: "Software Engineer",
+  // },
+  // {
+  //   id: 4,
+  //   deptId: 4,
+  //   name: "ENG",
+  //   fullname: "English",
+
+  // },
+  // {
+  //   id: 5,
+  //   deptId: 5,
+  //   name: "ITE",
+  //   fullname:'Information Technology Engineering'
+  // },
+  // {
+  //   id: 6,
+  //   deptId: 6,
+  //   name: "DSE",
+  //   fullname:'Data Science Engineering'
+  // },
+  // {
+  //   id: 6,
+  //   deptId: 6,
+  //   name: "DSE",
+  //   fullname:'Data Science Engineering'
+  // },
 ];
 
 const dummyDataStudent = [
@@ -182,7 +254,7 @@ const dummyDataStudent = [
     date_of_birth: "04/04/2001",
     gender: "Female",
     class_id: 1,
-    department_id: 3,
+    dep_id: 1,
   },
   {
     id: 5,
@@ -192,7 +264,7 @@ const dummyDataStudent = [
     date_of_birth: "04/04/2001",
     gender: "Female",
     class_id: 1,
-    department_id: 2,
+    dep_id: 1,
   },
   // Add more students as needed
 ];
@@ -214,14 +286,75 @@ const endpoints = {
 // };
 
 // Fake Data API
+// const fakeDataAPI = {
+//   get(url) {
+//     return new Promise((resolve, reject) => {
+//       setTimeout(() => {
+//         if (endpoints[url]) {
+//           resolve({ data: endpoints[url] });
+//         } else {
+//           reject(new Error("Endpoint not found"));
+//         }
+//       }, 1000);
+//     });
+//   },
+// };
 const fakeDataAPI = {
-  get(url) {
-    return new Promise((resolve, reject) => {
+  async get(url, { params }) {
+    return new Promise((resolve) => {
       setTimeout(() => {
-        if (endpoints[url]) {
-          resolve({ data: endpoints[url] });
+        let items = endpoints[url];
+        if (url === "/api/teachers" || url === "/api/students") {
+          // Apply sorting
+          if (params.departmentId) {
+            items = items.filter((item) => item.dep_id === params.departmentId);
+          }
+          if (params.sortBy && params.sortBy.length) {
+            const sortKey = params.sortBy[0];
+            const sortOrder = params.sortDesc[0];
+            items.sort((a, b) => {
+              const aValue = a[sortKey];
+              const bValue = b[sortKey];
+              if (aValue < bValue) return sortOrder ? 1 : -1;
+              if (aValue > bValue) return sortOrder ? -1 : 1;
+              return 0;
+            });
+          }
+
+          // Apply search
+          if (params.search) {
+            const search = params.search.toLowerCase();
+            items = items.filter((item) => {
+              return (
+                item.name.toLowerCase().includes(search) ||
+                item.email.toLowerCase().includes(search) ||
+                (item.teacher_id &&
+                  item.teacher_id.toLowerCase().includes(search)) ||
+                (item.student_id &&
+                  item.student_id.toLowerCase().includes(search))
+              );
+            });
+          }
+
+          // Apply pagination
+          const start = (params.page - 1) * params.itemsPerPage;
+          const end = start + params.itemsPerPage;
+          const paginatedItems = items.slice(start, end);
+
+          resolve({
+            data: {
+              items: paginatedItems,
+              totalItems: items.length,
+              end,
+              start
+            },
+          });
         } else {
-          reject(new Error("Endpoint not found"));
+          resolve({
+            data: {
+              items,
+            },
+          });
         }
       }, 1000);
     });
