@@ -2,6 +2,22 @@
 let teachers = [];
 let students = [];
 let department = [];
+let account =[];
+
+const dummyAccount = [
+  { id: 1, name: 'teacher1', email: 'teacher1@example.com', password: 'password' },
+  { id: 2, name: 'teacher2', email: 'teacher2@example.com', password: 'password' },
+  { id: 3, name: 'teacher3', email: 'teacher3@example.com', password: 'password' },
+  { id: 4, name: 'teacher4', email: 'teacher4@example.com', password: 'password' },
+  { id: 5, name: 'teacher5', email: 'teacher5@example.com', password: 'password' },
+  { id: 6, name: 'teacher6', email: 'teacher6@example.com', password: 'password' },
+  { id: 7, name: 'teacher7', email: 'teacher7@example.com', password: 'password' },
+  { id: 8, name: 'teacher8', email: 'teacher8@example.com', password: 'password' },
+  { id: 9, name: 'teacher9', email: 'teacher9@example.com', password: 'password' },
+  { id: 10, name: 'teacher10', email: 'teacher10@example.com', password: 'password' },
+  { id: 11, name: 'teacher11', email: 'teacher11@example.com', password: 'password' },
+  { id: 12, name: 'teacher12', email: 'teacher12@example.com', password: 'password' }
+]
 
 const dummyDataTeacher = [
   {
@@ -14,6 +30,7 @@ const dummyDataTeacher = [
     gender: "Male",
     phone: "+855-120-234-123",
     dep_id: 1,
+    account_id:1
   },
   {
     id: 2,
@@ -25,6 +42,7 @@ const dummyDataTeacher = [
     gender: "Female",
     phone: "+855-120-234-123",
     dep_id: 2,
+    account_id:2
   },
   {
     id: 3,
@@ -34,7 +52,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1984",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 1,
+    account_id:3
   },
   {
     id: 4,
@@ -44,7 +64,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1982",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 2,
+    account_id:4
   },
   {
     id: 5,
@@ -54,7 +76,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "01/01/1980",
     gender: "Male",
+    phone: "+855-120-234-123",
     dep_id: 3,
+    account_id:5
   },
   {
     id: 6,
@@ -64,7 +88,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1981",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 3,
+    account_id:6
   },
   {
     id: 7,
@@ -74,7 +100,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1984",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 1,
+    account_id:7
   },
   {
     id: 8,
@@ -84,7 +112,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1982",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 1,
+    account_id:8
   },
   {
     id: 9,
@@ -94,7 +124,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "01/01/1980",
     gender: "Male",
+    phone: "+855-120-234-123",
     dep_id: 3,
+    account_id:9
   },
   {
     id: 10,
@@ -104,7 +136,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1981",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 1,
+    account_id:10
   },
   {
     id: 11,
@@ -114,7 +148,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1984",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 3,
+    account_id:11
   },
   {
     id: 12,
@@ -124,7 +160,9 @@ const dummyDataTeacher = [
     subject: "English",
     date_of_birth: "02/02/1982",
     gender: "Female",
+    phone: "+855-120-234-123",
     dep_id: 4,
+    account_id:12
   },
 
   // Add more teachers as needed
@@ -218,6 +256,7 @@ const dummyDataDepartment = [
 const dummyDataStudent = [
   {
     id: 1,
+
     student_id: "STU001",
     name: "Student 1",
     email: "student1@example.com",
@@ -269,15 +308,19 @@ const dummyDataStudent = [
   // Add more students as needed
 ];
 
+
+
 teachers = dummyDataTeacher;
 students = dummyDataStudent;
 department = dummyDataDepartment;
+account = dummyAccount;
 
 // Define endpoints
 const endpoints = {
   "/api/students": students,
   "/api/teachers": teachers,
   "/api/departments": department,
+  "/api/accounts": account,
 };
 // const endpoints = {
 //   students,

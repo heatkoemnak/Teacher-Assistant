@@ -16,7 +16,7 @@
                   src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"
                 ></v-img>
               </v-avatar>
-              <v-list-item-title> Marcus Obrien </v-list-item-title>
+              <v-list-item-title> {{ account.name }} </v-list-item-title>
               <v-list-item-subtitle>Administrator</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -29,17 +29,17 @@
             prepend-icon="mdi-home-city"
             title="Profile Info"
             value="profile"
-            to="/admin/profile/baseinfo"
+            :to="`/admin/profile/baseinfo/${this.$route.params.id}`"
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-account"
             title="Account"
             value="account"
-            to="/admin/profile/account"
+            :to="`/admin/profile/baseinfo/${this.$route.params.id}/account`"
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-main max-height="550" style="overflow-y: auto"
+      <v-main  style="overflow-y: auto ; height: 90vh;"
         ><v-progress-linear
           :active="formLoading"
           indeterminate
@@ -53,23 +53,13 @@
   </v-card>
 </template>
 <script>
+import fakeDataAPI from "../fakedata";
+
 export default {
   data: () => ({
     valid: false,
-    calenderModal: false,
     formLoading: false,
-    positions: [
-      "Trainee",
-      "Working Student",
-      "Intern",
-      "Junior",
-      "Senior",
-      "V-Level",
-      "C-Level",
-    ],
-    formData: {
-      jobs: [{}],
-    },
+    account: "",
     requiredRules: [(v) => !!v || "Please fill out this field!"],
     numberRules: [
       (v) => !!v || "Please fill out this field!",
@@ -82,8 +72,32 @@ export default {
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
         "E-mail must be valid",
     ],
+    loading: true,
   }),
+  created() {
+    this.loadItems();
+  },
   methods: {
+    loadItems(
+      options = {
+        page: 1,
+        itemsPerPage: 10,
+        sortBy: [],
+        sortDesc: [],
+        search: "",
+        departmentId: this.$route.params.id,
+      }
+    ) {
+      fakeDataAPI.get("/api/accounts", { params: options }).then((response) => {
+        if (this.$route.params.id) {
+          console.log(this.$route.params.id);
+          this.account = response.data.items.find(
+            (item) => item.id == this.$route.params.id
+          );
+          console.log(this.account);
+        }
+      });
+    },
 
     deleteRow(index) {
       this.formData.jobs.splice([index], 1);

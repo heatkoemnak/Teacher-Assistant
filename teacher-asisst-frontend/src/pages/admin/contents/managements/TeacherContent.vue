@@ -162,7 +162,7 @@
     </template>
     <template v-slot:item.details="{ item }">
       <v-list>
-        <v-list-item :to="`/admin/profile/baseinfo/${item.id}`"
+        <v-list-item :to="`/admin/profile/baseinfo/${item.account_id}`"
           ><v-chip color="blue">details</v-chip></v-list-item
         >
       </v-list>
