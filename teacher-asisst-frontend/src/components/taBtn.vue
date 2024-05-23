@@ -1,7 +1,7 @@
 <template>
-  <v-col cols="12" md="4" sm="6">
-    <v-btn rounded="xl" size="x-large" block :color="color">Rounded xl</v-btn>
-  </v-col>
+  <div>
+    <v-btn :color="color" rounded="xl" size="x-large" block> {{ label }}</v-btn>
+  </div>
 </template>
 
 <script setup>
@@ -11,10 +11,12 @@ const props = defineProps({
   color: {
     type: String,
     default: '#E84D72'
+  },
+  label: {
+    type: String,
+    required:true
   }
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
