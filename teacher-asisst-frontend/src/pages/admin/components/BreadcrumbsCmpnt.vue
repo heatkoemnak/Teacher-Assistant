@@ -33,7 +33,6 @@ export default {
       () => route.path,
       (val) => {
         currentRouteUrl.value = val;
-        console.log(val);
       }
     );
     // const updateCurrentRoutePath = () => {
