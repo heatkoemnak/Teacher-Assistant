@@ -145,7 +145,7 @@ export default {
         id: 1,
         title: "Teachers",
         icon: "mdi-account",
-        route: "teachers",
+        route: "department-cards",
       },
       {
         id: 2,
