@@ -14,6 +14,13 @@
     hide-default-footer
     class="table-server"
   >
+    <!-- <template v-slot:item="{ item, index }">
+      <tr :class="getRowClass(index)">
+        <td v-for="header in headers" :key="header.value">
+          {{ item[header.value] }}
+        </td>
+      </tr>
+    </template> -->
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Manage Teachers</v-toolbar-title>
@@ -33,17 +40,21 @@
             <v-btn
               v-bind="props"
               color="white"
-              class="bg-primary ml-2 white--text"
+              class="text-none bg-primary ml-2 white--text"
             >
               Export CSV
             </v-btn>
-            <v-btn v-bind="props" color="white" class="bg-red ml-2 white--text">
+            <v-btn
+              v-bind="props"
+              color="white"
+              class="text-none bg-red ml-2 white--text"
+            >
               Import CSV
             </v-btn>
             <v-btn
               v-bind="props"
               color="white"
-              class="bg-primary ml-2 white--text"
+              class="bg-primary ml-2 text-none white--text"
             >
               <v-icon dark>mdi-plus</v-icon>AddNew
             </v-btn>
@@ -152,13 +163,11 @@
       </v-toolbar>
     </template>
     <template v-slot:item.image="{ item }">
-      <v-card class="my-2" elevation="2" rounded>
-        <v-img
-          :src="`https://cdn.vuetifyjs.com/images/john.jpg`"
-          height="64"
-          cover
-        ></v-img>
-      </v-card>
+      <v-list-item
+        prepend-avatar="https://cdn.vuetifyjs.com/images/john.png"
+        rounded="xl"
+      >
+      </v-list-item>
     </template>
     <template v-slot:item.details="{ item }">
       <v-list>
@@ -233,6 +242,14 @@ export default {
   }),
 
   methods: {
+    // getRowClass(index) {
+    //   const cycleIndex = index % 3;
+    //   if (cycleIndex === 0 || cycleIndex === 1) {
+    //     return 'color-one';
+    //   } else {
+    //     return 'color-two';
+    //   }
+    // },
     editItem(item) {
       this.editedIndex = this.serverItems.indexOf(item);
       this.editedItem = Object.assign({}, item);

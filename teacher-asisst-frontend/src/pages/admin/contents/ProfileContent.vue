@@ -37,6 +37,13 @@
             value="account"
             :to="`/admin/profile/baseinfo/${this.$route.params.id}/account`"
           ></v-list-item>
+          <v-list-item
+          prepend-icon="mdi-lock"
+          title="Change Password"
+          value="password"
+          :to="`/admin/profile/baseinfo/${this.$route.params.id}/change-password`"
+        ></v-list-item>
+         
         </v-list>
       </v-navigation-drawer>
       <v-main  style="overflow-y: auto ; height: 90vh;"

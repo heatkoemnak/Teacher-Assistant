@@ -2,8 +2,17 @@
   <v-container>
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" class="d-flex">
           <div class="headline">Account</div>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red"
+            class="text-none"
+            size="small"
+            to="/admin/profile/edit"
+          >
+            Edit
+          </v-btn>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
@@ -40,22 +49,6 @@
             counter
             @click:append="show1 = !show1"
           ></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <v-btn rounded color="red" class="text-none" size="small">
-            Edit Account
-          </v-btn>
-          <v-btn
-            rounded
-            color="red"
-            class="text-none mx-2"
-            size="small"
-            to="/admin/profile/change-account-password"
-          >
-            Change Password
-          </v-btn>
         </v-col>
       </v-row>
     </v-form>

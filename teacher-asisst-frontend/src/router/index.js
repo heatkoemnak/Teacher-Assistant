@@ -135,7 +135,7 @@ const router = createRouter({
               component: EditUserProfile,
             },
             {
-              path: "change-account-password", //个人
+              path: "baseinfo/:id/change-password", //个人
               component: ChangeUserPassword,
             },
           ],
