@@ -8,10 +8,7 @@
       @click="rail = false"
       class="overflow"
     >
-    <v-list-item
-        class="pa-5 "
-        nav
-        >
+      <v-list-item class="pa-5" nav>
         <h2>T . Assistant</h2>
         <template v-slot:append>
           <v-btn
@@ -111,7 +108,7 @@
             <v-icon>mdi-bell-outline</v-icon>
           </v-badge>
         </v-btn>
-        <profile-drop-down/>
+        <profile-drop-down />
       </v-toolbar>
       <!-- <breadcrumbs-cmpnt /> -->
       <v-content app>
@@ -124,7 +121,8 @@
 </template>
 <script>
 import ProfileDropDown from "./components/ProfileDropDown.vue";
-
+// import axios from "axios";
+import axios from '@/axios';
 export default {
   components: { ProfileDropDown },
   data() {
@@ -134,11 +132,11 @@ export default {
       expend: false,
       sheet: false,
       tiles: [
-        { img: 'keep.png', title: 'Keep' },
-        { img: 'inbox.png', title: 'Inbox' },
-        { img: 'hangouts.png', title: 'Hangouts' },
-        { img: 'messenger.png', title: 'Messenger' },
-        { img: 'google.png', title: 'Google+' },
+        { img: "keep.png", title: "Keep" },
+        { img: "inbox.png", title: "Inbox" },
+        { img: "hangouts.png", title: "Hangouts" },
+        { img: "messenger.png", title: "Messenger" },
+        { img: "google.png", title: "Google+" },
       ],
       managements: [
         {
@@ -191,8 +189,22 @@ export default {
           icon: "mdi-key",
           route: "permissions",
         },
-      ]
+      ],
     };
-  }
+  },
+
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      try {
+        const response =await axios.get("http://localhost:8000/api/example");
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
 };
 </script>
