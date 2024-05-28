@@ -199,7 +199,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response =await axios.get("http://localhost:8000/api/example");
+        const response =await axios.get("/example");
         console.log(response.data);
       } catch (error) {
         console.error(error);
