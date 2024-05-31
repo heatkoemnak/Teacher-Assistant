@@ -1,0 +1,194 @@
+{
+  "studentsData": [
+    {
+      "id": 1,
+      "student_id": "STU001",
+      "name": "Kristin Watson",
+      "email": "student1@example.com",
+      "date_of_birth": "03/03/2000",
+      "gender": "Male",
+      "class_id": 1,
+      "department_id": 1,
+      "scores": [
+        { "subject": "Assignment", "score": 100 },
+        { "subject": "Attendance", "score": 100 },
+        { "subject": "Quiz", "score": 100 },
+        { "subject": "Midterm", "score": 100 },
+        { "subject": "Final", "score": 100 }
+      ],
+      "overall": 100,
+      "gpa": 4.0
+    },
+    {
+      "id": 2,
+      "student_id": "STU002",
+      "name": "Marvin McKinney",
+      "email": "student2@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Male",
+      "class_id": 1,
+      "department_id": 1,
+      "scores": [
+        { "subject": "Assignment", "score": 90 },
+        { "subject": "Attendance", "score": 90 },
+        { "subject": "Quiz", "score": 90 },
+        { "subject": "Midterm", "score": 90 },
+        { "subject": "Final", "score": 90 }
+      ],
+      "overall": 90,
+      "gpa": 3.0
+    },
+    {
+      "id": 3,
+      "student_id": "STU003",
+      "name": "Jane Cooper",
+      "email": "student3@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Female",
+      "class_id": 2,
+      "department_id": 3,
+      "scores": [
+        { "subject": "Assignment", "score": 80 },
+        { "subject": "Attendance", "score": 50 },
+        { "subject": "Quiz", "score": 50 },
+        { "subject": "Midterm", "score": 50 },
+        { "subject": "Final", "score": 50 }
+      ],
+      "overall": 56,
+      "gpa": 0.8
+    },
+    {
+      "id": 4,
+      "student_id": "STU004",
+      "name": "Cody Fisher",
+      "email": "student4@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Male",
+      "class_id": 1,
+      "department_id": 3,
+      "scores": [
+        { "subject": "Assignment", "score": 95 },
+        { "subject": "Attendance", "score": 90 },
+        { "subject": "Quiz", "score": 90 },
+        { "subject": "Midterm", "score": 90 },
+        { "subject": "Final", "score": 90 }
+      ],
+      "overall": 91,
+      "gpa": 3.5
+    },
+    {
+      "id": 5,
+      "student_id": "STU005",
+      "name": "Bessie Cooper",
+      "email": "student5@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Male",
+      "class_id": 1,
+      "department_id": 2,
+      "scores": [
+        { "subject": "Assignment", "score": 100 },
+        { "subject": "Attendance", "score": 60 },
+        { "subject": "Quiz", "score": 60 },
+        { "subject": "Midterm", "score": 60 },
+        { "subject": "Final", "score": 60 }
+      ],
+      "overall": 68,
+      "gpa": 1.6
+    },
+    {
+      "id": 6,
+      "student_id": "STU006",
+      "name": "Leslie Alexander",
+      "email": "student6@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Female",
+      "class_id": 1,
+      "department_id": 2,
+      "scores": [
+        { "subject": "Assignment", "score": 90 },
+        { "subject": "Attendance", "score": 60 },
+        { "subject": "Quiz", "score": 60 },
+        { "subject": "Midterm", "score": 60 },
+        { "subject": "Final", "score": 60 }
+      ],
+      "overall": 66,
+      "gpa": 1.4
+    },
+    {
+      "id": 7,
+      "student_id": "STU007",
+      "name": "Guy Hawkins",
+      "email": "student7@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Female",
+      "class_id": 1,
+      "department_id": 2,
+      "scores": [
+        { "subject": "Assignment", "score": 100 },
+        { "subject": "Attendance", "score": 50 },
+        { "subject": "Quiz", "score": 50 },
+        { "subject": "Midterm", "score": 50 },
+        { "subject": "Final", "score": 50 }
+      ],
+      "overall": 60,
+      "gpa": 1.0
+    },
+    {
+      "id": 8,
+      "student_id": "STU008",
+      "name": "Theresa Webb",
+      "email": "student8@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Male",
+      "class_id": 1,
+      "department_id": 2,
+      "scores": [
+        { "subject": "Assignment", "score": 60 },
+        { "subject": "Attendance", "score": 60 },
+        { "subject": "Quiz", "score": 60 },
+        { "subject": "Midterm", "score": 60 },
+        { "subject": "Final", "score": 60 }
+      ],
+      "overall": 60,
+      "gpa": 1.0
+    },
+    {
+      "id": 9,
+      "student_id": "STU009",
+      "name": "Jerome Bell",
+      "email": "student9@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Female",
+      "class_id": 1,
+      "department_id": 2,
+      "scores": [
+        { "subject": "Assignment", "score": 50 },
+        { "subject": "Attendance", "score": 50 },
+        { "subject": "Quiz", "score": 50 },
+        { "subject": "Midterm", "score": 50 },
+        { "subject": "Final", "score": 50 }
+      ],
+      "overall": 50,
+      "gpa": 0.0
+    },
+    {
+      "id": 10,
+      "student_id": "STU010",
+      "name": "Savannah Nguyen",
+      "email": "student10@example.com",
+      "date_of_birth": "04/04/2001",
+      "gender": "Female",
+      "class_id": 1,
+      "department_id": 2,
+      "scores": [
+        { "subject": "Assignment", "score": 100 },
+        { "subject": "Attendance", "score": 60 },
+        { "subject": "Quiz", "score": 60 },
+        { "subject": "Midterm", "score": 60 },
+        { "subject": "Final", "score": 60 }
+      ],
+      "overall": 68,
+      "gpa": 1.6
+    }
+  ]
+}
