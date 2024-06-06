@@ -112,7 +112,7 @@
       </v-toolbar>
       <!-- <breadcrumbs-cmpnt /> -->
       <v-content app>
-        <v-container fluid style="height: 84%">
+        <v-container fluid style="height: 100%; background-color: #eeeeee">
           <router-view></router-view>
         </v-container>
       </v-content>
@@ -122,7 +122,7 @@
 <script>
 import ProfileDropDown from "./components/ProfileDropDown.vue";
 // import axios from "axios";
-import axios from '@/axios';
+import axios from "@/axios";
 export default {
   components: { ProfileDropDown },
   data() {
@@ -193,18 +193,18 @@ export default {
     };
   },
 
-  mounted() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      try {
-        const response =await axios.get("/example");
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
+  // created() {
+  //   this.fetchData();
+  // },
+  // methods: {
+  //   async fetchData() {
+  //     try {
+  //       const response = await axios.get("/teachers");
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   },
+  // },
 };
 </script>
