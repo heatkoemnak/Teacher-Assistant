@@ -6,9 +6,10 @@
     item-value="name"
     show-select
     :loading="loading"
+    height="450"
   >
     <template v-slot:top>
-      <v-toolbar-title class="ma-6">Teachers</v-toolbar-title>
+      <v-toolbar-title class="ma-4">Teachers</v-toolbar-title>
       <v-toolbar color="light-blue-darken-4">
         <v-text-field
           v-model="search"
@@ -37,7 +38,7 @@
           variant="flat"
           @click="openCreateDialog"
         >
-          Create Teacher
+          New Teacher
         </v-btn>
       </v-toolbar>
 
@@ -66,7 +67,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialogEdit" max-width="500px">
+      <v-dialog v-model="dialogEdit" max-width="700px">
         <v-card>
           <v-toolbar
             dense
@@ -78,32 +79,93 @@
           </v-toolbar>
           <v-card-text>
             <v-progress-linear
-        :active="loading"
-        :indeterminate="loading"
-        color="deep-purple-accent-4"
-        absolute
-        bottom
-      ></v-progress-linear>
+              :active="IsLoadingUpdate"
+              :indeterminate="IsLoadingUpdate"
+              color="deep-purple-accent-4"
+              absolute
+              bottom
+            ></v-progress-linear>
             <v-form ref="editForm" v-model="valid" lazy-validation>
-              <v-text-field
-                v-model="teacherToEdit.first_name"
-                :rules="[(v) => !!v || 'First Name is required']"
-                label="First Name"
-              ></v-text-field>
-              <v-text-field
-                v-model="teacherToEdit.last_name"
-                :rules="[(v) => !!v || 'Last Name is required']"
-                label="Last Name"
-              ></v-text-field>
+                <v-row>
+                  <v-col cols="6">
+                    <v-text-field
+                      v-model="teacherToEdit.first_name"
+                      :rules="[required, counter]"
+                      label="First Name"
+                      density="compact"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="teacherToEdit.last_name"
+                      :rules="[required, counter]"
+                      label="Last Name"
+                      density="compact"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-menu
+                      v-model="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="teacherToEdit.dob"
+                          label="Date of Birth"
+                          prepend-icon="mdi-calendar"
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="teacherToEdit.dob"
+                        @input="menu = false"
+                        locale="en-us"
+                      ></v-date-picker>
+                    </v-menu>
+                    <v-select
+                      v-model="teacherToEdit.gender"
+                      :items="
+                        genderOptions
+                          .map((option) => option.value)
+                          .filter((gender) => gender !== '')
+                      "
+                      label="Gender"
+                      density="compact"
+                    ></v-select>
+                  </v-col>
+                </v-row>
               <v-text-field
                 v-model="teacherToEdit.email"
                 :rules="[(v) => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
                 label="Email"
               ></v-text-field>
-              <v-text-field
-                v-model="teacherToEdit.dob"
-                label="DOB"
-              ></v-text-field>
+              <v-menu
+                v-model="menuEdit"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="teacherToEdit.dob"
+                    label="Date of Birth"
+                    prepend-icon="mdi-calendar"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="teacherToEdit.dob"
+                  @input="menuEdit = false"
+                  locale="en-us"
+                ></v-date-picker>
+              </v-menu>
               <v-text-field
                 v-model="teacherToEdit.address"
                 label="Address"
@@ -112,15 +174,6 @@
                 v-model="teacherToEdit.phone"
                 label="Phone"
               ></v-text-field>
-              <v-select
-                v-model="teacherToEdit.gender"
-                :items="
-                  genderOptions
-                    .map((option) => option.value)
-                    .filter((gender) => gender !== '')
-                "
-                label="Gender"
-              ></v-select>
             </v-form>
           </v-card-text>
           <v-card-actions>
@@ -132,63 +185,101 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialogCreate" max-width="500px">
+      <v-dialog v-model="dialogCreate" max-width="700px">
         <v-card>
-          <v-toolbar
-            dense
-            flat
-            class="body-2 font-weight-bold px-5"
-            color="grey lighten-2"
-          >
-            Create Teacher
-          </v-toolbar>
           <v-card-text>
             <v-form ref="createForm" v-model="valid" lazy-validation>
-              <v-text-field
-                v-model="newTeacher.first_name"
-                :rules="[(v) => !!v || 'First Name is required']"
-                label="First Name"
-              ></v-text-field>
-              <v-text-field
-                v-model="newTeacher.last_name"
-                :rules="[(v) => !!v || 'Last Name is required']"
-                label="Last Name"
-              ></v-text-field>
-              <v-text-field
-                v-model="newTeacher.email"
-                :rules="[(v) => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
-                label="Email"
-              ></v-text-field>
+              <v-container>
+                <v-toolbar-title class="mb-10">Create New Teacher</v-toolbar-title>
+                <v-row>
+                  <v-col cols="6">
+                    <v-text-field
+                      v-model="newTeacher.first_name"
+                      :rules="[required, counter]"
+                      label="First Name"
+                      density="compact"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="newTeacher.last_name"
+                      :rules="[required, counter]"
+                      label="Last Name"
+                      density="compact"
+                    ></v-text-field>
+                  </v-col>
 
-              <v-text-field v-model="newTeacher.dob" label="DOB"></v-text-field>
-              <v-text-field
-                v-model="newTeacher.phone"
-                label="Phone"
-              ></v-text-field>
-              <v-select
-                v-model="newTeacher.gender"
-                :items="
-                  genderOptions
-                    .map((option) => option.value)
-                    .filter((gender) => gender !== '')
-                "
-                label="Gender"
-              ></v-select>
-              <v-text-field
-                v-model="newTeacher.password"
-                :rules="[(v) => !!v || 'Password is required']"
-                label="Password"
-                type="password"
-              ></v-text-field>
-              <v-text-field
-                v-model="newTeacher.password_confirmation"
-                :rules="[(v) => !!v || 'Confirm Password is required']"
-                label="Confirm Password"
-                type="password"
-              ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
+                  <v-col cols="6">
+                    <v-menu
+                      v-model="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="newTeacher.dob"
+                          label="Date of Birth"
+                          prepend-icon="mdi-calendar"
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="newTeacher.dob"
+                        @input="menu = false"
+                        locale="en-us"
+                      ></v-date-picker>
+                    </v-menu>
+                    <v-select
+                      v-model="newTeacher.gender"
+                      :items="
+                        genderOptions
+                          .map((option) => option.value)
+                          .filter((gender) => gender !== '')
+                      "
+                      label="Gender"
+                      density="compact"
+                    ></v-select>
+                  </v-col>
+                </v-row>
+
+                <v-text-field
+                  v-model="newTeacher.email"
+                  prepend-inner-icon="mdi-email"
+                  :rules="[required, isEmail]"
+                  label="Email"
+                  density="compact"
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="newTeacher.phone"
+                  label="Phone"
+                  density="compact"
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="newTeacher.password"
+                  :rules="passwordRules"
+                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                  prepend-icon="mdi-lock"
+                  label="Password"
+                  hint="Minimum 8 characters"
+                  density="compact"
+                  counter
+                  :type="show ? 'text' : 'password'"
+                  @click:append="show = !show"
+                ></v-text-field>
+                <v-text-field
+                  v-model="newTeacher.password_confirmation"
+                  :rules="[(v) => !!v || 'Confirm Password is required']"
+                  label="Confirm Password"
+                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="show ? 'text' : 'password'"
+                  density="compact"
+                  @click:append="show = !show"
+                ></v-text-field>
+                <v-card-actions>
             <v-btn
               color="blue-darken-1"
               variant="text"
@@ -196,8 +287,18 @@
               >Cancel</v-btn
             >
             <v-spacer></v-spacer>
-            <v-btn color="green" @click="createItemConfirm">Create</v-btn>
+            <v-btn
+              color="green"
+              :disabled="!valid"
+              class="mr-4"
+              @click="createItemConfirm"
+              >Create</v-btn
+            >
           </v-card-actions>
+              </v-container>
+            </v-form>
+          </v-card-text>
+          
         </v-card>
       </v-dialog>
       <v-snackbar
@@ -215,7 +316,7 @@
           variant="flat"
           @click="showSuccessSnackbar = false"
         >
-        Close
+          Close
         </v-btn>
       </v-snackbar>
       <v-snackbar v-model="showErrorSnackbar" :timeout="timeout" color="red">
@@ -243,9 +344,7 @@
         mdi-delete
       </v-icon>
     </template>
-
   </v-data-table>
-
 </template>
 <script>
 import axios from "@/axios";
@@ -275,22 +374,33 @@ export default {
     ],
     teacherToDelete: null,
     teacherToEdit: null,
+    // date: new Date().toISOString().substr(0, 10),
     newTeacher: {
       first_name: "",
       last_name: "",
       email: "",
-      dob: "",
+      dob: new Date().toISOString().substr(0, 10),
       phone: "",
       gender: "",
       password: "",
       password_confirmation: "",
     },
+    menu: false,
+    menuEdit: false,
     valid: false,
+    isValidated: true,
+    show: false,
+    IsLoadingUpdate: false,
     showSuccessSnackbar: false,
     showErrorSnackbar: false,
     successMessage: "",
     errorMessage: "",
     timeout: 3000,
+
+    passwordRules: [
+      (v) => !!v || "Password ist needed",
+      (v) => v.length >= 8 || "Password is to short",
+    ],
   }),
 
   created() {
@@ -319,9 +429,13 @@ export default {
     dialogCreate(val) {
       val || this.closeCreateDialog();
     },
-    
   },
   methods: {
+    allowedDates: (val) => {
+      return (
+        parseInt(this.$vuetify.date.toISO(val).split("-")[2], 10) % 2 === 0
+      );
+    },
     async fetchData() {
       try {
         this.loading = true;
@@ -373,12 +487,11 @@ export default {
 
     closeEditDialog() {
       this.dialogEdit = false;
-      // this.teacherToEdit = null;
     },
     async editItemConfirm() {
       if (this.$refs.editForm.validate()) {
         try {
-          this.loading=true
+          this.IsLoadingUpdate = true;
           await axios.put(
             `/update-teacher/${this.teacherToEdit.id}`,
             this.teacherToEdit
@@ -391,9 +504,9 @@ export default {
           console.error("Error updating data:", error);
           this.showErrorSnackbar = true;
           this.errorMessage = "Error editing teacher.";
-        }finally {
-        this.loading = false;
-      }
+        } finally {
+          this.IsLoadingUpdate = false;
+        }
       }
     },
 
@@ -403,19 +516,24 @@ export default {
 
     closeCreateDialog() {
       this.dialogCreate = false;
-      this.newTeacher = {
-        first_name: "",
-        last_name: "",
-        email: "",
-        dob: "",
-        phone: "",
-        gender: "",
-        password: "",
-      };
+      // this.newTeacher = {
+      //   first_name: "",
+      //   last_name: "",
+      //   email: "",
+      //   dob: "",
+      //   phone: "",
+      //   gender: "",
+      //   password: "",
+      // };
+    },
+    validate() {
+      if (this.isValidated == false) return;
+      else alert("Now you can sign in!");
     },
 
     async createItemConfirm() {
       if (this.$refs.createForm.validate()) {
+        this.validate();
         try {
           const response = await axios.post(
             "/register-teacher",
@@ -432,6 +550,15 @@ export default {
           this.errorMessage = "Error creating teacher.";
         }
       }
+    },
+    //validation rules
+
+    required: (value) => !!value || "Required.",
+    counter: (value) => value.length >= 3 || "min 3 characters",
+    isEmail: (value) => {
+      const pattern =
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return pattern.test(value) || "Invalid e-mail.";
     },
   },
 };
