@@ -6,6 +6,7 @@ use App\Http\Controllers\{
     UserController,RoleController,PermissionController,TeacherController
 };
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
