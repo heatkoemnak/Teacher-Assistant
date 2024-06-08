@@ -96,6 +96,7 @@
 
 <script setup>
 import { ref } from "vue";
+import axios from 'axios';
 import { useRouter } from "vue-router";
 import taBtn from "./../../../components/taBtn.vue";
 import taCard from "./../../../components/taCard.vue";
@@ -165,13 +166,32 @@ const formRef = ref(null);
 const submitForm = () => {
   formRef.value.validate().then((success) => {
     if (success) {
-      console.log("Admin login submitted:");
-      router.push("/admin/login");
+      const formData = new FormData();
+      formData.append('firstName', signupData.value.firstName);
+      formData.append('email', signupData.value.email);
+      formData.append('phoneNumber', signupData.value.phoneNumber);
+      formData.append('password', signupData.value.password);
+      formData.append('password_confirmation', signupData.value.confirmPassword);
+      formData.append('universityName', signupData.value.universityName);
+      formData.append('faculty', signupData.value.faculty);
+      if (signupData.value.profilePicture) {
+        formData.append('profilePicture', signupData.value.profilePicture);
+      }
+
+      axios.post('http://localhost:8000/api/register', formData)
+        .then(response => {
+          console.log(response.data);
+          router.push('/admin/login');
+        })
+        .catch(error => {
+          console.error(error);
+        });
     } else {
-      console.log("Form is not valid");
+      console.log('Form is not valid');
     }
   });
 };
+
 
 const toggleMode = () => {
   router.push("/admin/login");
