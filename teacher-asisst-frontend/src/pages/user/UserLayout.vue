@@ -58,7 +58,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-main style="height: 100vh">
-      <v-toolbar color="blue-blue-darken-3">
+      <v-toolbar color="white h-10">
         <v-btn
           v-if="rail"
           class="text-none"
@@ -70,19 +70,22 @@
         >
           <v-icon>mdi-menu</v-icon>
         </v-btn>
-        <span class="mx-5">Teacher Assistant Dashboard</span>
+        <h4 class="mx-5 text-gray">Welcome to Dashboard</h4>
 
         <v-spacer></v-spacer>
 
         <v-btn class="text-none" stacked>
-          <v-badge color="error" content="2">
-            <v-icon>mdi-bell-outline</v-icon>
-          </v-badge>
+          <v-icon>mdi-account-multiple-outline</v-icon>
         </v-btn>
 
         <v-btn class="text-none" stacked>
-          Import
+          <v-badge color="error" content="2">
+            <v-btn to="/admin/notification" variant="text"
+              ><v-icon>mdi-bell-outline</v-icon>
+            </v-btn>
+          </v-badge>
         </v-btn>
+        <!-- <profile-drop-down :user="user" /> -->
       </v-toolbar>
       <breadcrumbs-cmpnt />
       <v-content app>
@@ -95,10 +98,11 @@
   </v-layout>
 </template>
 <script>
+// import ProfileDropDown from "./components/ProfileDropDown.vue";
 import { ref } from "vue";
 // import BreadcrumbsCmpnt from "../";
 export default {
-  // components: { BreadcrumbsCmpnt },
+  components: { ProfileDropDown },
   data() {
     return {
       pathID : this.$route.params.class_id
