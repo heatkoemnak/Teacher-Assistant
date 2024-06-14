@@ -1,49 +1,48 @@
 <template>
   <div>
     <v-data-table-server
-  :headers="headers"
-    :items="serverItems"
-    :items-length="totalItems"
-    :loading="loading"
-    :search="search"
-    item-value="name"
-    @update:options="loadItems"
-    fixed-header
-    height="420"
-    disable-pagination
-    disable-sort
-    hide-default-footer
-  >
-    <template v-slot:item.March="{ item }">
-      <div class="d-flex justify-start align-center">
-        <v-autocomplete
-          variant="underlined"
-          :items="['Present', 'Permission', 'Absent']"
-          v-model="attendStatus"
-        ></v-autocomplete>
-      </div>
-    </template>
-    <template v-slot:top>
-      <div class="d-flex align-center">
-        <v-text-field
-          v-model="name"
-          class="ma-2"
-          density="compact"
-          placeholder="Search name..."
-          hide-details
-          width="20"
-          variant="outlined"
-        ></v-text-field>
-        <v-spacer></v-spacer>
-        <addDateDiol @get-date="onAddDate"/>
-      </div>
-    </template>
-  </v-data-table-server>
+      :headers="headers"
+      :items="serverItems"
+      :items-length="totalItems"
+      :loading="loading"
+      :search="search"
+      item-value="name"
+      @update:options="loadItems"
+      fixed-header
+      height="420"
+      disable-pagination
+      disable-sort
+      hide-default-footer
+    >
+      <template v-slot:item.March="{ item }">
+        <div class="d-flex justify-start align-center">
+          <v-autocomplete
+            variant="underlined"
+            :items="['Present', 'Permission', 'Absent']"
+            v-model="attendStatus"
+          ></v-autocomplete>
+        </div>
+      </template>
+      <template v-slot:top>
+        <div class="d-flex align-center">
+          <v-text-field
+            v-model="name"
+            class="ma-2"
+            density="compact"
+            placeholder="Search name..."
+            hide-details
+            width="20"
+            variant="outlined"
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <addDateDiol @get-date="onAddDate" />
+        </div>
+      </template>
+    </v-data-table-server>
   </div>
-
 </template>
 <script>
-import addDateDiol from '../components/addDateDiol.vue'
+import addDateDiol from "../components/addDateDiol.vue";
 
 function generateData() {
   const data = [];
@@ -75,7 +74,6 @@ function generateData() {
     "Honeycomb",
     "Donut",
   ];
-
 
   for (let i = 1; i <= 12; i++) {
     // const randomGenderIndex = Math.floor(Math.random() * genders.length);
@@ -146,13 +144,13 @@ export default {
     addDateDiol,
   },
   data: () => ({
-    itemsPerPage: 6,
+    itemsPerPage: 10,
     headers: [
       { title: "No.", key: "id" },
       { title: "Name", key: "name" },
       { title: "Student ID", key: "student_id" },
       { title: "Gender", key: "gender" },
-      { title: "Attendance", key: 'attendance'}
+      { title: "Attendance", key: "attendance" },
     ],
     generatedData: [],
     serverItems: [],
@@ -161,7 +159,7 @@ export default {
     name: "",
     student_id: 0,
     search: "",
-    attendStatus: null
+    attendStatus: null,
   }),
   watch: {
     name() {
@@ -171,8 +169,8 @@ export default {
       this.search = String(Date.now());
     },
     attendStatus(newVal) {
-      console.log(newVal)
-    }
+      console.log(newVal);
+    },
   },
 
   mounted() {
@@ -196,10 +194,10 @@ export default {
     onAddDate(val) {
       const newDate = {
         title: `${val}`,
-        key: 'March'
-      }
-      this.headers.push(newDate)
-    }
+        key: "March",
+      };
+      this.headers.push(newDate);
+    },
   },
 };
 </script>

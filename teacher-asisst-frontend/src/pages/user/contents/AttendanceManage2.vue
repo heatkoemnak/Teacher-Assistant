@@ -24,21 +24,26 @@
           variant="outlined"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <addNewstudent />
+        <addDateDiol @get-date="onAddDate" />
       </div>
     </template>
-    <template v-slot:item.actions="{ item }">
-      <!-- <v-icon class="me-2" size="small" @click="editItem(item)">
-        mdi-pencil
-      </v-icon> -->
-      <EditStudentDialog :student="item"></EditStudentDialog>
-      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
+    <template
+      v-for="header in dynamicHeaders"
+      v-slot:[`item.${header.key}`]="{ item }"
+    >
+      <div class="d-flex justify-start align-center">
+        <v-autocomplete
+          variant="underlined"
+          :items="attendanceStatuses"
+          v-model="item[header.key]"
+          @change="updateAttendance(item)"
+        ></v-autocomplete>
+      </div>
     </template>
   </v-data-table-server>
 </template>
 <script>
-import addNewstudent from "../components/addNewstudent.vue";
-import EditStudentDialog from "../components/DiolEditStudent.vue";
+import addDateDiol from "../components/addDateDiol.vue";
 
 const desserts = [
   {
@@ -47,11 +52,6 @@ const desserts = [
     student_id: "S001",
     gender: "Female",
     attendance: 92,
-    assignment: 85,
-    quiz: 80,
-    midterm: 88,
-    final: 90,
-    overall: 86, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -60,11 +60,6 @@ const desserts = [
     student_id: "S002",
     gender: "Male",
     attendance: 85,
-    assignment: 80,
-    quiz: 75,
-    midterm: 83,
-    final: 87,
-    overall: 81, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -73,11 +68,6 @@ const desserts = [
     student_id: "S003",
     gender: "Female",
     attendance: 78,
-    assignment: 70,
-    quiz: 68,
-    midterm: 72,
-    final: 74,
-    overall: 71, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -86,11 +76,6 @@ const desserts = [
     student_id: "S004",
     gender: "Male",
     attendance: 88,
-    assignment: 85,
-    quiz: 82,
-    midterm: 86,
-    final: 89,
-    overall: 85, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -99,11 +84,6 @@ const desserts = [
     student_id: "S005",
     gender: "Female",
     attendance: 95,
-    assignment: 92,
-    quiz: 91,
-    midterm: 94,
-    final: 96,
-    overall: 93, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -112,11 +92,6 @@ const desserts = [
     student_id: "S006",
     gender: "Male",
     attendance: 90,
-    assignment: 88,
-    quiz: 85,
-    midterm: 87,
-    final: 90,
-    overall: 87, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -125,11 +100,6 @@ const desserts = [
     student_id: "S007",
     gender: "Female",
     attendance: 82,
-    assignment: 79,
-    quiz: 75,
-    midterm: 80,
-    final: 83,
-    overall: 80, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -138,11 +108,6 @@ const desserts = [
     student_id: "S008",
     gender: "Male",
     attendance: 91,
-    assignment: 89,
-    quiz: 87,
-    midterm: 90,
-    final: 92,
-    overall: 90, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -151,11 +116,6 @@ const desserts = [
     student_id: "S009",
     gender: "Female",
     attendance: 89,
-    assignment: 85,
-    quiz: 82,
-    midterm: 87,
-    final: 90,
-    overall: 86, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -164,11 +124,6 @@ const desserts = [
     student_id: "S010",
     gender: "Male",
     attendance: 87,
-    assignment: 83,
-    quiz: 80,
-    midterm: 85,
-    final: 88,
-    overall: 84, // Adding a fixed value for overall score
     attendanceDates: {},
   },
 ];
@@ -206,19 +161,15 @@ const FakeAPI = {
 };
 
 export default {
-  components: { addNewstudent, EditStudentDialog },
+  components: { addDateDiol },
   data: () => ({
     itemsPerPage: 5,
     headers: [
+      { title: "No.", key: "id" },
       { title: "Name", key: "name" },
+      { title: "Student ID", key: "student_id" },
       { title: "Gender", key: "gender" },
-      { title: "Assignment", key: "assignment" },
       { title: "Attendance", key: "attendance" },
-      { title: "Quiz", key: "quiz" },
-      { title: "Midterm", key: "midterm" },
-      { title: "Final", key: "final" },
-      { title: "Overall", key: "overall" },
-      { title: "Actions", key: "actions", sortable: false },
     ],
     serverItems: [],
     loading: true,
@@ -229,8 +180,6 @@ export default {
     attendanceStatuses: ["Present", "Permission", "Absent"],
     newDateKey: "", // To store the current new date key
     dynamicHeaders: [],
-    showEditDialog: false,
-    currentStudent: null,
   }),
   watch: {
     name() {
@@ -254,18 +203,43 @@ export default {
         this.loading = false;
       });
     },
-    saveStudent(updatedStudent) {
-      const index = this.serverItems.findIndex(
-        (student) => student.id === updatedStudent.id
-      );
-      if (index !== -1) {
-        // Update the student in the serverItems array
-        this.serverItems.splice(index, 1, updatedStudent);
-        // Potentially update backend or perform any other actions
-        console.log("Updated student:", updatedStudent);
-      } else {
-        console.error("Student not found in serverItems:", updatedStudent);
+    onAddDate(val) {
+      this.newDateKey = val;
+      const newDate = { title: `${val}`, key: `${val}` };
+      this.headers.push(newDate);
+      this.dynamicHeaders.push(newDate);
+
+      desserts.forEach((item) => {
+        this.$set(item, newDate.key, "Present"); // Initialize with default value
+        this.$set(item.attendanceDates, newDate.key, "Present");
+      });
+
+      this.updateAllAttendance();
+      this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
+    },
+    updateAttendance(item) {
+      let presentCount = 0;
+      let totalDays = 0;
+
+      for (let date in item.attendanceDates) {
+        if (item.attendanceDates[date] !== "Permission") {
+          totalDays++;
+          if (item.attendanceDates[date] === "Present") {
+            presentCount++;
+          }
+        }
       }
+
+      const attendancePercentage =
+        totalDays > 0 ? (presentCount / totalDays) * 100 : 0;
+      item.attendance = Math.round(attendancePercentage);
+
+      this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
+    },
+    updateAllAttendance() {
+      desserts.forEach((item) => {
+        this.updateAttendance(item);
+      });
     },
   },
 };

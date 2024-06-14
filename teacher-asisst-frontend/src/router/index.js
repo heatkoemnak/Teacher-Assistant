@@ -2,6 +2,7 @@ import HomeLayout from "@/pages/HomeLayout.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
 import AdminLayout from "@/pages/admin/AdminLayout.vue";
 import UserLayout from "@/pages/user/UserLayout.vue";
+import AttendanceManage from "../pages/user/contents/AttendanceManage2.vue";
 import DashboardContent from "@/pages/admin/contents/DashboardContent.vue";
 import TeacherContent from "@/pages/admin/contents/managements/TeacherContent.vue";
 import StudentContent from "@/pages/admin/contents/managements/StudentContent.vue";
@@ -163,7 +164,7 @@ const router = createRouter({
         {
           path: "attendance",
           name: "attendance",
-          component: import("../pages/user/contents/AttendanceManage.vue"),
+          component: AttendanceManage,
           meta: {
             RouteName: "Attendance",
           },
