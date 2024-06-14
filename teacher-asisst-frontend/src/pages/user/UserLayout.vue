@@ -1,109 +1,3 @@
-<!-- <template lang="">
-  <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      :mini-variant="mini"
-      :clipped="clipped"
-      enable-resize-watcher
-      fixed
-      color="#365BC2"
-    >
-    <v-row>
-      <v-col cols="12" class="d-flex justify-center pt-5">
-        <v-avatar size="100">
-          <v-img
-            alt="John"
-            src="https://cdn.vuetifyjs.com/images/john.jpg"
-          ></v-img>
-        </v-avatar>
-      </v-col>
-      <v-col cols="12" class="d-flex justify-center">
-        <p>Teacher's assistant</p>
-      </v-col>
-      <v-col class="px-10">
-        <hr/>
-      </v-col>
-      <v-col cols="12" class="px-10 rounded-lg">
-        <v-list dense>
-          <v-list-item-group v-model="group">
-            <v-list-item v-for="(item, i) in items" :key="i" :to="item.name" rounded="lg" color="#F3797E">
-              <v-list-item-action>
-                <v-icon>{{ item.icon }}</v-icon>
-                <v-list-item-title class="pl-4">{{ item.text }}</v-list-item-title>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-col>
-    </v-row>
-    </v-navigation-drawer>
-
-    <v-app-bar >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ $route.meta.RouteName }}</v-toolbar-title>
-    </v-app-bar>
-
-    <v-content app class="content">
-      <v-main>
-        <router-view></router-view>
-      </v-main>
-    </v-content>
-  </v-app>
-</template>
-<script>
-import { ref } from "vue";
-
-export default {
-  setup() {
-    const drawer = ref(true);
-    const clipped = ref(true);
-    const mini = ref(true);
-    const group = ref(null);
-    const current = ref(null);
-    const items = [
-      {
-        icon: "mdi-view-dashboard",
-        text: "Dashboard",
-        name: "dashboard",
-      },
-      { icon: "mdi-list-status",
-        text: "Attendance",
-        name: "attendance"
-      },
-      { icon: "mdi-school",
-        text: "Score Grading",
-        name: "score-grading"
-      },
-      { icon: "mdi-text-box-search-outline",
-        text: "Generate Report",
-        name: "generate-report"
-      },
-      { icon: "mdi-chevron-left",
-        text: "All Class",
-        name: "/home"
-      },
-    ];
-
-    return {
-      drawer,
-      clipped,
-      mini,
-      group,
-      current,
-      items,
-    };
-  },
-};
-</script>
-
-<style scoped>
-.content {
-  margin-top: 64px;
-  background: #746565;
-}
-</style> -->
-
 <template>
   <v-layout>
     <v-navigation-drawer
@@ -135,25 +29,25 @@ export default {
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
           value="home"
-          to="/user/dashboard"
+          :to="`/class/${pathID}/dashboard`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-list-status"
           title="Attendance"
           value="password"
-          to="/user/attendance"
+          :to="`/class/${pathID}/attendance`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-school"
           title="Score Grading"
           value="profile"
-          to="/user/score-grading"
+          :to="`/class/${pathID}/score-grading`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-text-box-search-outline"
           title="Generate Report"
           value="notifications"
-          to="/user/generate-report"
+          :to="`/class/${pathID}/generate-report`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-chevron-left"
@@ -210,6 +104,11 @@ import { ref } from "vue";
 // import BreadcrumbsCmpnt from "../";
 export default {
   // components: { BreadcrumbsCmpnt },
+  data() {
+    return {
+      pathID : this.$route.params.class_id
+    }
+  },
   setup() {
     const drawer = ref(true);
     const rail = ref(false);

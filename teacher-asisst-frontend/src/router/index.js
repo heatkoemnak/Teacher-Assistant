@@ -154,7 +154,7 @@ const router = createRouter({
       component: import("../pages/user/AllClass.vue"),
     },
     {
-      path: "/user",
+      path: "/class/:class_id",
       name: "dashboard",
       component: UserLayout,
       children: [
