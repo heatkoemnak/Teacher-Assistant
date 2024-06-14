@@ -26,6 +26,7 @@ import UserAccount from "@/pages/admin/contents/profile/account/UserAccount.vue"
 import ChangeUserPassword from "@/pages/admin/contents/profile/account/ChangeUserPassword.vue";
 import SampleTable from "@/pages/admin/contents/SampleTable.vue";
 import DepartmentCards from "@/pages/admin/components/DepartmentCards.vue";
+import Notification from "@/pages/admin/components/Notification.vue";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -140,6 +141,10 @@ const router = createRouter({
               component: ChangeUserPassword,
             },
           ],
+        },
+        {
+          path: "notification",
+          component: Notification,
         },
       ],
     },

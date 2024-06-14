@@ -75,6 +75,7 @@
           prepend-icon="mdi-bell"
           title="Notifications"
           value="notifications"
+          to="/admin/notification"
         ></v-list-item>
       </v-list>
       <v-chip elevated class="ma-2 bg-orange" color="white" label>
@@ -105,7 +106,9 @@
 
         <v-btn class="text-none" stacked>
           <v-badge color="error" content="2">
-            <v-icon>mdi-bell-outline</v-icon>
+            <v-btn to="/admin/notification" variant="text"
+              ><v-icon>mdi-bell-outline</v-icon>
+            </v-btn>
           </v-badge>
         </v-btn>
         <profile-drop-down />
