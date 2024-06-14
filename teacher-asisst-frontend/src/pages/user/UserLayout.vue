@@ -102,7 +102,7 @@
 import { ref } from "vue";
 // import BreadcrumbsCmpnt from "../";
 export default {
-  components: { ProfileDropDown },
+  //components: { ProfileDropDown },
   data() {
     return {
       pathID : this.$route.params.class_id
