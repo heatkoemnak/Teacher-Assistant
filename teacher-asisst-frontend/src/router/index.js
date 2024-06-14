@@ -185,7 +185,7 @@ const router = createRouter({
         {
           path: "Generate-report",
           name: "Generate Report",
-          component: ProfileContent,
+          component: import("../pages/user/contents/GenerateReport.vue"),
           meta: {
             RouteName: "Generate Report",
           },

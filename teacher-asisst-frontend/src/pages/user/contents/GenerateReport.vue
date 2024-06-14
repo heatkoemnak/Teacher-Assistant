@@ -24,22 +24,22 @@
           variant="outlined"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <addNewstudent />
+          <v-btn
+            class="text-none font-weight-regular"
+            color="primary"
+            prepend-icon="mdi-account"
+            text="Generate all students"
+            variant="tonal"
+          ></v-btn>
       </div>
     </template>
     <template v-slot:item.actions="{ item }">
-      <!-- <v-icon class="me-2" size="small" @click="editItem(item)">
-        mdi-pencil
-      </v-icon> -->
-      <EditStudentDialog :student="item"></EditStudentDialog>
+      <v-btn @click="generateAllStudents" color="primary">Generate</v-btn>
       <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
   </v-data-table-server>
 </template>
 <script>
-import addNewstudent from "../components/addNewstudent.vue";
-import EditStudentDialog from "../components/DiolEditStudent.vue";
-
 const students = [
   {
     id: 1,
@@ -179,7 +179,7 @@ const FakeAPI = {
       setTimeout(() => {
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const items =students.slice().filter((item) => {
+        const items = students.slice().filter((item) => {
           if (
             search.name &&
             !item.name.toLowerCase().includes(search.name.toLowerCase())
@@ -206,7 +206,6 @@ const FakeAPI = {
 };
 
 export default {
-  components: { addNewstudent, EditStudentDialog },
   data: () => ({
     itemsPerPage: 5,
     headers: [
@@ -225,18 +224,10 @@ export default {
     totalItems: 0,
     name: "",
     search: "",
-    attendStatus: null,
-    attendanceStatuses: ["Present", "Permission", "Absent"],
-    newDateKey: "",
     dynamicHeaders: [],
-    showEditDialog: false,
     currentStudent: null,
   }),
-  watch: {
-    name() {
-      this.search = String(Date.now());
-    },
-  },
+
   created() {
     this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
   },
@@ -264,6 +255,9 @@ export default {
       } else {
         console.error("Student not found in serverItems:", updatedStudent);
       }
+    },
+    generateAllStudents() {
+      console.log("Generating all students...");
     },
   },
 };
