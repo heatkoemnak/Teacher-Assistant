@@ -13,6 +13,8 @@
     "axios": "^1.7.2",
     "core-js": "^3.34.0",
     "date-fns": "^3.6.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "roboto-fontface": "*",
     "vue": "^3.3.0",
     "vuetify": "^3.0.0",
