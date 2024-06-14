@@ -34,7 +34,7 @@
             prepend-inner-icon="mdi-email-outline"
           />
         </v-col>
-        <v-col cols="12" md="6">
+        <!-- <v-col cols="12" md="6">
           <v-text-field
             density="compact"
             v-model="account.password"
@@ -49,13 +49,13 @@
             counter
             @click:append="show1 = !show1"
           ></v-text-field>
-        </v-col>
+        </v-col> -->
       </v-row>
     </v-form>
   </v-container>
 </template>
 <script>
-import fakeDataAPI from "@/pages/admin/fakedata";
+import axios from "@/axios";
 
 export default {
   data: () => ({
@@ -85,29 +85,20 @@ export default {
   }),
 
   created() {
-    this.loadItems();
+    this.getUserAccount();
   },
   methods: {
-    loadItems(
-      options = {
-        page: 1,
-        itemsPerPage: 10,
-        sortBy: [],
-        sortDesc: [],
-        search: "",
-        departmentId: this.$route.params.id,
+    async getUserAccount() {
+      try {
+        const response = await axios.get(`/users/${this.$route.params.id}`);
+        this.account = response.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        this.showErrorSnackbar = true;
+        this.errorMessage = "Error fetching data.";
       }
-    ) {
-      fakeDataAPI.get("/api/accounts", { params: options }).then((response) => {
-        if (this.$route.params.id) {
-          console.log(this.$route.params.id);
-          this.account = response.data.items.find(
-            (item) => item.id == this.$route.params.id
-          );
-          console.log(this.account);
-        }
-      });
     },
-  },
+  }
+
 };
 </script>

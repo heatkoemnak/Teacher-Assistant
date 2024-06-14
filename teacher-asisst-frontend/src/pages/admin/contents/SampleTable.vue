@@ -16,12 +16,21 @@
           density="compact"
           label="Search by Name or ID"
           prepend-inner-icon="mdi-magnify"
-          variant="solo"
+          variant="outlined"
           hide-details
           class="ml-4"
         ></v-text-field>
         <v-spacer></v-spacer>
 
+        <v-select
+          v-model="selectedDep"
+          :items="DepOptions"
+          label="Filter by Department"
+          class="md-6 mr-4 w-15 grey-lighten-2"
+          density="compact"
+          hide-details="auto"
+          variant="solo"
+        ></v-select>
         <v-select
           v-model="selectedGender"
           :items="genderOptions"
@@ -86,90 +95,60 @@
               bottom
             ></v-progress-linear>
             <v-form ref="editForm" v-model="valid" lazy-validation>
-                <v-row>
-                  <v-col cols="6">
-                    <v-text-field
-                      v-model="teacherToEdit.first_name"
-                      :rules="[required, counter]"
-                      label="First Name"
-                      density="compact"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="teacherToEdit.last_name"
-                      :rules="[required, counter]"
-                      label="Last Name"
-                      density="compact"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="6">
-                    <v-menu
-                      v-model="menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="teacherToEdit.dob"
-                          label="Date of Birth"
-                          prepend-icon="mdi-calendar"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="teacherToEdit.dob"
-                        @input="menu = false"
-                        locale="en-us"
-                      ></v-date-picker>
-                    </v-menu>
-                    <v-select
-                      v-model="teacherToEdit.gender"
-                      :items="
-                        genderOptions
-                          .map((option) => option.value)
-                          .filter((gender) => gender !== '')
-                      "
-                      label="Gender"
-                      density="compact"
-                    ></v-select>
-                  </v-col>
-                </v-row>
-              <v-text-field
-                v-model="teacherToEdit.email"
-                :rules="[(v) => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
-                label="Email"
-              ></v-text-field>
-              <v-menu
-                v-model="menuEdit"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on, attrs }">
+              <v-row>
+                <v-col cols="6">
                   <v-text-field
-                    v-model="teacherToEdit.dob"
-                    label="Date of Birth"
-                    prepend-icon="mdi-calendar"
-                    v-bind="attrs"
-                    v-on="on"
+                    v-model="teacherToEdit.first_name"
+                    :rules="[required, counter]"
+                    label="First Name"
+                    density="compact"
                   ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="teacherToEdit.dob"
-                  @input="menuEdit = false"
-                  locale="en-us"
-                ></v-date-picker>
-              </v-menu>
-              <v-text-field
-                v-model="teacherToEdit.address"
-                label="Address"
-              ></v-text-field>
+                  <v-text-field
+                    v-model="teacherToEdit.last_name"
+                    :rules="[required, counter]"
+                    label="Last Name"
+                    density="compact"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="6">
+                  <v-menu
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="teacherToEdit.dob"
+                        label="Date of Birth"
+                        prepend-icon="mdi-calendar"
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="teacherToEdit.dob"
+                      @input="menu = false"
+                      locale="en-us"
+                    ></v-date-picker>
+                  </v-menu>
+                  <v-select
+                    v-model="teacherToEdit.gender"
+                    :items="genderOptions"
+                    label="Gender"
+                    density="compact"
+                  ></v-select>
+                  <v-select
+                    v-model="teacherToEdit.department_id"
+                    :items="DepOptions"
+                    label="Department"
+                    density="compact"
+                  ></v-select>
+                </v-col>
+              </v-row>
               <v-text-field
                 v-model="teacherToEdit.phone"
                 label="Phone"
@@ -190,7 +169,9 @@
           <v-card-text>
             <v-form ref="createForm" v-model="valid" lazy-validation>
               <v-container>
-                <v-toolbar-title class="mb-10">Create New Teacher</v-toolbar-title>
+                <v-toolbar-title class="mb-10"
+                  >Create New Teacher</v-toolbar-title
+                >
                 <v-row>
                   <v-col cols="6">
                     <v-text-field
@@ -233,12 +214,14 @@
                     </v-menu>
                     <v-select
                       v-model="newTeacher.gender"
-                      :items="
-                        genderOptions
-                          .map((option) => option.value)
-                          .filter((gender) => gender !== '')
-                      "
+                      :items="genderOptions"
                       label="Gender"
+                      density="compact"
+                    ></v-select>
+                    <v-select
+                      v-model="newTeacher.department_id"
+                      :items="DepOptions"
+                      label="Department"
                       density="compact"
                     ></v-select>
                   </v-col>
@@ -280,25 +263,24 @@
                   @click:append="show = !show"
                 ></v-text-field>
                 <v-card-actions>
-            <v-btn
-              color="blue-darken-1"
-              variant="text"
-              @click="closeCreateDialog"
-              >Cancel</v-btn
-            >
-            <v-spacer></v-spacer>
-            <v-btn
-              color="green"
-              :disabled="!valid"
-              class="mr-4"
-              @click="createItemConfirm"
-              >Create</v-btn
-            >
-          </v-card-actions>
+                  <v-btn
+                    color="blue-darken-1"
+                    variant="text"
+                    @click="closeCreateDialog"
+                    >Cancel</v-btn
+                  >
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="green"
+                    :disabled="!valid"
+                    class="mr-4"
+                    @click="createItemConfirm"
+                    >Create</v-btn
+                  >
+                </v-card-actions>
               </v-container>
             </v-form>
           </v-card-text>
-          
         </v-card>
       </v-dialog>
       <v-snackbar
@@ -331,18 +313,22 @@
       </v-overlay>
     </template>
 
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        color="blue"
-        class="me-2"
-        size="small"
-        @click="openEditDialog(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon color="red" size="small" @click="openDeleteDialog(item)">
-        mdi-delete
-      </v-icon>
+    <template v-slot:item.actions="{ item }" >
+      {{ console.log("item",item) }}
+      <div class="d-flex align-center justify-end">
+          <v-chip color="blue" class="ma-2" :to="`/admin/profile/basic-info/${item.user_id}/personal-details`">views</v-chip>
+        <v-icon
+          color="blue"
+          class="me-2"
+          size="small"
+          @click="openEditDialog(item)"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon color="red" size="small" @click="openDeleteDialog(item)">
+          mdi-delete
+        </v-icon>
+      </div>
     </template>
   </v-data-table>
 </template>
@@ -351,27 +337,31 @@ import axios from "@/axios";
 export default {
   data: () => ({
     headers: [
-      { title: "Name ", key: "fullname" },
-      { title: "ID", key: "id" },
-      { title: "Email", key: "email" },
-      { title: "DOB", key: "dob" },
-      { title: "Phone", key: "phone" },
-      { title: "Gender", key: "gender" },
-      { title: "Action", key: "actions", filterable: false, sortable: false },
-    ],
+  { title: "Name", value: "fullname" },
+  { title: "ID", value: "id" },
+  { title: "Email", value: "email" },
+  { title: "DOB", value: "dob" },
+  { title: "Phone", value: "phone" },
+  { title: "Gender", value: "gender" },
+  { title: "Action", value: "actions", filterable: false, sortable: false, align: "end" },
+],
+
     dialogEdit: false,
     dialogDelete: false,
     dialogCreate: false,
     loading: true,
     teachers: [],
     search: "",
+    deps: [],
     selectedGender: "",
+    selectedDep: "",
     genderOptions: [
       { title: "All", value: "" },
       { title: "Male", value: "male" },
       { title: "Female", value: "female" },
       { title: "Other", value: "other" },
     ],
+    DepOptions: [],
     teacherToDelete: null,
     teacherToEdit: null,
     // date: new Date().toISOString().substr(0, 10),
@@ -384,6 +374,7 @@ export default {
       gender: "",
       password: "",
       password_confirmation: "",
+      department_id: "",
     },
     menu: false,
     menuEdit: false,
@@ -405,6 +396,7 @@ export default {
 
   created() {
     this.fetchData();
+    this.fetchDepartment();
   },
   computed: {
     filteredTeachers() {
@@ -412,10 +404,13 @@ export default {
         const matchesGender = this.selectedGender
           ? teacher.gender === this.selectedGender
           : true;
+        const matchesDep = this.selectedDep
+          ? teacher.department_id === this.selectedDep
+          : true;
         const matchesSearch =
           teacher.fullname.toLowerCase().includes(this.search.toLowerCase()) ||
           teacher.id.toString().includes(this.search);
-        return matchesGender && matchesSearch;
+        return matchesGender && matchesSearch && matchesDep;
       });
     },
   },
@@ -431,11 +426,6 @@ export default {
     },
   },
   methods: {
-    allowedDates: (val) => {
-      return (
-        parseInt(this.$vuetify.date.toISO(val).split("-")[2], 10) % 2 === 0
-      );
-    },
     async fetchData() {
       try {
         this.loading = true;
@@ -443,8 +433,35 @@ export default {
         this.teachers = response.data.map((teacher) => ({
           ...teacher,
           fullname: `${teacher.first_name} ${teacher.last_name}`,
+          email: teacher.user.email,
+          dob: teacher.dob || "N/A", // Handle null value for DOB
+          phone: teacher.phone || "N/A", // Handle null value for phone
+          gender: teacher.gender || "N/A",
         }));
+
         // console.log(this.teachers);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        this.showErrorSnackbar = true;
+        this.errorMessage = "Error fetching data.";
+      } finally {
+        this.loading = false;
+      }
+    },
+    async fetchDepartment() {
+      try {
+        this.loading = true;
+        const response = await axios.get("/deps");
+        this.DepOptions = [
+          { title: "All", value: "" }, // Default option
+          ...response.data.map((dep) => ({
+            title: dep.name.charAt(0).toUpperCase() + dep.name.slice(1), // Capitalize the role name
+            value: dep.id, // Convert role name to lowercase for consistency
+          })),
+        ];
+        console.log(this.RoleOptions);
+        this.deps = response.data;
+        console.log(this.deps);
       } catch (error) {
         console.error("Error fetching data:", error);
         this.showErrorSnackbar = true;
