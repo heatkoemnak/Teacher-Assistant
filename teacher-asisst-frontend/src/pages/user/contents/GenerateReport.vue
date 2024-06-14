@@ -47,7 +47,7 @@ const students = [
     student_id: "S001",
     gender: "Female",
     attendance: 92,
-    assignment: 85,
+    assignment: 99,
     quiz: 80,
     midterm: 88,
     final: 90,
