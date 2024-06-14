@@ -29,25 +29,25 @@
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
           value="home"
-          to="/user/dashboard"
+          :to="`/class/${pathID}/dashboard`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-list-status"
           title="Attendance"
           value="password"
-          to="/user/attendance"
+          :to="`/class/${pathID}/attendance`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-school"
           title="Score Grading"
           value="profile"
-          to="/user/score-grading"
+          :to="`/class/${pathID}/score-grading`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-text-box-search-outline"
           title="Generate Report"
           value="notifications"
-          to="/user/generate-report"
+          :to="`/class/${pathID}/generate-report`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-chevron-left"
@@ -99,6 +99,11 @@ import { ref } from "vue";
 // import BreadcrumbsCmpnt from "../";
 export default {
   // components: { BreadcrumbsCmpnt },
+  data() {
+    return {
+      pathID : this.$route.params.class_id
+    }
+  },
   setup() {
     const drawer = ref(true);
     const rail = ref(false);

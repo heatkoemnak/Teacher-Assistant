@@ -69,21 +69,23 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       searchText: '',
       classes: [
-        { id: 1, name: 'ITE-G8-M4', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 2, name: 'ITE-G7-M3', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 3, name: 'Math-G6-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 4, name: 'Science-G8-B2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 5, name: 'History-G7-C1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 6, name: 'Art-G6-D1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 7, name: 'Music-G7-E1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 8, name: 'Physical Education', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 9, name: 'Biology-G8-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-        { id: 10, name: 'Chemistry-G7-A2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' }
+        // { id: 1, name: 'ITE-G8-M4', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 2, name: 'ITE-G7-M3', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 3, name: 'Math-G6-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 4, name: 'Science-G8-B2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 5, name: 'History-G7-C1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 6, name: 'Art-G6-D1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 7, name: 'Music-G7-E1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 8, name: 'Physical Education', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 9, name: 'Biology-G8-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        // { id: 10, name: 'Chemistry-G7-A2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' }
       ],
     };
   },
@@ -106,11 +108,30 @@ export default {
 
   methods: {
     viewClass(classId) {
-      this.$router.push(`/class/${classId}`);
+      this.$router.push(`/class/${classId}/dashboard`);
     },
+    getClass(val) {
+      const newArrClass = []
+      for(let i = 0; i <val.length; i++){
+        console.log(val[i].id)
+        const thisclass = {
+          id : val[i].id,
+          name : val[i].class_name,
+          image : val[i].image
+        }
+        newArrClass.push(thisclass)
+      }
+      this.classes = newArrClass
+    }
     // filterClasses() {
 
     // },
   },
+  async mounted() {
+    const allclass = await axios.get('http://localhost:4000/classes')
+    console.log(allclass.data)
+    this.getClass(allclass.data)
+    
+  }
 };
 </script>

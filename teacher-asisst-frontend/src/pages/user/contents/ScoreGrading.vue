@@ -37,140 +37,141 @@
   </v-data-table-server>
 </template>
 <script>
+import axios from 'axios';
 import addNewstudent from "../components/addNewstudent.vue";
 import EditStudentDialog from "../components/DiolEditStudent.vue";
 
-const students = [
-  {
-    id: 1,
-    name: "Mony",
-    student_id: "S001",
-    gender: "Female",
-    attendance: 92,
-    assignment: 85,
-    quiz: 80,
-    midterm: 88,
-    final: 90,
-    overall: 86,
-    attendanceDates: {},
-  },
-  {
-    id: 2,
-    name: "Jnint",
-    student_id: "S002",
-    gender: "Male",
-    attendance: 85,
-    assignment: 80,
-    quiz: 75,
-    midterm: 83,
-    final: 87,
-    overall: 81,
-    attendanceDates: {},
-  },
-  {
-    id: 3,
-    name: "Nak",
-    student_id: "S003",
-    gender: "Female",
-    attendance: 78,
-    assignment: 70,
-    quiz: 68,
-    midterm: 72,
-    final: 74,
-    overall: 71,
-    attendanceDates: {},
-  },
-  {
-    id: 4,
-    name: "Dara",
-    student_id: "S004",
-    gender: "Male",
-    attendance: 88,
-    assignment: 85,
-    quiz: 82,
-    midterm: 86,
-    final: 89,
-    overall: 85,
-    attendanceDates: {},
-  },
-  {
-    id: 5,
-    name: "Bona",
-    student_id: "S005",
-    gender: "Female",
-    attendance: 95,
-    assignment: 92,
-    quiz: 91,
-    midterm: 94,
-    final: 96,
-    overall: 93,
-    attendanceDates: {},
-  },
-  {
-    id: 6,
-    name: "Morn",
-    student_id: "S006",
-    gender: "Male",
-    attendance: 90,
-    assignment: 88,
-    quiz: 85,
-    midterm: 87,
-    final: 90,
-    overall: 87,
-    attendanceDates: {},
-  },
-  {
-    id: 7,
-    name: "Lollipop",
-    student_id: "S007",
-    gender: "Female",
-    attendance: 82,
-    assignment: 79,
-    quiz: 75,
-    midterm: 80,
-    final: 83,
-    overall: 80,
-    attendanceDates: {},
-  },
-  {
-    id: 8,
-    name: "Cupcake",
-    student_id: "S008",
-    gender: "Male",
-    attendance: 91,
-    assignment: 89,
-    quiz: 87,
-    midterm: 90,
-    final: 92,
-    overall: 90,
-    attendanceDates: {},
-  },
-  {
-    id: 9,
-    name: "Honeycomb",
-    student_id: "S009",
-    gender: "Female",
-    attendance: 89,
-    assignment: 85,
-    quiz: 82,
-    midterm: 87,
-    final: 90,
-    overall: 86,
-    attendanceDates: {},
-  },
-  {
-    id: 10,
-    name: "Donut",
-    student_id: "S010",
-    gender: "Male",
-    attendance: 87,
-    assignment: 83,
-    quiz: 80,
-    midterm: 85,
-    final: 88,
-    overall: 84,
-    attendanceDates: {},
-  },
+let studentsData = [
+  // {
+  //   id: 1,
+  //   name: "Frozen Yogurt",
+  //   student_id: "S001",
+  //   gender: "Female",
+  //   attendance: 92,
+  //   assignment: 85,
+  //   quiz: 80,
+  //   midterm: 88,
+  //   final: 90,
+  //   overall: 86, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 2,
+  //   name: "Jelly bean",
+  //   student_id: "S002",
+  //   gender: "Male",
+  //   attendance: 85,
+  //   assignment: 80,
+  //   quiz: 75,
+  //   midterm: 83,
+  //   final: 87,
+  //   overall: 81, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 3,
+  //   name: "KitKat",
+  //   student_id: "S003",
+  //   gender: "Female",
+  //   attendance: 78,
+  //   assignment: 70,
+  //   quiz: 68,
+  //   midterm: 72,
+  //   final: 74,
+  //   overall: 71, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 4,
+  //   name: "Eclair",
+  //   student_id: "S004",
+  //   gender: "Male",
+  //   attendance: 88,
+  //   assignment: 85,
+  //   quiz: 82,
+  //   midterm: 86,
+  //   final: 89,
+  //   overall: 85, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 5,
+  //   name: "Gingerbread",
+  //   student_id: "S005",
+  //   gender: "Female",
+  //   attendance: 95,
+  //   assignment: 92,
+  //   quiz: 91,
+  //   midterm: 94,
+  //   final: 96,
+  //   overall: 93, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 6,
+  //   name: "Ice cream sandwich",
+  //   student_id: "S006",
+  //   gender: "Male",
+  //   attendance: 90,
+  //   assignment: 88,
+  //   quiz: 85,
+  //   midterm: 87,
+  //   final: 90,
+  //   overall: 87, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 7,
+  //   name: "Lollipop",
+  //   student_id: "S007",
+  //   gender: "Female",
+  //   attendance: 82,
+  //   assignment: 79,
+  //   quiz: 75,
+  //   midterm: 80,
+  //   final: 83,
+  //   overall: 80, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 8,
+  //   name: "Cupcake",
+  //   student_id: "S008",
+  //   gender: "Male",
+  //   attendance: 91,
+  //   assignment: 89,
+  //   quiz: 87,
+  //   midterm: 90,
+  //   final: 92,
+  //   overall: 90, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 9,
+  //   name: "Honeycomb",
+  //   student_id: "S009",
+  //   gender: "Female",
+  //   attendance: 89,
+  //   assignment: 85,
+  //   quiz: 82,
+  //   midterm: 87,
+  //   final: 90,
+  //   overall: 86, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
+  // {
+  //   id: 10,
+  //   name: "Donut",
+  //   student_id: "S010",
+  //   gender: "Male",
+  //   attendance: 87,
+  //   assignment: 83,
+  //   quiz: 80,
+  //   midterm: 85,
+  //   final: 88,
+  //   overall: 84, // Adding a fixed value for overall score
+  //   attendanceDates: {},
+  // },
 ];
 
 const FakeAPI = {
@@ -179,7 +180,7 @@ const FakeAPI = {
       setTimeout(() => {
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const items =students.slice().filter((item) => {
+        const items = studentsData.slice().filter((item) => {
           if (
             search.name &&
             !item.name.toLowerCase().includes(search.name.toLowerCase())
@@ -250,7 +251,10 @@ export default {
       this.search = String(Date.now());
     },
   },
-  created() {
+  async created() {
+    const getClassData = await axios.get(`http://localhost:4000/classes/${this.$route.params.class_id}`)
+    console.log(getClassData.data.students)
+    studentsData = getClassData.data.students
     this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
   },
   methods: {
