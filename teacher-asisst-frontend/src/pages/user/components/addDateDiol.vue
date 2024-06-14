@@ -10,6 +10,7 @@
       <v-card title="Add New Date">
         <row>
           <v-col class="d-flex justify-center">
+            <!-- <v-date-picker></v-date-picker> -->
             <!-- <v-date-picker
               v-model="date"
               color="#F3797E"

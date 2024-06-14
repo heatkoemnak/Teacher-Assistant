@@ -35,23 +35,29 @@
         <v-autocomplete
           variant="underlined"
           :items="attendanceStatuses"
-          v-model="item[header.key]"
-          @change="updateAttendance(item)"
+          v-model="item.attendanceDates[header.key]"
+          @update:model-value="updateAttendance(item)"
         ></v-autocomplete>
       </div>
     </template>
   </v-data-table-server>
 </template>
+
 <script>
 import addDateDiol from "../components/addDateDiol.vue";
 
 const desserts = [
-  {
+{
     id: 1,
     name: "Frozen Yogurt",
     student_id: "S001",
     gender: "Female",
-    attendance: 92,
+    attendance: 0,
+    assignment: 85,
+    quiz: 80,
+    midterm: 88,
+    final: 90,
+    overall: 86, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -59,7 +65,12 @@ const desserts = [
     name: "Jelly bean",
     student_id: "S002",
     gender: "Male",
-    attendance: 85,
+    attendance: 0,
+    assignment: 80,
+    quiz: 75,
+    midterm: 83,
+    final: 87,
+    overall: 81, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -67,7 +78,12 @@ const desserts = [
     name: "KitKat",
     student_id: "S003",
     gender: "Female",
-    attendance: 78,
+    attendance: 0,
+    assignment: 70,
+    quiz: 68,
+    midterm: 72,
+    final: 74,
+    overall: 71, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -75,7 +91,12 @@ const desserts = [
     name: "Eclair",
     student_id: "S004",
     gender: "Male",
-    attendance: 88,
+    attendance: 0,
+    assignment: 85,
+    quiz: 82,
+    midterm: 86,
+    final: 89,
+    overall: 85, // Adding a fixed value for overall score
     attendanceDates: {},
   },
   {
@@ -83,47 +104,12 @@ const desserts = [
     name: "Gingerbread",
     student_id: "S005",
     gender: "Female",
-    attendance: 95,
-    attendanceDates: {},
-  },
-  {
-    id: 6,
-    name: "Ice cream sandwich",
-    student_id: "S006",
-    gender: "Male",
-    attendance: 90,
-    attendanceDates: {},
-  },
-  {
-    id: 7,
-    name: "Lollipop",
-    student_id: "S007",
-    gender: "Female",
-    attendance: 82,
-    attendanceDates: {},
-  },
-  {
-    id: 8,
-    name: "Cupcake",
-    student_id: "S008",
-    gender: "Male",
-    attendance: 91,
-    attendanceDates: {},
-  },
-  {
-    id: 9,
-    name: "Honeycomb",
-    student_id: "S009",
-    gender: "Female",
-    attendance: 89,
-    attendanceDates: {},
-  },
-  {
-    id: 10,
-    name: "Donut",
-    student_id: "S010",
-    gender: "Male",
-    attendance: 87,
+    attendance: 0,
+    assignment: 92,
+    quiz: 91,
+    midterm: 94,
+    final: 96,
+    overall: 93, // Adding a fixed value for overall score
     attendanceDates: {},
   },
 ];
@@ -177,7 +163,7 @@ export default {
     name: "",
     search: "",
     attendStatus: null,
-    attendanceStatuses: ["Present", "Permission", "Absent"],
+    attendanceStatuses: ["Present", "Absent"],
     newDateKey: "", // To store the current new date key
     dynamicHeaders: [],
   }),
@@ -208,14 +194,6 @@ export default {
       const newDate = { title: `${val}`, key: `${val}` };
       this.headers.push(newDate);
       this.dynamicHeaders.push(newDate);
-
-      desserts.forEach((item) => {
-        this.$set(item, newDate.key, "Present"); // Initialize with default value
-        this.$set(item.attendanceDates, newDate.key, "Present");
-      });
-
-      this.updateAllAttendance();
-      this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
     },
     updateAttendance(item) {
       let presentCount = 0;
@@ -224,7 +202,7 @@ export default {
       for (let date in item.attendanceDates) {
         if (item.attendanceDates[date] !== "Permission") {
           totalDays++;
-          if (item.attendanceDates[date] === "Present") {
+          if (item.attendanceDates[date] === "Present" || item.attendanceDates[date] === "Permission") {
             presentCount++;
           }
         }
@@ -234,7 +212,11 @@ export default {
         totalDays > 0 ? (presentCount / totalDays) * 100 : 0;
       item.attendance = Math.round(attendancePercentage);
 
-      this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
+      // Instead of calling loadItems, update serverItems directly
+      const index = this.serverItems.findIndex((i) => i.id === item.id);
+      if (index !== -1) {
+        this.$set(this.serverItems, index, item);
+      }
     },
     updateAllAttendance() {
       desserts.forEach((item) => {
