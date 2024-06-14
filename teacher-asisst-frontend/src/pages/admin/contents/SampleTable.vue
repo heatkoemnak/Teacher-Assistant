@@ -9,8 +9,8 @@
     height="450"
   >
     <template v-slot:top>
-      <v-toolbar-title class="ma-4">Teachers</v-toolbar-title>
-      <v-toolbar color="light-blue-darken-4">
+      <v-card-title>Teachers</v-card-title>
+      <v-toolbar flat>
         <v-text-field
           v-model="search"
           density="compact"

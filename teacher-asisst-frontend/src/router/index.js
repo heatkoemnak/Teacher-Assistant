@@ -81,7 +81,7 @@ const router = createRouter({
           path: "dashboard",
           component: DashboardContent,
         },
-       
+
         {
           path: "management",
           component: ManagementLayout,

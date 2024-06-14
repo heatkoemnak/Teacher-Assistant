@@ -64,12 +64,13 @@
           prepend-icon="mdi-lock"
           title="Change Password"
           value="password"
+          :to="`/admin/profile/basic-info/${user.id}/change-password`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-account-circle"
           title="Profile"
           value="profile"
-          to="/admin/profile/baseinfo"
+          :to="`/admin/profile/basic-info/${user.id}/personal-details`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-bell"
@@ -134,7 +135,7 @@ export default {
       rail: false,
       expend: false,
       sheet: false,
-      user: null,
+      user: "",
       tiles: [
         { img: "keep.png", title: "Keep" },
         { img: "inbox.png", title: "Inbox" },
@@ -182,7 +183,7 @@ export default {
         {
           id: 7,
           title: "Teachers",
-          icon: "mdi-book-open-variant",
+          icon: "mdi-account",
           route: "sample",
         },
       ],
