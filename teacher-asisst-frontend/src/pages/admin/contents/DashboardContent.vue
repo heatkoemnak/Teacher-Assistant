@@ -38,7 +38,7 @@ export default {
         title: "Teachers",
         icon: "mdi-account",
         backgroundGradient: "linear-gradient(45deg, #FF416C, #FF4B2F)",
-        route: "/admin/management/teachers",
+        route: "/admin/management/sample",
       },
       {
         id: 2,

@@ -1,194 +1,275 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="desserts"
-    :sort-by="[{ key: 'calories', order: 'asc' }]"
-    height="420"
-    disable-pagination
-    disable-sort
-    hide-default-footer
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>Manage Role</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ props }">
-            <v-btn class="mb-2" color="primary" dark v-bind="props">
-              Add New Role
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="User Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field
-                      v-model="editedItem.type"
-                      label="Type"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="close">
-                Cancel
-              </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="save">
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5"
-              >Are you sure you want to delete this item?</v-card-title
+  <v-container>
+    <v-card>
+      <v-card-title>Roles</v-card-title>
+      <v-data-table
+        :headers="subjectHeaders"
+        :items="filteredRoles"
+        class="elevation-1 cursor-pointer"
+        item-value="name"
+        show-select
+        :loading="loading"
+        height="450"
+      >
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search by Name or ID"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              class="ml-4"
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" dark class="mb-2" @click="openCreateDialog"
+              >New Role</v-btn
             >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
-                >Cancel</v-btn
-              >
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="deleteItemConfirm"
-                >OK</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon class="me-2" size="small" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
-    </template>
-  </v-data-table>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.permissions="{ item }">
+          <div class="d-flex flex-row flex-wrap">
+            <v-chip
+              v-for="permission in item.permissions"
+              :key="permission.id"
+              :style="{ backgroundColor: randomColor() }"
+            >
+              {{ permission.name }}
+            </v-chip>
+          </div>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <div class="d-flex align-center justify-end">
+            <v-icon
+              color="blue"
+              class="me-2"
+              size="small"
+              @click="openEditDialog(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon color="red" size="small" @click="openDeleteDialog(item)">
+              mdi-delete
+            </v-icon>
+          </div>
+        </template>
+      </v-data-table>
+    </v-card>
+
+    <!-- Create Dialog -->
+    <v-dialog v-model="dialogCreate" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">New Role</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="createForm" v-model="valid" lazy-validation>
+            <v-text-field
+              label="Role Name"
+              v-model="newRole.name"
+              :rules="[required]"
+              required
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="closeCreateDialog"
+            >Cancel</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="addRole">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Edit Dialog -->
+    <v-dialog v-model="dialogEdit" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Edit Role</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="editForm" v-model="valid" lazy-validation>
+            <v-text-field
+              label="Role Name"
+              v-model="roleToEdit.name"
+              :rules="[required]"
+              required
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="closeEditDialog"
+            >Cancel</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="editRoleConfirm"
+            >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete Dialog -->
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Confirm Delete</span>
+        </v-card-title>
+        <v-card-text>Are you sure you want to delete this role?</v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="closeDeleteDialog"
+            >Cancel</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="red" text @click="deleteRoleConfirm">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
+
 <script>
+import axios from "@/axios";
+
 export default {
-  data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      {
-        title: "No.",
-        align: "start",
-        sortable: false,
-        key: "id",
+  data() {
+    return {
+      roles: [],
+      subjectHeaders: [
+        { title: "Role Name", value: "name" },
+        { title: "ID", value: "id" },
+        { title: "Permissions", value: "permissions", sortable: false },
+        { title: "Actions", value: "actions", sortable: false, align: "end" },
+      ],
+      loading: true,
+      search: "",
+      dialogCreate: false,
+      dialogEdit: false,
+      dialogDelete: false,
+      valid: false,
+      newRole: {
+        name: "",
       },
-      { title: "Role Name", key: "name" },
-      { title: "Actions", key: "actions", sortable: false },
-    ],
-    desserts: [],
-    editedIndex: -1,
-    editedItem: {
-      id: 0,
-      name: "",
-    },
-    defaultItem: {
-      name: "",
-    },
-  }),
-
+      roleToEdit: null,
+      required: (value) => !!value || "Required.",
+    };
+  },
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    filteredRoles() {
+      return this.roles.filter((role) =>
+        role.name.toLowerCase().includes(this.search.toLowerCase())
+      );
     },
   },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
-  },
-
-  created() {
-    this.initialize();
-  },
-
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          id: 1,
-          name: "User",
-        },
-        {
-          id: 2,
-          name: "Admin",
-        },
-      ];
+    fetchRoles() {
+      this.loading = true;
+      axios
+        .get("/roles")
+        .then((response) => {
+          this.roles = response.data;
+          return axios.get("/permissions");
+        })
+        .then((response) => {
+          const permissions = response.data;
+          this.roles = this.roles.map(role => ({
+            ...role,
+            permissions: permissions.filter(permission => permission.role_id === role.id),
+          }));
+        })
+        .catch((error) => {
+          console.error("Error fetching roles or permissions:", error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+    randomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     },
-
-    deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+    openCreateDialog() {
+      this.dialogCreate = true;
+    },
+    closeCreateDialog() {
+      this.dialogCreate = false;
+      this.resetForm(this.$refs.createForm);
+    },
+    addRole() {
+      if (this.$refs.createForm.validate()) {
+        axios
+          .post("/roles", this.newRole)
+          .then(() => {
+            this.fetchRoles();
+            this.newRole.name = "";
+            this.dialogCreate = false;
+          })
+          .catch((error) => {
+            console.error("Error adding role:", error);
+          });
+      }
+    },
+    openEditDialog(item) {
+      this.roleToEdit = { ...item };
+      this.dialogEdit = true;
+    },
+    closeEditDialog() {
+      this.dialogEdit = false;
+      this.resetForm(this.$refs.editForm);
+    },
+    editRoleConfirm() {
+      if (this.$refs.editForm.validate()) {
+        axios
+          .put(`/roles/${this.roleToEdit.id}`, this.roleToEdit)
+          .then(() => {
+            this.fetchRoles();
+            this.dialogEdit = false;
+          })
+          .catch((error) => {
+            console.error("Error editing role:", error);
+          });
+      }
+    },
+    openDeleteDialog(item) {
+      this.roleToEdit = item;
       this.dialogDelete = true;
     },
-
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
-      this.closeDelete();
-    },
-
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
-
-    closeDelete() {
+    closeDeleteDialog() {
       this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+      this.roleToEdit = null;
     },
-
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.editedItem.id = this.desserts.length + 1;
-        console.log(this.dessert);
-        this.desserts.push(this.editedItem);
+    deleteRoleConfirm() {
+      axios
+        .delete(`/roles/${this.roleToEdit.id}`)
+        .then(() => {
+          this.fetchRoles();
+          this.dialogDelete = false;
+        })
+        .catch((error) => {
+          console.error("Error deleting role:", error);
+        });
+    },
+    resetForm(form) {
+      if (form) {
+        form.reset();
+        form.resetValidation();
       }
-      this.close();
     },
+  },
+  mounted() {
+    this.fetchRoles();
   },
 };
 </script>
+
+<style scoped>
+.v-data-table-header {
+  background-color: #f5f5f5;
+}
+</style>

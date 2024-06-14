@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-card>
       <v-card-title>Subjects</v-card-title>
       <v-data-table
@@ -13,23 +13,29 @@
       >
         <template v-slot:top>
           <v-toolbar flat>
-            <v-toolbar-title>Subjects</v-toolbar-title>
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search by Name or ID"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              class="ml-4"
+            ></v-text-field>
             <v-spacer></v-spacer>
-            <v-btn color="primary" dark class="mb-2" @click="openCreateDialog">New Subject</v-btn>
+            <v-btn color="primary" dark class="mb-2" @click="openCreateDialog"
+              >New Subject</v-btn
+            >
           </v-toolbar>
-
-          <v-text-field
-            v-model="search"
-            label="Search by Subject Name"
-            prepend-inner-icon="mdi-magnify"
-            class="mx-4"
-            hide-details
-          ></v-text-field>
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editSubject(item)">mdi-pencil</v-icon>
-          <v-icon small @click="deleteSubject(item)">mdi-delete</v-icon>
+          <div class="d-flex justify-end">
+            <v-icon small color='blue' class="mr-2" @click="editSubject(item)"
+              >mdi-pencil</v-icon
+            >
+            <v-icon small color='red' @click="deleteSubject(item)">mdi-delete</v-icon>
+          </div>
         </template>
       </v-data-table>
     </v-card>
@@ -42,11 +48,14 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="createForm" v-model="valid" lazy-validation>
-            <v-text-field label="Subject Name" v-model="newSubject.name" :rules="[required]" required></v-text-field>
+            <v-text-field
+              label="Subject Name"
+              v-model="newSubject.name"
+              :rules="[required]"
+              required
+            ></v-text-field>
             <v-select
-              :items="departments"
-              item-text="name"
-              item-value="id"
+              :items="depOptions"
               label="Department"
               v-model="newSubject.department_id"
               :rules="[required]"
@@ -55,7 +64,9 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="closeCreateDialog">Cancel</v-btn>
+          <v-btn color="blue darken-1" text @click="closeCreateDialog"
+            >Cancel</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="addSubject">Save</v-btn>
         </v-card-actions>
@@ -70,11 +81,14 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="editForm" v-model="valid" lazy-validation>
-            <v-text-field label="Subject Name" v-model="subjectToEdit.name" :rules="[required]" required></v-text-field>
+            <v-text-field
+              label="Subject Name"
+              v-model="subjectToEdit.name"
+              :rules="[required]"
+              required
+            ></v-text-field>
             <v-select
-              :items="departments"
-              item-text="name"
-              item-value="id"
+              :items="depOptions"
               label="Department"
               v-model="subjectToEdit.department_id"
               :rules="[required]"
@@ -83,9 +97,13 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="closeEditDialog">Cancel</v-btn>
+          <v-btn color="blue darken-1" text @click="closeEditDialog"
+            >Cancel</v-btn
+          >
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="editSubjectConfirm">Save</v-btn>
+          <v-btn color="blue darken-1" text @click="editSubjectConfirm"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -98,17 +116,19 @@
         </v-card-title>
         <v-card-text>Are you sure you want to delete this subject?</v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="closeDeleteDialog">Cancel</v-btn>
+          <v-btn color="blue darken-1" text @click="closeDeleteDialog"
+            >Cancel</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn color="red" text @click="deleteSubjectConfirm">Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+  </div>
 </template>
 
 <script>
-import axios from '@/axios';
+import axios from "@/axios";
 
 export default {
   data() {
@@ -116,57 +136,68 @@ export default {
       subjects: [],
       departments: [],
       subjectHeaders: [
-        { text: 'Subject Name', value: 'name' },
-        { text: 'Department', value: 'department' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { title: "Subject Name", value: "name" },
+        { title: "Department", value: "department" },
+        { title: "Actions", value: "actions", sortable: false,align:"end" },
       ],
       loading: true,
-      search: '',
+      search: "",
       dialogCreate: false,
       dialogEdit: false,
       dialogDelete: false,
+      depOptions:[],
       valid: false,
       newSubject: {
-        name: '',
-        department_id: null,
+        name: "",
+        department_id: "",
       },
       subjectToEdit: null,
-      required: value => !!value || 'Required.',
+      required: (value) => !!value || "Required.",
     };
   },
   computed: {
     filteredSubjects() {
-      return this.subjects.map(subject => ({
-        ...subject,
-        department: this.getDepartmentName(subject.department_id),
-      })).filter(subject =>
-        subject.name.toLowerCase().includes(this.search.toLowerCase())
-      );
+      return this.subjects
+        .map((subject) => ({
+          ...subject,
+          department: this.getDepartmentName(subject.department_id),
+        }))
+        .filter((subject) =>
+          subject.name.toLowerCase().includes(this.search.toLowerCase())
+        );
     },
   },
   methods: {
     getDepartmentName(department_id) {
-      const department = this.departments.find(dep => dep.id === department_id);
-      return department ? department.name : '';
+      const department = this.departments.find(
+        (dep) => dep.id === department_id
+      );
+      return department ? department.name : "";
     },
     fetchSubjects() {
-      axios.get('/subjects')
-        .then(response => {
+      axios
+        .get("/subjects")
+        .then((response) => {
           this.subjects = response.data;
           this.loading = false;
         })
-        .catch(error => {
-          console.error('Error fetching subjects:', error);
+        .catch((error) => {
+          console.error("Error fetching subjects:", error);
           this.loading = false;
         });
     },
     fetchDepartments() {
-      axios.get('/deps')
-        .then(response => {
+      axios
+        .get("/deps")
+        .then((response) => {
           this.departments = response.data;
+          this.depOptions = [
+            { title: "All", value: "" },
+            ...this.departments.map((dep) => ({ title: dep.name, value: dep.id })),
+          ];
         })
-        .catch(error => {
-          console.error('Error fetching departments:', error);
+        .catch((error) => {
+          console.error("Error fetching departments:", error);
         });
     },
     openCreateDialog() {
@@ -174,19 +205,19 @@ export default {
     },
     closeCreateDialog() {
       this.dialogCreate = false;
-      this.resetForm(this.$refs.createForm);
     },
     addSubject() {
       if (this.$refs.createForm.validate()) {
-        axios.post('/subjects', this.newSubject)
+        axios
+          .post("/subjects/create", this.newSubject)
           .then(() => {
             this.fetchSubjects();
-            this.newSubject.name = '';
-            this.newSubject.department_id = null;
+            this.newSubject.name = "";
+            this.newSubject.department_id = "";
             this.dialogCreate = false;
           })
-          .catch(error => {
-            console.error('Error adding subject:', error);
+          .catch((error) => {
+            console.error("Error adding subject:", error);
           });
       }
     },
@@ -200,31 +231,33 @@ export default {
     },
     editSubjectConfirm() {
       if (this.$refs.editForm.validate()) {
-        axios.put(`/subjects/${this.subjectToEdit.id}`, this.subjectToEdit)
+        axios
+          .put(`/subjects/${this.subjectToEdit.id}`, this.subjectToEdit)
           .then(() => {
             this.fetchSubjects();
             this.dialogEdit = false;
           })
-          .catch(error => {
-            console.error('Error editing subject:', error);
+          .catch((error) => {
+            console.error("Error editing subject:", error);
           });
       }
     },
     deleteSubject(item) {
-      this.subjectToEdit = item;
+      this.subjectToDelete = item;
       this.dialogDelete = true;
     },
     closeDeleteDialog() {
       this.dialogDelete = false;
     },
     deleteSubjectConfirm() {
-      axios.delete(`/subjects/${this.subjectToEdit.id}`)
+      axios
+        .delete(`/subjects/${this.subjectToDelete.id}/delete`)
         .then(() => {
           this.fetchSubjects();
           this.dialogDelete = false;
         })
-        .catch(error => {
-          console.error('Error deleting subject:', error);
+        .catch((error) => {
+          console.error("Error deleting subject:", error);
         });
     },
     resetForm(form) {
