@@ -203,6 +203,19 @@ const FakeAPI = {
       }, 500);
     });
   },
+  async deleteStudent(studentId) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = students.findIndex((student) => student.id === studentId);
+        if (index !== -1) {
+          students.splice(index, 1);
+          resolve();
+        } else {
+          reject(new Error("Student not found"));
+        }
+      }, 500);
+    });
+  },
 };
 
 export default {
@@ -258,6 +271,25 @@ export default {
     },
     generateAllStudents() {
       console.log("Generating all students...");
+    },
+    deleteItem(item) {
+      if (!confirm(`Are you sure you want to delete ${item.name}?`)) {
+        return;
+      }
+
+      FakeAPI.deleteStudent(item.id)
+        .then(() => {
+          const index = this.serverItems.findIndex((student) => student.id === item.id);
+          if (index !== -1) {
+            this.serverItems.splice(index, 1);
+            console.log("Deleted item:", item);
+          } else {
+            console.error("Item not found in serverItems:", item);
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting student:", error.message);
+        });
     },
   },
 };
