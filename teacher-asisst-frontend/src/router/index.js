@@ -20,13 +20,21 @@ import UsersManagement from "@/pages/admin/contents/managements/user/UsersManage
 import RolesManagement from "@/pages/admin/contents/managements/roles/RolesManagement.vue";
 import PermissionsManagement from "@/pages/admin/contents/managements/permissions/PermissionsManagement.vue";
 import FakeComponent from "@/pages/admin/contents/managements/FakeComponent.vue";
+import SubjectContent from "@/pages/admin/contents/managements/SubjectContent.vue";
 import UserProfile from "@/pages/admin/contents/profile/UserProfile.vue";
-import EditUserProfile from "@/pages/admin/contents/profile/EditUserProfile.vue";
+// import EditUserProfile from "@/pages/admin/contents/profile/EditUserProfile.vue";
 import UserAccount from "@/pages/admin/contents/profile/account/UserAccount.vue";
+
+import PersonalDetails from "@/pages/admin/contents/profile/personal_info/PersonalDetails.vue";
+import SubjectBelong from "@/pages/admin/contents/profile/personal_info/SubjectBelong.vue";
+
 import ChangeUserPassword from "@/pages/admin/contents/profile/account/ChangeUserPassword.vue";
 import SampleTable from "@/pages/admin/contents/SampleTable.vue";
 import DepartmentCards from "@/pages/admin/components/DepartmentCards.vue";
 import Notification from "@/pages/admin/components/Notification.vue";
+
+import LoginPage from "@/pages/auth/LoginView.vue";
+import RegisterView from "@/pages/auth/RegisterView.vue";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -35,6 +43,7 @@ const router = createRouter({
       path: "/",
       name: "home-layout",
       component: HomeLayout,
+      meta: { requiresAuth: true },
     },
     {
       path: "/admin/signup",
@@ -52,13 +61,27 @@ const router = createRouter({
       component: LoginViewUser,
     },
     {
+      path: "/login",
+      name: "login-User",
+      component: LoginPage,
+      meta: { guest: true },
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: RegisterView,
+    },
+    {
       path: "/admin",
       component: AdminLayout,
+      meta: { requiresAuth: true, role: 1 },
+
       children: [
         {
           path: "dashboard",
           component: DashboardContent,
         },
+       
         {
           path: "management",
           component: ManagementLayout,
@@ -111,6 +134,10 @@ const router = createRouter({
               path: "sample",
               component: SampleTable,
             },
+            {
+              path: "subjects",
+              component: SubjectContent,
+            },
           ],
         },
 
@@ -119,25 +146,25 @@ const router = createRouter({
           component: ProfileContent,
           children: [
             {
-              path: "baseinfo", //个人
-
+              path: "basic-info/:id", //个人
               component: UserProfile,
+              children: [
+                {
+                  path: "personal-details",
+                  component: PersonalDetails,
+                },
+                {
+                  path: "subject",
+                  component: SubjectBelong,
+                },
+              ],
             },
             {
-              path: "baseinfo/:id", //个人
-
-              component: UserProfile,
-            },
-            {
-              path: "baseinfo/:id/account", //个人
+              path: "basic-info/:id/account",
               component: UserAccount,
             },
             {
-              path: "edit", //个人
-              component: EditUserProfile,
-            },
-            {
-              path: "baseinfo/:id/change-password", //个人
+              path: "basic-info/:id/change-password",
               component: ChangeUserPassword,
             },
           ],
@@ -157,6 +184,7 @@ const router = createRouter({
       path: "/class/:class_id",
       name: "dashboard",
       component: UserLayout,
+      meta: { requiresAuth: true, role: 3 },
       children: [
         {
           path: "dashboard",
@@ -185,7 +213,7 @@ const router = createRouter({
         {
           path: "Generate-report",
           name: "Generate Report",
-          component: ProfileContent,
+          component: import("../pages/user/contents/GenerateReport.vue"),
           meta: {
             RouteName: "Generate Report",
           },
@@ -197,6 +225,36 @@ const router = createRouter({
       component: PageNotFound,
     },
   ],
+});
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next({ path: "/login" });
+    } else if (to.meta.role && user.role_id !== to.meta.role) {
+      if (user.role_id === 1) {
+        next({ path: "/admin/dashboard" });
+      }else {
+        next({ path: "/user/dashboard" });
+      }
+    } else {
+      next();
+    }
+  } else if (to.matched.some((record) => record.meta.guest)) {
+    if (isAuthenticated) {
+      if (user.role_id === 1) {
+        next({ path: "/admin/dashboard" });
+      } else {
+        next({ path: "/user/dashboard" });
+      }
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

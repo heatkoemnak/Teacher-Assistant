@@ -6,9 +6,7 @@
           <template v-slot:activator="{ props: tooltip }">
             <v-list-item
               v-bind="mergeProps(menu, tooltip)"
-              prepend-avatar="https://cdn.vuetifyjs.com/images/john.png"
-              subtitle="john@google.com"
-              title="John Leider"
+              :title="user.name"
               rounded="xl"
             >
               <template v-slot:append>
@@ -26,12 +24,15 @@
             :key="i"
             :value="item"
             color="primary"
-            
+            :to="`/admin/profile/basic-info/${user.id}/${item.route}`"
           >
             <template v-slot:prepend>
               <v-icon :icon="item.icon"></v-icon>
             </template>
-            <v-list-item-title :to="`/admin/profile/baseinfo/${this.$route.params.id}`">{{ item.text }}</v-list-item-title>
+            <v-list-item-title>{{ item.text }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-btn @click="handleLogout" variant='text' block> Logout</v-btn>
           </v-list-item>
         </v-list>
       </v-card>
@@ -39,19 +40,45 @@
   </div>
 </template>
 <script>
+// import axios from "@/axios";
+import { mapGetters, mapActions } from "vuex";
 import { mergeProps } from "vue";
 
 export default {
   data: () => ({
     items: [
-      { text: "View profile", icon: "mdi-account-circle" },
-      { text: "Account", icon: "mdi-account" },
-      { text: "Settings", icon: "mdi-clock" },
-      { text: "Log Out", icon: "mdi-logout" },
+      {
+        text: "View profile",
+        icon: "mdi-account-circle",
+        route: "personal-details",
+      },
+      { text: "Account", icon: "mdi-account", route: "account" },
     ],
   }),
+
+  computed: {
+    ...mapGetters(["isAuthenticated"]),
+    user() {
+      return this.$store.state.user;
+    },
+  },
+  created() {
+    if (!this.isAuthenticated) {
+      this.$router.push("/login"); // Adjust as needed
+    }
+  },
   methods: {
     mergeProps,
+
+    ...mapActions(["logout"]),
+    async handleLogout() {
+      try {
+        await this.logout();
+        this.$router.push("/login"); // Adjust as needed
+      } catch (error) {
+        console.error("Logout failed", error);
+      }
+    },
   },
 };
 </script>

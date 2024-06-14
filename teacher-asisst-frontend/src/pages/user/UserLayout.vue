@@ -91,11 +91,6 @@
         </v-container>
         <v-divider></v-divider>
       </v-content>
-      <!-- <v-card-text class="bg-red white--text">
-        Copyright 1993 - {{ new Date().getFullYear() }}
-        <a class="white--text" href="https://codepen.io/jettaz">Jettaz</a> | It
-        is free for use
-      </v-card-text> -->
     </v-main>
   </v-layout>
 </template>
@@ -145,27 +140,6 @@ export default {
         icon: "mdi-domain",
         route: "departments",
       },
-      // {
-      //   id: 6,
-      //   title: "Grading",
-      //   icon: "mdi-star",
-      //   route: "/attendance",
-      // },
-      // {
-      //   id: 1,
-      //   title: "Users",
-      //   icon: "mdi-account-multiple-outline",
-      // },
-      // {
-      //   id: 2,
-      //   title: "Role",
-      //   icon: "mdi-briefcase-account",
-      // },
-      // {
-      //   id: 3,
-      //   title: "Permissions",
-      //   icon: "mdi-key",
-      // },
     ]);
     return { drawer, rail, managements, expend };
   },

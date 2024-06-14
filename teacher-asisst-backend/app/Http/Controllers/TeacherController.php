@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Teacher;
+use App\Models\Profile;
 class TeacherController extends Controller
 {
     public function index(){
@@ -21,6 +22,7 @@ class TeacherController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'department_id' =>'required|integer|exists:departments,id'
         ]);
 
         if ($validator->fails()) {
@@ -39,14 +41,21 @@ class TeacherController extends Controller
             $teacher = Teacher::create([
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
-                'email' => $request->email,
                 'user_id' => $user->id,
-                'phone' => $request->phone,
-                'address' => $request->address,
                 'dob' => $request->dob,
+                'phone' => $request->phone,
+                'gender' => $request->gender,
+                'department_id'=>$request->department_id
+            ]);
+            $profile = Profile::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'user_id' => $user->id,
+                'dob' => $request->dob,
+                'phone' => $request->phone,
                 'gender' => $request->gender,
             ]);
-            return response()->json(['user' => $user, 'teacher' => $teacher,'message'=>'register success'], 201);
+            return response()->json([$user,$teacher,$profile,'message'=>'register success',], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
         }
@@ -55,26 +64,26 @@ class TeacherController extends Controller
     {
         try {
             $teacher = Teacher::with('user')->findOrFail($id);
-            return response()->json(['teacher' => $teacher], 200);
+            return response()->json($teacher, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Teacher not found', 'message' => $e->getMessage()], 404);
         }
     }
     public function updateTeacher(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'sometimes|required|string|max:255',
-            'last_name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
-            'phone' => 'sometimes|required|string|max:15',
-            'address' => 'sometimes|required|string|max:255',
-            'dob' => 'sometimes|required|date',
-            'gender' => 'sometimes|required|string|max:10',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'first_name' => 'sometimes|required|string|max:255',
+        //     'last_name' => 'sometimes|required|string|max:255',
+        //     'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
+        //     'phone' => 'sometimes|required|string|max:15',
+        //     'address' => 'sometimes|required|string|max:255',
+        //     'dob' => 'sometimes|required|date',
+        //     'gender' => 'sometimes|required|string|max:10',
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 422);
+        // }
 
         try {
             // Find the teacher and associated user
@@ -96,10 +105,10 @@ class TeacherController extends Controller
                 'first_name',
                 'last_name',
                 'email',
-                'phone',
-                'address',
                 'dob',
-                'gender'
+                'phone',
+                'gender',
+                'department_id'
             ]));
 
 

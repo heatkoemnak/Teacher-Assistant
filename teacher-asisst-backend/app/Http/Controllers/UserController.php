@@ -8,10 +8,9 @@ use App\Models\Role;
 class UserController extends Controller
 {
     public function index(){
-        $users = User::with('role')->get();
+        $users = User::with('role','profile')->get();
         return response()->json($users, 200);
     }
-
     public function getUsersWithRoleId($id)
     {
         try {
@@ -54,7 +53,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::with('profile')->findOrFail($id);
             $user->role_name = $user->role->name; // Assuming there is a role relationship defined in the User model
             return response()->json($user, 200);
         } catch (\Exception $e) {

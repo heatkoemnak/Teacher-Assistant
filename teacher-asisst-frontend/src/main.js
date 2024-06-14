@@ -13,7 +13,12 @@ import store from "@/store/index";
 
 // Composables
 import { createApp } from "vue";
+import apiClient from "./axios";
 
+const token = localStorage.getItem("token");
+if (token) {
+  apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
 const app = createApp(App);
 app.use(store);
 

@@ -10,6 +10,8 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Teacher;
+use App\Models\Profile;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -25,7 +27,6 @@ class User extends Authenticatable
         'password',
         'role_id'
     ];
-
 
 
     /**
@@ -51,9 +52,27 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
     public function teacher()
     {
         return $this->hasOne(Teacher::class);
     }
 
+    public function isAdmin()
+    {
+        return $this->role === 1;
+    }
+
+    public function isUser()
+    {
+        return $this->role === 2;
+    }
+
+    public function isTeacher()
+    {
+        return $this->role === 3;
+    }
 }

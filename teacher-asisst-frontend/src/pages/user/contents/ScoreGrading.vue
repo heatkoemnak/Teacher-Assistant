@@ -204,6 +204,19 @@ const FakeAPI = {
       }, 500);
     });
   },
+  async deleteStudent(studentId) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = students.findIndex((student) => student.id === studentId);
+        if (index !== -1) {
+          students.splice(index, 1);
+          resolve();
+        } else {
+          reject(new Error("Student not found"));
+        }
+      }, 500);
+    });
+  },
 };
 
 export default {
@@ -228,7 +241,7 @@ export default {
     search: "",
     attendStatus: null,
     attendanceStatuses: ["Present", "Permission", "Absent"],
-    newDateKey: "", // To store the current new date key
+    newDateKey: "",
     dynamicHeaders: [],
     showEditDialog: false,
     currentStudent: null,
@@ -263,13 +276,30 @@ export default {
         (student) => student.id === updatedStudent.id
       );
       if (index !== -1) {
-        // Update the student in the serverItems array
         this.serverItems.splice(index, 1, updatedStudent);
-        // Potentially update backend or perform any other actions
         console.log("Updated student:", updatedStudent);
       } else {
         console.error("Student not found in serverItems:", updatedStudent);
       }
+    },
+    deleteItem(item) {
+      if (!confirm(`Are you sure you want to delete ${item.name}?`)) {
+        return;
+      }
+
+      FakeAPI.deleteStudent(item.id)
+        .then(() => {
+          const index = this.serverItems.findIndex((student) => student.id === item.id);
+          if (index !== -1) {
+            this.serverItems.splice(index, 1);
+            console.log("Deleted item:", item);
+          } else {
+            console.error("Item not found in serverItems:", item);
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting student:", error.message);
+        });
     },
   },
 };

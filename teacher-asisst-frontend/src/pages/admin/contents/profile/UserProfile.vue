@@ -1,110 +1,89 @@
 <template>
   <v-container>
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-row>
-        <v-col cols="12" class="d-flex">
-          <div class="headline">Personal Details</div>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="red"
-            class="text-none"
-            size="small"
-            to="/admin/profile/edit"
-          >
-            Edit
-          </v-btn>
-        </v-col>
-
-        <v-col cols="12" md="6" class="mb-0">
-          <v-text-field
-            density="compact"
-            label="Full Name"
-            prepend-inner-icon="mdi-account-arrow-right-outline"
-            v-model="data.name"
-            variant="outlined"
-            readonly
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field
-            density="compact"
-            label="Code"
-            prepend-inner-icon="mdi-account-arrow-right-outline"
-            v-model="data.teacher_id"
-            variant="outlined"
-            readonly
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field
-            density="compact"
-            label="E-Mail"
-            v-model="data.email"
-            variant="outlined"
-            :rules="emailRules"
-            prepend-inner-icon="mdi-email-outline"
-          />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field
-            density="compact"
-            label="Phone Number"
-            v-model="data.phone"
-            variant="outlined"
-            counter="10"
-            :rules="numberRules"
-            prepend-inner-icon="mdi-cellphone"
-          />
-        </v-col>
-        <v-col cols="12" md="6" class="mb-0">
-          <v-text-field
-            label="Gender*"
-            density="compact"
-            v-model="data.gender"
-            variant="outlined"
-            :rules="requiredRules"
-          />
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field
-            density="compact"
-            label="Date of birth"
-            v-model="data.date_of_birth"
-            variant="outlined"
-            :rules="requiredRules"
-          />
-        </v-col>
-
-        <v-col cols="12" md="6">
-          <v-text-field
-            ref="address"
-            label="Address*"
-            v-model="data.address"
-            variant="outlined"
-            prepend-inner-icon="mdi-account-arrow-left-outline"
-            :rules="[
-              () => !!address || 'This field is required',
-              () =>
-                (!!address && address.length <= 25) ||
-                'Address must be less than 25 characters',
-              addressCheck,
-            ]"
-            counter="25"
-          />
+    <div class="fill-height mb-5">
+      <v-row class="d-flex align-center">
+        <v-col cols="12" md="8">
+          <v-card class="pa-8" outlined>
+            <v-row>
+              <v-col cols="auto">
+                <v-avatar size="80">
+                  <v-img
+                    src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"
+                  ></v-img>
+                </v-avatar>
+              </v-col>
+              <v-col>
+                <v-card-title class="headline"
+                  >{{ items.first_name }} {{ items.last_name }}
+                </v-card-title>
+                <v-card-subtitle class="mb-4 text-gray-400">
+                  Phileas is a rascal, scoundrel and raconteur
+                </v-card-subtitle>
+                <v-chip class="ma-2" color="primary" text-color="white" label
+                  >{{ role }}
+                </v-chip>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-col>
       </v-row>
-    </v-form>
+    </div>
+    <v-list density="compact" nav class="d-flex">
+      <v-chip
+        class="ma-2 mx-2"
+        color="primary"
+        text-color="white"
+        :class="{ 'v-chip--active': activeChip === 'personal details' }"
+        :to="`/admin/profile/basic-info/${this.$route.params.id}/personal-details`"
+        @click="setActiveChip('personal details')"
+      >
+        <v-icon left class="ma-2">mdi-account</v-icon>
+        Profile Info
+      </v-chip>
+      <v-chip
+        v-if="role === 'teacher'"
+        class="ma-2 mx-2"
+        color="primary"
+        text-color="white"
+        :class="{ 'v-chip--active': activeChip === 'subject' }"
+        :to="`/admin/profile/basic-info/${this.$route.params.id}/subject`"
+        @click="setActiveChip('subject')"
+      >
+        <v-icon left class="ma-2">mdi-book-open-variant</v-icon>
+        Subjects
+      </v-chip>
+      <v-chip
+        class="ma-2 mx-2"
+        color="primary"
+        text-color="white"
+        :class="{ 'v-chip--active': activeChip === 'permissions' }"
+        :to="`/admin/profile/basic-info/${this.$route.params.id}/change-password`"
+        @click="setActiveChip('permissions')"
+      >
+        <v-icon left class="ma-2">mdi-lock</v-icon>
+        Permissions
+      </v-chip>
+    </v-list>
+    <v-divider></v-divider>
+    <router-view></router-view>
+    <personal-details />
   </v-container>
 </template>
 <script>
-import fakeDataAPI from "../../fakedata";
+import axios from "@/axios";
 
 export default {
   data: () => ({
     valid: false,
     calenderModal: false,
     formLoading: false,
-    data: "",
+    activeChip: null,
+    items: "",
+    role: "",
+    tab: null,
+    loading: false,
+    showErrorSnackbar: false,
+    errorMessage: "",
     requiredRules: [(v) => !!v || "Please fill out this field!"],
     // numberRules: [
     //   (v) => !!v || "Please fill out this field!",
@@ -119,32 +98,32 @@ export default {
     ],
   }),
   created() {
-    this.loadItems();
+    this.fetchData();
   },
   methods: {
-    loadItems(
-      options = {
-        page: 1,
-        itemsPerPage: 10,
-        sortBy: [],
-        sortDesc: [],
-        search: "",
-        departmentId: this.$route.params.id,
+    async fetchData() {
+      try {
+        const response = await axios.get(`/users/${this.$route.params.id}`);
+        this.role = response.data.role_name;
+        this.items = response.data.profile;
+        console.log(this.items);
+        
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        this.showErrorSnackbar = true;
+        this.errorMessage = "Error fetching data.";
       }
-    ) {
-      this.loading = true;
-      fakeDataAPI.get("/api/teachers", { params: options }).then((response) => {
-        if (this.$route.params.id) {
-          this.data = response.data.items.find(
-            (item) => item.id == this.$route.params.id
-          );
-          console.log(this.$route.params.id);
-          console.log(this.data);
-        } else {
-          this.data = response.data.items;
-        }
-      });
+    },
+
+    setActiveChip(chip) {
+      this.activeChip = chip;
     },
   },
 };
 </script>
+<style>
+.v-chip--active {
+  background-color: #6ca9eb !important; /* Change this to your desired active color */
+  color: white !important;
+}
+</style>
