@@ -9,27 +9,9 @@
       href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
-    <script src="keycloak.js"></script>
-
-    <script>
-        function initKeycloak() {
-            keycloak = new Keycloak("http://localhost:3000/keycloak.json");
-            keycloak.init({
-                onLoad: 'login-required'
-            }).then(function (authenticated) {
-                if(authenticated){
-                    keycloak.loadUserInfo().then(function(kcUserInfo){
-                        userInfo = kcUserInfo;
-                    });
-                };
-            }).catch(function () {
-                alert('failed to initialize');
-            });
-        }
-    </script>
   </head>
 
-  <body onload="initKeycloak()">
+  <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

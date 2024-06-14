@@ -1,20 +1,32 @@
 <template>
   <div>
-    <h2 class="text-center">Welcome to home page</h2>
-    <p class="text-center">User Created: {{ user }} <br />just testing</p>
+    <h1>Dashboard</h1>
+    <p v-if="user">Welcome, {{ user.name }}!</p>
   </div>
 </template>
 
 <script>
-import { computed } from "vue";
-import { useStore } from "vuex";
+import axios from "@/axios";
 
 export default {
-  setup() {
-    const store = useStore();
-
-    const user = computed(() => store.state.user.user);
-    return { user };
+  data() {
+    return {
+      user: "",
+    };
+  },
+  created() {
+    this.fetchUserDetails();
+  },
+  methods: {
+    async fetchUserDetails() {
+      try {
+        const response = await axios.get("/auth/user");
+        this.user = response.data;
+        console.log(this.user);
+      } catch (error) {
+        console.error("Failed to fetch user details:", error);
+      }
+    },
   },
 };
 </script>

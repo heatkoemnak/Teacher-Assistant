@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-layout>
-      <v-navigation-drawer location="right" permanent>
+      <v-navigation-drawer location="left" permanent>
         <v-col cols="12">
           <v-list-item color="#0000" class="profile-text-name ma-4">
             <v-list-item-content
@@ -16,8 +16,10 @@
                   src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"
                 ></v-img>
               </v-avatar>
-              <v-list-item-title> {{ account.name }} </v-list-item-title>
-              <v-list-item-subtitle>Administrator</v-list-item-subtitle>
+              <v-list-item-title> {{ profile.first_name }} {{profile.last_name}} </v-list-item-title>
+              <v-chip class="ma-2" color="primary" text-color="white" label>
+                {{data.role_name}}
+              </v-chip>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -29,24 +31,23 @@
             prepend-icon="mdi-home-city"
             title="Profile Info"
             value="profile"
-            :to="`/admin/profile/baseinfo/${this.$route.params.id}`"
+            :to="`/admin/profile/basic-info/${this.$route.params.id}/personal-details`"
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-account"
             title="Account"
             value="account"
-            :to="`/admin/profile/baseinfo/${this.$route.params.id}/account`"
+            :to="`/admin/profile/basic-info/${this.$route.params.id}/account`"
           ></v-list-item>
           <v-list-item
-          prepend-icon="mdi-lock"
-          title="Change Password"
-          value="password"
-          :to="`/admin/profile/baseinfo/${this.$route.params.id}/change-password`"
-        ></v-list-item>
-         
+            prepend-icon="mdi-lock"
+            title="Change Password"
+            value="password"
+            :to="`/admin/profile/basic-info/${this.$route.params.id}/change-password`"
+          ></v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-main  style="overflow-y: auto ; height: 90vh;"
+      <v-main style="overflow-y: auto; height: 90vh"
         ><v-progress-linear
           :active="formLoading"
           indeterminate
@@ -60,12 +61,15 @@
   </v-card>
 </template>
 <script>
-import fakeDataAPI from "../fakedata";
+import axios from "@/axios";
+// import fakeDataAPI from "../fakedata";
 
 export default {
   data: () => ({
     valid: false,
     formLoading: false,
+    data:"",
+    profile:"",
     account: "",
     requiredRules: [(v) => !!v || "Please fill out this field!"],
     numberRules: [
@@ -82,71 +86,20 @@ export default {
     loading: true,
   }),
   created() {
-    this.loadItems();
+    this.fetchData();
   },
-  methods: {
-    loadItems(
-      options = {
-        page: 1,
-        itemsPerPage: 10,
-        sortBy: [],
-        sortDesc: [],
-        search: "",
-        departmentId: this.$route.params.id,
-      }
-    ) {
-      fakeDataAPI.get("/api/accounts", { params: options }).then((response) => {
-        if (this.$route.params.id) {
-          console.log(this.$route.params.id);
-          this.account = response.data.items.find(
-            (item) => item.id == this.$route.params.id
-          );
-          console.log(this.account);
+    methods: {
+      async fetchData() {
+        try {
+          const response = await axios.get(`/users/${this.$route.params.id}`);
+          this.data = response.data;
+          this.profile = response.data.profile;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          this.showErrorSnackbar = true;
+          this.errorMessage = "Error fetching data.";
         }
-      });
+      },
     },
-
-    deleteRow(index) {
-      this.formData.jobs.splice([index], 1);
-    },
-    addRow() {
-      this.formData.jobs.push({});
-    },
-    moveUp(index) {
-      let temp1 = this.formData.jobs[index];
-      let temp2 = this.formData.jobs[index - 1];
-      this.$set(this.formData.jobs, index, temp2);
-      this.$set(this.formData.jobs, index - 1, temp1);
-    },
-    moveDown(index) {
-      let temp1 = this.formData.jobs[index];
-      let temp2 = this.formData.jobs[index + 1];
-      this.$set(this.formData.jobs, index, temp2);
-      this.$set(this.formData.jobs, index + 1, temp1);
-    },
-    validate() {
-      if (this.$refs.form.validate()) {
-        console.log("submit");
-        this.formLoading = true;
-        // Timeout Function only for showing loading progress
-        setTimeout(() => {
-          alert(JSON.stringify(this.formData));
-          this.formLoading = false;
-          this.reset();
-        }, 4000);
-      }
-    },
-    validateDate(dateRange) {
-      if (dateRange.length === 2) {
-        this.calenderModal = false;
-      }
-    },
-    reset() {
-      this.$refs.form.reset();
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation();
-    },
-  },
 };
 </script>

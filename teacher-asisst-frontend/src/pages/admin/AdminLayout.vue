@@ -108,7 +108,7 @@
             <v-icon>mdi-bell-outline</v-icon>
           </v-badge>
         </v-btn>
-        <profile-drop-down />
+        <profile-drop-down :user="user" />
       </v-toolbar>
       <!-- <breadcrumbs-cmpnt /> -->
       <v-content app>
@@ -131,6 +131,7 @@ export default {
       rail: false,
       expend: false,
       sheet: false,
+      user: null,
       tiles: [
         { img: "keep.png", title: "Keep" },
         { img: "inbox.png", title: "Inbox" },
@@ -139,12 +140,12 @@ export default {
         { img: "google.png", title: "Google+" },
       ],
       managements: [
-        {
-          id: 1,
-          title: "Teachers",
-          icon: "mdi-account",
-          route: "department-cards",
-        },
+        // {
+        //   id: 1,
+        //   title: "Teachers",
+        //   icon: "mdi-account",
+        //   route: "department-cards",
+        // },
         {
           id: 2,
           title: "Students",
@@ -168,6 +169,18 @@ export default {
           title: "Departments",
           icon: "mdi-domain",
           route: "departments",
+        },
+        {
+          id: 6,
+          title: "Subjects",
+          icon: "mdi-book-open-variant",
+          route: "subjects",
+        },
+        {
+          id: 7,
+          title: "Teachers",
+          icon: "mdi-book-open-variant",
+          route: "sample",
         },
       ],
       user_managements: [
@@ -193,18 +206,19 @@ export default {
     };
   },
 
-  // created() {
-  //   this.fetchData();
-  // },
-  // methods: {
-  //   async fetchData() {
-  //     try {
-  //       const response = await axios.get("/teachers");
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   },
-  // },
+  mounted() {
+    this.fetchUserDetails();
+  },
+  methods: {
+    async fetchUserDetails() {
+      try {
+        const response = await axios.get("/auth/user");
+        this.user = response.data;
+        console.log(this.user);
+      } catch (error) {
+        console.error("Failed to fetch user details:", error);
+      }
+    },
+  },
 };
 </script>

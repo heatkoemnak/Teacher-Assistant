@@ -53,7 +53,7 @@
             Confirm Delete
           </v-toolbar>
           <v-card-text>
-            Are you sure you want to delete this teacher?
+            Are you sure you want to delete this user?
           </v-card-text>
           <v-card-actions>
             <v-btn
@@ -89,7 +89,7 @@
               <v-row>
                 <v-col cols="6">
                   <v-text-field
-                    v-model="teacherToEdit.name"
+                    v-model="userToEdit.name"
                     :rules="[required, counter]"
                     label="Username"
                     density="compact"
@@ -98,11 +98,11 @@
 
                 <v-col cols="6">
                   <v-select
-                    v-model="teacherToEdit.role"
+                    v-model="userToEdit.role"
                     :items="
-                      roles.map((option) => option.name).filter(
-                        (role) => role !== ''
-                      )
+                      roles
+                        .map((option) => option.name)
+                        .filter((role) => role !== '')
                     "
                     label="Role"
                     density="compact"
@@ -110,11 +110,10 @@
                 </v-col>
               </v-row>
               <v-text-field
-                v-model="teacherToEdit.email"
+                v-model="userToEdit.email"
                 :rules="[(v) => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
                 label="Email"
               ></v-text-field>
-            
             </v-form>
           </v-card-text>
           <v-card-actions>
@@ -237,17 +236,22 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        color="blue"
-        class="me-2"
-        size="small"
-        @click="openEditDialog(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon color="red" size="small" @click="openDeleteDialog(item)">
-        mdi-delete
-      </v-icon>
+     
+      {{ console.log("item",item) }}
+      <div class="d-flex align-center justify-end">
+          <v-chip color="blue" class="ma-2" :to="`/admin/profile/basic-info/${item.id}/personal-details`">views</v-chip>
+        <v-icon
+          color="blue"
+          class="me-2"
+          size="small"
+          @click="openEditDialog(item)"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon color="red" size="small" @click="openDeleteDialog(item)">
+          mdi-delete
+        </v-icon>
+      </div>
     </template>
   </v-data-table>
 </template>
@@ -260,7 +264,7 @@ export default {
       { title: "ID", key: "id" },
       { title: "Email", key: "email" },
       { title: "Role", key: "role" },
-      { title: "Action", key: "actions", filterable: false, sortable: false },
+      { title: "Action", key: "actions", filterable: false, sortable: false, align: "end"  },
     ],
     dialogEdit: false,
     dialogDelete: false,
@@ -270,14 +274,9 @@ export default {
     roles: [],
     search: "",
     selectedRole: "",
-    RoleOptions: [
-      { title: "All", value: "" },
-      { title: "Admin", value: "administrator" },
-      { title: "User", value: "user" },
-      { title: "Teacher", value: "teacher" },
-    ],
+    RoleOptions: [],
     teacherToDelete: null,
-    teacherToEdit: null,
+    userToEdit: null,
     // date: new Date().toISOString().substr(0, 10),
     newTeacher: {
       name: "",
@@ -310,14 +309,13 @@ export default {
   computed: {
     filteredTeachers() {
       return this.users.filter((user) => {
-        const matchesRole = this.selectedRole
+          const matchesRole = this.selectedRole
           ? user.role === this.selectedRole
           : true;
-
         const matchesSearch =
           user.name.toLowerCase().includes(this.search.toLowerCase()) ||
           user.id.toString().includes(this.search);
-        return matchesRole && matchesSearch;
+        return  matchesRole&& matchesSearch;
       });
     },
   },
@@ -341,7 +339,6 @@ export default {
           ...user,
           role: `${user.role.name}`,
         }));
-        console.log(this.users);
       } catch (error) {
         console.error("Error fetching data:", error);
         this.showErrorSnackbar = true;
@@ -351,21 +348,25 @@ export default {
       }
     },
     async fetchRole() {
-      try {
-        this.loading = true;
-        const response = await axios.get("/roles");
-        this.roles = response.data;
-        console.log(this.roles);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        this.showErrorSnackbar = true;
-        this.errorMessage = "Error fetching data.";
-      } finally {
-        this.loading = false;
-      }
-    },
+  try {
+    this.loading = true;
+    const response = await axios.get("/roles");
+    this.RoleOptions = [
+      { title: "All", value: "" }, // Default option
+      ...response.data.map(role => ({
+        title: role.name.charAt(0).toUpperCase() + role.name.slice(1), // Capitalize the role name
+        value: role.name.toLowerCase(), // Convert role name to lowercase for consistency
+      }))
+    ];
+  } catch (error) {
+    console.error("Error fetching roles:", error);
+    this.showErrorSnackbar = true;
+    this.errorMessage = "Error fetching roles.";
+  } finally {
+    this.loading = false;
+  }
+},
 
-  
     openDeleteDialog(item) {
       this.teacherToDelete = item;
       this.dialogDelete = true;
@@ -379,7 +380,7 @@ export default {
     async deleteItemConfirm() {
       if (this.teacherToDelete) {
         try {
-          await axios.delete(`/delete-teacher/${this.teacherToDelete.id}`);
+          await axios.delete(`/users/${this.teacherToDelete.id}`);
           this.closeDeleteDialog();
           this.fetchData(); // Refresh the data after deletion
           this.showSuccessSnackbar = true;
@@ -393,8 +394,8 @@ export default {
     },
 
     openEditDialog(item) {
-      this.teacherToEdit = { ...item };
-      console.log(this.teacherToEdit);
+      this.userToEdit = { ...item };
+      console.log(this.userToEdit);
       this.dialogEdit = true;
     },
 
@@ -406,8 +407,8 @@ export default {
         try {
           this.IsLoadingUpdate = true;
           await axios.put(
-            `/users/${this.teacherToEdit.id}`,
-            this.teacherToEdit
+            `/users/${this.userToEdit.id}`,
+            this.userToEdit
           );
           this.closeEditDialog();
           this.fetchData(); // Refresh the data after edit
@@ -429,24 +430,15 @@ export default {
 
     closeCreateDialog() {
       this.dialogCreate = false;
-      // this.newTeacher = {
-      //   first_name: "",
-      //   last_name: "",
-      //   email: "",
-      //   dob: "",
-      //   phone: "",
-      //   gender: "",
-      //   password: "",
-      // };
     },
-    validate() {
+    createUserValidate() {
       if (this.isValidated == false) return;
-      else alert("Now you can sign in!");
+      else alert("Now you can create this user!");
     },
 
     async createItemConfirm() {
       if (this.$refs.createForm.validate()) {
-        this.validate();
+        this.createUserValidate();
         try {
           const response = await axios.post(
             "/register-teacher",
