@@ -5,61 +5,59 @@
 
       <v-spacer></v-spacer>
       <v-avatar size="30">
-          <v-img
-            alt="John"
-            src="https://cdn.vuetifyjs.com/images/john.jpg"
-          ></v-img>
-        </v-avatar>
-      <v-btn icon="mdi-dots-vertical">
-      </v-btn>
+        <v-img
+          alt="John"
+          src="https://cdn.vuetifyjs.com/images/john.jpg"
+        ></v-img>
+      </v-avatar>
+      <v-btn icon="mdi-dots-vertical"></v-btn>
     </v-app-bar>
 
     <v-main class="pt-0">
       <v-container>
         <v-row>
           <v-col cols="12">
-            <span class="py-1 px-5 rounded-lg" style="background-color: #E84D72; color:white ;">Recently</span>
+            <span class="py-1 px-5 rounded-lg" style="background-color: #E84D72; color:white;">Recently</span>
           </v-col>
-          <v-col
-            v-for="n in 4"
-            :key="n"
-            cols="3"
-          >
+
+          <!-- Recently added classes -->
+          <v-col v-for="classItem in recentClasses" :key="classItem.id" cols="3">
             <v-card height="200" elevation="5">
               <v-row class="pa-2" no-gutters>
                 <v-col cols="12">
-                  <v-img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"></v-img>
+                  <v-img :src="classItem.image" alt="Class Image"></v-img>
                 </v-col>
                 <v-col cols="12" class="pt-2 d-flex justify-space-between align-center">
-                  <span>ITE-G8-M4</span>
-                  <v-btn variant="text" size="small" @click="ToClass">view class</v-btn>
+                  <span>{{ classItem.name }}</span>
+                  <v-btn variant="text" size="small" @click="viewClass(classItem.id)">View class</v-btn>
                 </v-col>
               </v-row>
             </v-card>
           </v-col>
+
+          <!-- All classes with search functionality -->
           <v-col cols="12" class="d-flex justify-space-between align-center">
-            <span>All Class</span>
+            <span>All Classes</span>
             <v-col cols="3">
               <v-text-field
+                v-model="searchText"
                 append-icon="mdi-magnify"
                 label="Search class"
-                variant="underlined"
+                variant="outlined"
+                @input="filterClasses"
               ></v-text-field>
             </v-col>
           </v-col>
-          <v-col
-            v-for="n in 10"
-            :key="n"
-            cols="3"
-          >
+
+          <v-col v-for="classItem in filteredClasses" :key="classItem.id" cols="3">
             <v-card height="200" elevation="5">
               <v-row class="pa-2" no-gutters>
                 <v-col cols="12">
-                  <v-img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"></v-img>
+                  <v-img :src="classItem.image" alt="Class Image"></v-img>
                 </v-col>
                 <v-col cols="12" class="pt-2 d-flex justify-space-between align-center">
-                  <span>ITE-G8-M4</span>
-                  <v-btn variant="text" size="small" @click="ToClass">view class</v-btn>
+                  <span>{{ classItem.name }}</span>
+                  <v-btn variant="text" size="small" @click="viewClass(classItem.id)">View class</v-btn>
                 </v-col>
               </v-row>
             </v-card>
@@ -69,15 +67,50 @@
     </v-main>
   </div>
 </template>
-<script>
-  export default {
-    data: () => ({
-    }),
 
-    methods: {
-      ToClass () {
-        this.$router.push('/user/dashboard')
-      },
+<script>
+export default {
+  data() {
+    return {
+      searchText: '',
+      classes: [
+        { id: 1, name: 'ITE-G8-M4', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 2, name: 'ITE-G7-M3', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 3, name: 'Math-G6-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 4, name: 'Science-G8-B2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 5, name: 'History-G7-C1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 6, name: 'Art-G6-D1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 7, name: 'Music-G7-E1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 8, name: 'Physical Education', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 9, name: 'Biology-G8-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+        { id: 10, name: 'Chemistry-G7-A2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' }
+      ],
+    };
+  },
+
+  computed: {
+    recentClasses() {
+      return this.classes.slice(0, 4);
     },
-  }
+    filteredClasses() {
+      const searchText = this.searchText.toLowerCase().trim();
+      if (!searchText) {
+        return this.classes;
+      } else {
+        return this.classes.filter(classItem =>
+          classItem.name.toLowerCase().includes(searchText)
+        );
+      }
+    },
+  },
+
+  methods: {
+    viewClass(classId) {
+      this.$router.push(`/class/${classId}`);
+    },
+    // filterClasses() {
+
+    // },
+  },
+};
 </script>
