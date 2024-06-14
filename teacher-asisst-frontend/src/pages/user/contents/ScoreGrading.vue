@@ -51,7 +51,7 @@ const desserts = [
     quiz: 80,
     midterm: 88,
     final: 90,
-    overall: 86, // Adding a fixed value for overall score
+    overall: 86,
     attendanceDates: {},
   },
   {
@@ -64,7 +64,7 @@ const desserts = [
     quiz: 75,
     midterm: 83,
     final: 87,
-    overall: 81, // Adding a fixed value for overall score
+    overall: 81,
     attendanceDates: {},
   },
   {
@@ -77,7 +77,7 @@ const desserts = [
     quiz: 68,
     midterm: 72,
     final: 74,
-    overall: 71, // Adding a fixed value for overall score
+    overall: 71,
     attendanceDates: {},
   },
   {
@@ -90,7 +90,7 @@ const desserts = [
     quiz: 82,
     midterm: 86,
     final: 89,
-    overall: 85, // Adding a fixed value for overall score
+    overall: 85,
     attendanceDates: {},
   },
   {
@@ -103,7 +103,7 @@ const desserts = [
     quiz: 91,
     midterm: 94,
     final: 96,
-    overall: 93, // Adding a fixed value for overall score
+    overall: 93,
     attendanceDates: {},
   },
   {
@@ -116,7 +116,7 @@ const desserts = [
     quiz: 85,
     midterm: 87,
     final: 90,
-    overall: 87, // Adding a fixed value for overall score
+    overall: 87,
     attendanceDates: {},
   },
   {
@@ -129,7 +129,7 @@ const desserts = [
     quiz: 75,
     midterm: 80,
     final: 83,
-    overall: 80, // Adding a fixed value for overall score
+    overall: 80,
     attendanceDates: {},
   },
   {
@@ -142,7 +142,7 @@ const desserts = [
     quiz: 87,
     midterm: 90,
     final: 92,
-    overall: 90, // Adding a fixed value for overall score
+    overall: 90,
     attendanceDates: {},
   },
   {
@@ -155,7 +155,7 @@ const desserts = [
     quiz: 82,
     midterm: 87,
     final: 90,
-    overall: 86, // Adding a fixed value for overall score
+    overall: 86,
     attendanceDates: {},
   },
   {
@@ -168,7 +168,7 @@ const desserts = [
     quiz: 80,
     midterm: 85,
     final: 88,
-    overall: 84, // Adding a fixed value for overall score
+    overall: 84,
     attendanceDates: {},
   },
 ];

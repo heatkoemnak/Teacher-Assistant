@@ -14,58 +14,51 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.name"
+                  v-model="editedStudent.name"
                   label="Name"
-                  readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.student_id"
+                  v-model="editedStudent.student_id"
                   label="Student ID"
                   readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.gender"
+                  v-model="editedStudent.gender"
                   label="Gender"
-                  readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.assignment"
+                  v-model="editedStudent.assignment"
                   label="Assignment"
-                  readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.quiz"
+                  v-model="editedStudent.quiz"
                   label="Quiz"
-                  readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.midterm"
+                  v-model="editedStudent.midterm"
                   label="Midterm"
-                  readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.final"
+                  v-model="editedStudent.final"
                   label="Final"
-                  readonly
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="student.overall"
+                  v-model="editedStudent.overall"
                   label="Overall"
-                  readonly
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -74,6 +67,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="dialogVisible = false">Close</v-btn>
+          <v-btn color="primary" @click="saveChanges">Save</v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -91,7 +85,17 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      editedStudent: { ...this.student }, // Make a copy of student prop for editing
     };
+  },
+  methods: {
+    saveChanges() {
+      // Emit 'save' event with edited student data
+      this.$emit("save", this.editedStudent);
+
+      // Close dialog after saving
+      this.dialogVisible = false;
+    },
   },
 };
 </script>
