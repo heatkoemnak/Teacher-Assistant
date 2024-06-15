@@ -1,171 +1,292 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="permissions"
-    :sort-by="[{ key: 'id', order: 'asc' }]"
-    height="420"
-    disable-pagination
-    disable-sort
-    hide-default-footer
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>Manage Permissions</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ props }">
-            <v-btn class="mb-2" color="primary" dark v-bind="props">
-              Add New Permission
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="title-h5">{{ formTitle }}</span>
-            </v-card-title>
+  <v-container>
+    <v-card>
+      <v-card-title>Permissions</v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="filteredPermissions"
+        class="elevation-1 cursor-pointer"
+        item-value="name"
+        show-select
+        :loading="loading"
+        height="450"
+      >
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search by Name or ID"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              class="ml-4"
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" dark class="mb-2" @click="openCreateDialog"
+              >New Permission</v-btn
+            >
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <div class="d-flex align-center justify-end">
+            <v-icon
+              color="blue"
+              class="me-2"
+              size="small"
+              @click="openEditDialog(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon color="red" size="small" @click="openDeleteDialog(item)">
+              mdi-delete
+            </v-icon>
+          </div>
+        </template>
+      </v-data-table>
+    </v-card>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-text-field v-model="editedItem.name" label="Permission Name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field v-model="editedItem.type" label="Permission Type"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
+    <!-- Create Dialog -->
+    <v-dialog v-model="dialogCreate" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">New Permission</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="createForm" v-model="valid" lazy-validation>
+            <v-text-field
+              label="Permission Name"
+              v-model="newPermission.name"
+              :rules="[required]"
+              required
+            ></v-text-field>
+            <v-select
+              label="Role"
+              v-model="newPermission.role_id"
+              :items="roleOptions"
+              :rules="[required]"
+              required
+            ></v-select>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="closeCreateDialog"
+            >Cancel</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="addPermission">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" variant="title" @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" variant="title" @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="title-h5">Are you sure you want to delete this item?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" variant="title" @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" variant="title" @click="deleteItemConfirm">OK</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon class="me-2" size="small" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon size="small" @click="deleteItem(item)">mdi-delete</v-icon>
-    </template>
-    <template v-slot:item.checkbox="{ item }">
-      <v-checkbox v-model="selectedItems" :value="item.id"></v-checkbox>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
-    </template>
-  </v-data-table>
+    <!-- Edit Dialog -->
+    <v-dialog v-model="dialogEdit" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Edit Permission</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="editForm" v-model="valid" lazy-validation>
+            <v-text-field
+              label="Permission Name"
+              v-model="permissionToEdit.name"
+              :rules="[required]"
+              required
+            ></v-text-field>
+            <v-select
+              label="Role"
+              v-model="permissionToEdit.role_id"
+              :items="roleOptions"
+              :rules="[required]"
+              required
+            ></v-select>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="closeEditDialog"
+            >Cancel</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="editPermissionConfirm"
+            >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete Dialog -->
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Confirm Delete</span>
+        </v-card-title>
+        <v-card-text
+          >Are you sure you want to delete this permission?</v-card-text
+        >
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="closeDeleteDialog"
+            >Cancel</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="red" text @click="deletePermissionConfirm"
+            >Delete</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
-
 <script>
+import axios from "@/axios";
+
 export default {
-  data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      { title: "ID", value: "id", align: "start", sortable: true },
-      { title: "Permission Name", value: "name" },
-      { title: "Permission Type", value: "type" },
-      { title: "Actions", value: "actions", sortable: false },
-      { title: "Select", value: "checkbox", sortable: false },
-    ],
-    permissions: [],
-    editedIndex: -1,
-    editedItem: {
-      id: 0,
-      name: "",
-      type: "",
-    },
-    defaultItem: {
-      name: "",
-      type: "",
-    },
-    selectedItems: [],
-  }),
-
+  data() {
+    return {
+      roles: [],
+      permissions: [],
+      headers: [
+        { title: "Permission Name", value: "name" },
+        { title: "ID", value: "id" },
+        { title: "Role ID", value: "role_id" },
+        { title: "Actions", value: "actions", sortable: false, align: "end" },
+      ],
+      loading: true,
+      search: "",
+      dialogCreate: false,
+      dialogEdit: false,
+      dialogDelete: false,
+      valid: false,
+      roleOptions: [],
+      newPermission: {
+        name: "",
+        role_id: "",
+      },
+      permissionToEdit: null,
+      required: (value) => !!value || "Required.",
+    };
+  },
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Permission" : "Edit Permission";
+    filteredPermissions() {
+      return this.permissions.filter((permission) =>
+        permission.name.toLowerCase().includes(this.search.toLowerCase())
+      );
     },
   },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
-  },
-
-  created() {
-    this.initialize();
-  },
-
   methods: {
-    initialize() {
-      // Initialize permissions data
-      this.permissions = [
-        { id: 1, name: "Read", type: "User" },
-        { id: 2, name: "Write", type: "User" },
-        { id: 3, name: "Execute", type: "Admin" },
-      ];
+    fetchPermissions() {
+      this.loading = true;
+      axios
+        .get("/permissions")
+        .then((response) => {
+          this.permissions = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching permissions:", error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-
-    editItem(item) {
-      this.editedIndex = this.permissions.indexOf(item);
-      this.editedItem = { ...item };
-      this.dialog = true;
+    fetchRoles() {
+      this.loading = true;
+      axios
+        .get("/roles")
+        .then((response) => {
+          this.roles = response.data;
+          this.roleOptions = [
+            { title: "All", value: "" },
+            ...this.roles.map((role) => ({ title: role.name, value: role.id })),
+          ];
+        })
+        .catch((error) => {
+          console.error("Error fetching roles:", error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-
-    deleteItem(item) {
-      this.editedIndex = this.permissions.indexOf(item);
-      this.editedItem = { ...item };
+    openCreateDialog() {
+      this.dialogCreate = true;
+    },
+    closeCreateDialog() {
+      this.dialogCreate = false;
+      this.resetForm(this.$refs.createForm);
+    },
+    addPermission() {
+      if (this.$refs.createForm.validate()) {
+        axios
+          .post("/permissions", this.newPermission)
+          .then(() => {
+            this.fetchPermissions();
+            this.newPermission.name = "";
+            this.newPermission.role_id = "";
+            this.dialogCreate = false;
+          })
+          .catch((error) => {
+            console.error("Error adding permission:", error);
+          });
+      }
+    },
+    openEditDialog(item) {
+      this.permissionToEdit = { ...item };
+      this.dialogEdit = true;
+    },
+    closeEditDialog() {
+      this.dialogEdit = false;
+    },
+    editPermissionConfirm() {
+      if (this.$refs.editForm.validate()) {
+        axios
+          .put(
+            `/permissions/${this.permissionToEdit.id}`,
+            this.permissionToEdit
+          )
+          .then(() => {
+            this.fetchPermissions();
+            this.permissionToEdit.name = "";
+            this.permissionToEdit.role_id = "";
+            this.dialogEdit = false;
+          })
+          .catch((error) => {
+            console.error("Error editing permission:", error);
+          });
+      }
+    },
+    openDeleteDialog(item) {
+      this.permissionToEdit = item;
       this.dialogDelete = true;
     },
-
-    deleteItemConfirm() {
-      this.permissions.splice(this.editedIndex, 1);
-      this.closeDelete();
-    },
-
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = { ...this.defaultItem };
-        this.editedIndex = -1;
-      });
-    },
-
-    closeDelete() {
+    closeDeleteDialog() {
       this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = { ...this.defaultItem };
-        this.editedIndex = -1;
-      });
     },
-
-    save() {
-      if (this.editedIndex > -1) {
-        this.$set(this.permissions, this.editedIndex, { ...this.editedItem });
-      } else {
-        this.permissions.push({ ...this.editedItem, id: this.permissions.length + 1 });
+    deletePermissionConfirm() {
+      axios
+        .delete(`/permissions/${this.permissionToEdit.id}`)
+        .then(() => {
+          this.fetchPermissions();
+          this.dialogDelete = false;
+        })
+        .catch((error) => {
+          console.error("Error deleting permission:", error);
+        });
+    },
+    resetForm(form) {
+      if (form) {
+        form.reset();
+        form.resetValidation();
       }
-      this.close();
     },
+  },
+  mounted() {
+    this.fetchPermissions();
+    this.fetchRoles();
   },
 };
 </script>
+
+<style scoped>
+.v-data-table-header {
+  background-color: #f5f5f5;
+}
+</style>

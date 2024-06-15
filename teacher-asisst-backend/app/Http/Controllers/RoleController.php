@@ -8,7 +8,7 @@ class RoleController extends Controller
 {
     public function index(){
 
-        $roles = Role::with('users')->get();
+        $roles = Role::with('users',"permissions")->get();
         // foreach ($roles as $role) {
         //     $users= $role->users; // Access users for each model
         //     foreach ($users as $user) {

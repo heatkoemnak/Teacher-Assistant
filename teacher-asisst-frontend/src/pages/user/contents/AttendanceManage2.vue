@@ -44,74 +44,75 @@
 </template>
 
 <script>
+import axios from 'axios';
 import addDateDiol from "../components/addDateDiol.vue";
 
-const desserts = [
-{
-    id: 1,
-    name: "Frozen Yogurt",
-    student_id: "S001",
-    gender: "Female",
-    attendance: 0,
-    assignment: 85,
-    quiz: 80,
-    midterm: 88,
-    final: 90,
-    overall: 86, // Adding a fixed value for overall score
-    attendanceDates: {},
-  },
-  {
-    id: 2,
-    name: "Jelly bean",
-    student_id: "S002",
-    gender: "Male",
-    attendance: 0,
-    assignment: 80,
-    quiz: 75,
-    midterm: 83,
-    final: 87,
-    overall: 81, // Adding a fixed value for overall score
-    attendanceDates: {},
-  },
-  {
-    id: 3,
-    name: "KitKat",
-    student_id: "S003",
-    gender: "Female",
-    attendance: 0,
-    assignment: 70,
-    quiz: 68,
-    midterm: 72,
-    final: 74,
-    overall: 71, // Adding a fixed value for overall score
-    attendanceDates: {},
-  },
-  {
-    id: 4,
-    name: "Eclair",
-    student_id: "S004",
-    gender: "Male",
-    attendance: 0,
-    assignment: 85,
-    quiz: 82,
-    midterm: 86,
-    final: 89,
-    overall: 85, // Adding a fixed value for overall score
-    attendanceDates: {},
-  },
-  {
-    id: 5,
-    name: "Gingerbread",
-    student_id: "S005",
-    gender: "Female",
-    attendance: 0,
-    assignment: 92,
-    quiz: 91,
-    midterm: 94,
-    final: 96,
-    overall: 93, // Adding a fixed value for overall score
-    attendanceDates: {},
-  },
+let studentsData = [
+// {
+//     id: 1,
+//     name: "Frozen Yogurt",
+//     student_id: "S001",
+//     gender: "Female",
+//     attendance: 0,
+//     assignment: 85,
+//     quiz: 80,
+//     midterm: 88,
+//     final: 90,
+//     overall: 86, // Adding a fixed value for overall score
+//     attendanceDates: {},
+//   },
+//   {
+//     id: 2,
+//     name: "Jelly bean",
+//     student_id: "S002",
+//     gender: "Male",
+//     attendance: 0,
+//     assignment: 80,
+//     quiz: 75,
+//     midterm: 83,
+//     final: 87,
+//     overall: 81, // Adding a fixed value for overall score
+//     attendanceDates: {},
+//   },
+//   {
+//     id: 3,
+//     name: "KitKat",
+//     student_id: "S003",
+//     gender: "Female",
+//     attendance: 0,
+//     assignment: 70,
+//     quiz: 68,
+//     midterm: 72,
+//     final: 74,
+//     overall: 71, // Adding a fixed value for overall score
+//     attendanceDates: {},
+//   },
+//   {
+//     id: 4,
+//     name: "Eclair",
+//     student_id: "S004",
+//     gender: "Male",
+//     attendance: 0,
+//     assignment: 85,
+//     quiz: 82,
+//     midterm: 86,
+//     final: 89,
+//     overall: 85, // Adding a fixed value for overall score
+//     attendanceDates: {},
+//   },
+//   {
+//     id: 5,
+//     name: "Gingerbread",
+//     student_id: "S005",
+//     gender: "Female",
+//     attendance: 0,
+//     assignment: 92,
+//     quiz: 91,
+//     midterm: 94,
+//     final: 96,
+//     overall: 93, // Adding a fixed value for overall score
+//     attendanceDates: {},
+//   },
 ];
 
 const FakeAPI = {
@@ -120,7 +121,7 @@ const FakeAPI = {
       setTimeout(() => {
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        const items = desserts.slice().filter((item) => {
+        const items = studentsData.slice().filter((item) => {
           if (
             search.name &&
             !item.name.toLowerCase().includes(search.name.toLowerCase())
@@ -166,13 +167,17 @@ export default {
     attendanceStatuses: ["Present", "Absent"],
     newDateKey: "", // To store the current new date key
     dynamicHeaders: [],
+    // pathID: this.$route.params.class_id
   }),
   watch: {
     name() {
       this.search = String(Date.now());
     },
   },
-  created() {
+  async created() {
+    const getClassData = await axios.get(`http://localhost:4000/classes/${this.$route.params.class_id}`)
+    studentsData = getClassData.data.students
+    console.log(studentsData)
     this.loadItems({ page: 1, itemsPerPage: this.itemsPerPage, sortBy: [] });
   },
   methods: {
@@ -195,7 +200,7 @@ export default {
       this.headers.push(newDate);
       this.dynamicHeaders.push(newDate);
     },
-    updateAttendance(item) {
+    async updateAttendance(item) {
       let presentCount = 0;
       let totalDays = 0;
 
@@ -213,15 +218,17 @@ export default {
       item.attendance = Math.round(attendancePercentage);
 
       // Instead of calling loadItems, update serverItems directly
-      const index = this.serverItems.findIndex((i) => i.id === item.id);
-      if (index !== -1) {
-        this.$set(this.serverItems, index, item);
+      // const index = this.serverItems.findIndex((i) => i.id === item.id);
+      // if (index !== -1) {
+      //   this.$set(this.serverItems, index, item);
+      // }
+      console.log(item.id)
+      try {
+        await axios.put(`http://localhost:4000/classes/${this.$route.params.class_id}/students/${item.id}`, item);
+        console.log("Attendance updated successfully");
+      } catch (error) {
+        console.error("Failed to update attendance:", error);
       }
-    },
-    updateAllAttendance() {
-      desserts.forEach((item) => {
-        this.updateAttendance(item);
-      });
     },
   },
 };

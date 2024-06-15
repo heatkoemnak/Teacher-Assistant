@@ -1,255 +1,278 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="filteredTeachers"
-    class="elevation-1 cursor-pointer"
-    item-value="name"
-    show-select
-    :loading="loading"
-    height="450"
-  >
-    <template v-slot:top>
-      <v-toolbar-title class="ma-4">Teachers</v-toolbar-title>
-      <v-toolbar color="light-blue-darken-4">
-        <v-text-field
-          v-model="search"
-          density="compact"
-          label="Search by Name or ID"
-          prepend-inner-icon="mdi-magnify"
-          variant="solo"
-          hide-details
-          class="ml-4"
-        ></v-text-field>
-        <v-spacer></v-spacer>
+  <v-container>
+    <v-card>
+      <v-card-title>Users</v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="filteredTeachers"
+        class="elevation-1 cursor-pointer"
+        item-value="name"
+        show-select
+        :loading="loading"
+        height="450"
+      >
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-text-field
+              v-model="search"
+              density="compact"
+              label="Search by Name or ID"
+              prepend-inner-icon="mdi-magnify"
+              variant="solo"
+              hide-details
+              class="ml-4"
+            ></v-text-field>
+            <v-spacer></v-spacer>
 
-        <v-select
-          v-model="selectedRole"
-          :items="RoleOptions"
-          label="Filter by Role"
-          class="md-6 mr-4 w-15 grey-lighten-2"
-          density="compact"
-          hide-details="auto"
-          variant="solo"
-        ></v-select>
-        <v-btn
-          class="text-none text-subtitle-1"
-          color="#5865f2"
-          size="small"
-          variant="flat"
-          @click="openCreateDialog"
-        >
-          New Teacher
-        </v-btn>
-      </v-toolbar>
-
-      <v-dialog v-model="dialogDelete" max-width="500px">
-        <v-card>
-          <v-toolbar
-            dense
-            flat
-            class="body-2 font-weight-bold px-5"
-            color="grey lighten-2"
-          >
-            Confirm Delete
-          </v-toolbar>
-          <v-card-text>
-            Are you sure you want to delete this teacher?
-          </v-card-text>
-          <v-card-actions>
+            <v-select
+              v-model="selectedRole"
+              :items="RoleOptions"
+              label="Filter by Role"
+              class="md-6 mr-4 w-15 grey-lighten-2"
+              density="compact"
+              hide-details="auto"
+              variant="solo"
+            ></v-select>
             <v-btn
-              color="blue-darken-1"
-              variant="text"
-              @click="closeDeleteDialog"
-              >Cancel</v-btn
+              class="text-none text-subtitle-1"
+              color="#5865f2"
+              size="small"
+              variant="flat"
+              @click="openCreateDialog"
             >
-            <v-spacer></v-spacer>
-            <v-btn color="red" @click="deleteItemConfirm">Delete</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="dialogEdit" max-width="700px">
-        <v-card>
-          <v-toolbar
-            dense
-            flat
-            class="body-2 font-weight-bold px-5"
-            color="grey lighten-2"
-          >
-            Confirm Edit
+              New Teacher
+            </v-btn>
           </v-toolbar>
-          <v-card-text>
-            <v-progress-linear
-              :active="IsLoadingUpdate"
-              :indeterminate="IsLoadingUpdate"
-              color="deep-purple-accent-4"
-              absolute
-              bottom
-            ></v-progress-linear>
-            <v-form ref="editForm" v-model="valid" lazy-validation>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="teacherToEdit.name"
-                    :rules="[required, counter]"
-                    label="Username"
-                    density="compact"
-                  ></v-text-field>
-                </v-col>
 
-                <v-col cols="6">
-                  <v-select
-                    v-model="teacherToEdit.role"
-                    :items="
-                      roles.map((option) => option.name).filter(
-                        (role) => role !== ''
-                      )
-                    "
-                    label="Role"
-                    density="compact"
-                  ></v-select>
-                </v-col>
-              </v-row>
-              <v-text-field
-                v-model="teacherToEdit.email"
-                :rules="[(v) => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
-                label="Email"
-              ></v-text-field>
-            
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="blue-darken-1" variant="text" @click="closeEditDialog"
-              >Cancel</v-btn
-            >
-            <v-spacer></v-spacer>
-            <v-btn color="green" @click="editItemConfirm">Edit</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="dialogCreate" max-width="700px">
-        <v-card>
-          <v-card-text>
-            <v-form ref="createForm" v-model="valid" lazy-validation>
-              <v-container>
-                <v-toolbar-title class="mb-10">Create New User</v-toolbar-title>
-                <v-row>
-                  <v-col cols="6">
+          <v-dialog v-model="dialogDelete" max-width="500px">
+            <v-card>
+              <v-toolbar
+                dense
+                flat
+                class="body-2 font-weight-bold px-5"
+                color="grey lighten-2"
+              >
+                Confirm Delete
+              </v-toolbar>
+              <v-card-text>
+                Are you sure you want to delete this user?
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  color="blue-darken-1"
+                  variant="text"
+                  @click="closeDeleteDialog"
+                  >Cancel</v-btn
+                >
+                <v-spacer></v-spacer>
+                <v-btn color="red" @click="deleteItemConfirm">Delete</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogEdit" max-width="700px">
+            <v-card>
+              <v-toolbar
+                dense
+                flat
+                class="body-2 font-weight-bold px-5"
+                color="grey lighten-2"
+              >
+                Confirm Edit
+              </v-toolbar>
+              <v-card-text>
+                <v-progress-linear
+                  :active="IsLoadingUpdate"
+                  :indeterminate="IsLoadingUpdate"
+                  color="deep-purple-accent-4"
+                  absolute
+                  bottom
+                ></v-progress-linear>
+                <v-form ref="editForm" v-model="valid" lazy-validation>
+                  <v-row>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="userToEdit.name"
+                        :rules="[required, counter]"
+                        label="Username"
+                        density="compact"
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="6">
+                      <v-select
+                        v-model="userToEdit.role"
+                        :items="
+                          roles
+                            .map((option) => option.name)
+                            .filter((role) => role !== '')
+                        "
+                        label="Role"
+                        density="compact"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-text-field
+                    v-model="userToEdit.email"
+                    :rules="[
+                      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+                    ]"
+                    label="Email"
+                  ></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  color="blue-darken-1"
+                  variant="text"
+                  @click="closeEditDialog"
+                  >Cancel</v-btn
+                >
+                <v-spacer></v-spacer>
+                <v-btn color="green" @click="editItemConfirm">Edit</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogCreate" max-width="700px">
+            <v-card>
+              <v-card-text>
+                <v-form ref="createForm" v-model="valid" lazy-validation>
+                  <v-container>
+                    <v-toolbar-title class="mb-10"
+                      >Create New User</v-toolbar-title
+                    >
+                    <v-row>
+                      <v-col cols="6">
+                        <v-text-field
+                          v-model="newTeacher.name"
+                          :rules="[required, counter]"
+                          label="First Name"
+                          density="compact"
+                        ></v-text-field>
+                      </v-col>
+
+                      <v-col cols="6">
+                        <v-select
+                          v-model="newTeacher.role"
+                          :items="
+                            roles
+                              .map((option) => option.name)
+                              .filter((role) => role !== '')
+                          "
+                          label="Roles"
+                          density="compact"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+
                     <v-text-field
-                      v-model="newTeacher.name"
-                      :rules="[required, counter]"
-                      label="First Name"
+                      v-model="newTeacher.email"
+                      prepend-inner-icon="mdi-email"
+                      :rules="[required, isEmail]"
+                      label="Email"
                       density="compact"
                     ></v-text-field>
-                  </v-col>
 
-                  <v-col cols="6">
-                    <v-select
-                      v-model="newTeacher.role"
-                      :items="
-                        roles
-                          .map((option) => option.name)
-                          .filter((role) => role !== '')
-                      "
-                      label="Roles"
+                    <v-text-field
+                      v-model="newTeacher.password"
+                      :rules="passwordRules"
+                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                      prepend-icon="mdi-lock"
+                      label="Password"
+                      hint="Minimum 8 characters"
                       density="compact"
-                    ></v-select>
-                  </v-col>
-                </v-row>
+                      counter
+                      :type="show ? 'text' : 'password'"
+                      @click:append="show = !show"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="newTeacher.password_confirmation"
+                      :rules="[(v) => !!v || 'Confirm Password is required']"
+                      label="Confirm Password"
+                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                      :type="show ? 'text' : 'password'"
+                      density="compact"
+                      @click:append="show = !show"
+                    ></v-text-field>
+                    <v-card-actions>
+                      <v-btn
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="closeCreateDialog"
+                        >Cancel</v-btn
+                      >
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="green"
+                        :disabled="!valid"
+                        class="mr-4"
+                        @click="createItemConfirm"
+                        >Create</v-btn
+                      >
+                    </v-card-actions>
+                  </v-container>
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-snackbar
+            v-model="showSuccessSnackbar"
+            :timeout="timeout"
+            color="green"
+            absolute
+            top
+          >
+            {{ successMessage }}
+            <v-btn
+              class="text-none"
+              color="#5865f2"
+              size="small"
+              variant="flat"
+              @click="showSuccessSnackbar = false"
+            >
+              Close
+            </v-btn>
+          </v-snackbar>
+          <v-snackbar
+            v-model="showErrorSnackbar"
+            :timeout="timeout"
+            color="red"
+          >
+            {{ errorMessage }}
+            <v-btn text @click="showErrorSnackbar = false">Close</v-btn>
+          </v-snackbar>
+        </template>
 
-                <v-text-field
-                  v-model="newTeacher.email"
-                  prepend-inner-icon="mdi-email"
-                  :rules="[required, isEmail]"
-                  label="Email"
-                  density="compact"
-                ></v-text-field>
+        <template v-slot:progress>
+          <v-overlay :value="loading">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+          </v-overlay>
+        </template>
 
-                <v-text-field
-                  v-model="newTeacher.password"
-                  :rules="passwordRules"
-                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                  prepend-icon="mdi-lock"
-                  label="Password"
-                  hint="Minimum 8 characters"
-                  density="compact"
-                  counter
-                  :type="show ? 'text' : 'password'"
-                  @click:append="show = !show"
-                ></v-text-field>
-                <v-text-field
-                  v-model="newTeacher.password_confirmation"
-                  :rules="[(v) => !!v || 'Confirm Password is required']"
-                  label="Confirm Password"
-                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="show ? 'text' : 'password'"
-                  density="compact"
-                  @click:append="show = !show"
-                ></v-text-field>
-                <v-card-actions>
-                  <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="closeCreateDialog"
-                    >Cancel</v-btn
-                  >
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="green"
-                    :disabled="!valid"
-                    class="mr-4"
-                    @click="createItemConfirm"
-                    >Create</v-btn
-                  >
-                </v-card-actions>
-              </v-container>
-            </v-form>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-      <v-snackbar
-        v-model="showSuccessSnackbar"
-        :timeout="timeout"
-        color="green"
-        absolute
-        top
-      >
-        {{ successMessage }}
-        <v-btn
-          class="text-none"
-          color="#5865f2"
-          size="small"
-          variant="flat"
-          @click="showSuccessSnackbar = false"
-        >
-          Close
-        </v-btn>
-      </v-snackbar>
-      <v-snackbar v-model="showErrorSnackbar" :timeout="timeout" color="red">
-        {{ errorMessage }}
-        <v-btn text @click="showErrorSnackbar = false">Close</v-btn>
-      </v-snackbar>
-    </template>
-
-    <template v-slot:progress>
-      <v-overlay :value="loading">
-        <v-progress-circular indeterminate size="64"></v-progress-circular>
-      </v-overlay>
-    </template>
-
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        color="blue"
-        class="me-2"
-        size="small"
-        @click="openEditDialog(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon color="red" size="small" @click="openDeleteDialog(item)">
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
+        <template v-slot:item.actions="{ item }">
+          {{ console.log("item", item) }}
+          <div class="d-flex align-center justify-end">
+            <v-chip
+              color="blue"
+              class="ma-2"
+              :to="`/admin/profile/basic-info/${item.id}/personal-details`"
+              >views</v-chip
+            >
+            <v-icon
+              color="blue"
+              class="me-2"
+              size="small"
+              @click="openEditDialog(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon color="red" size="small" @click="openDeleteDialog(item)">
+              mdi-delete
+            </v-icon>
+          </div>
+        </template>
+      </v-data-table>
+    </v-card>
+  </v-container>
 </template>
 <script>
 import axios from "@/axios";
@@ -260,7 +283,13 @@ export default {
       { title: "ID", key: "id" },
       { title: "Email", key: "email" },
       { title: "Role", key: "role" },
-      { title: "Action", key: "actions", filterable: false, sortable: false },
+      {
+        title: "Action",
+        key: "actions",
+        filterable: false,
+        sortable: false,
+        align: "end",
+      },
     ],
     dialogEdit: false,
     dialogDelete: false,
@@ -270,14 +299,9 @@ export default {
     roles: [],
     search: "",
     selectedRole: "",
-    RoleOptions: [
-      { title: "All", value: "" },
-      { title: "Admin", value: "administrator" },
-      { title: "User", value: "user" },
-      { title: "Teacher", value: "teacher" },
-    ],
+    RoleOptions: [],
     teacherToDelete: null,
-    teacherToEdit: null,
+    userToEdit: null,
     // date: new Date().toISOString().substr(0, 10),
     newTeacher: {
       name: "",
@@ -313,7 +337,6 @@ export default {
         const matchesRole = this.selectedRole
           ? user.role === this.selectedRole
           : true;
-
         const matchesSearch =
           user.name.toLowerCase().includes(this.search.toLowerCase()) ||
           user.id.toString().includes(this.search);
@@ -341,7 +364,6 @@ export default {
           ...user,
           role: `${user.role.name}`,
         }));
-        console.log(this.users);
       } catch (error) {
         console.error("Error fetching data:", error);
         this.showErrorSnackbar = true;
@@ -354,18 +376,22 @@ export default {
       try {
         this.loading = true;
         const response = await axios.get("/roles");
-        this.roles = response.data;
-        console.log(this.roles);
+        this.RoleOptions = [
+          { title: "All", value: "" }, // Default option
+          ...response.data.map((role) => ({
+            title: role.name.charAt(0).toUpperCase() + role.name.slice(1), // Capitalize the role name
+            value: role.name.toLowerCase(), // Convert role name to lowercase for consistency
+          })),
+        ];
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching roles:", error);
         this.showErrorSnackbar = true;
-        this.errorMessage = "Error fetching data.";
+        this.errorMessage = "Error fetching roles.";
       } finally {
         this.loading = false;
       }
     },
 
-  
     openDeleteDialog(item) {
       this.teacherToDelete = item;
       this.dialogDelete = true;
@@ -379,7 +405,7 @@ export default {
     async deleteItemConfirm() {
       if (this.teacherToDelete) {
         try {
-          await axios.delete(`/delete-teacher/${this.teacherToDelete.id}`);
+          await axios.delete(`/users/${this.teacherToDelete.id}`);
           this.closeDeleteDialog();
           this.fetchData(); // Refresh the data after deletion
           this.showSuccessSnackbar = true;
@@ -393,8 +419,8 @@ export default {
     },
 
     openEditDialog(item) {
-      this.teacherToEdit = { ...item };
-      console.log(this.teacherToEdit);
+      this.userToEdit = { ...item };
+      console.log(this.userToEdit);
       this.dialogEdit = true;
     },
 
@@ -405,10 +431,7 @@ export default {
       if (this.$refs.editForm.validate()) {
         try {
           this.IsLoadingUpdate = true;
-          await axios.put(
-            `/users/${this.teacherToEdit.id}`,
-            this.teacherToEdit
-          );
+          await axios.put(`/users/${this.userToEdit.id}`, this.userToEdit);
           this.closeEditDialog();
           this.fetchData(); // Refresh the data after edit
           this.showSuccessSnackbar = true;
@@ -429,24 +452,15 @@ export default {
 
     closeCreateDialog() {
       this.dialogCreate = false;
-      // this.newTeacher = {
-      //   first_name: "",
-      //   last_name: "",
-      //   email: "",
-      //   dob: "",
-      //   phone: "",
-      //   gender: "",
-      //   password: "",
-      // };
     },
-    validate() {
+    createUserValidate() {
       if (this.isValidated == false) return;
-      else alert("Now you can sign in!");
+      else alert("Now you can create this user!");
     },
 
     async createItemConfirm() {
       if (this.$refs.createForm.validate()) {
-        this.validate();
+        this.createUserValidate();
         try {
           const response = await axios.post(
             "/register-teacher",

@@ -29,25 +29,25 @@
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
           value="home"
-          to="/user/dashboard"
+          :to="`/class/${pathID}/dashboard`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-list-status"
           title="Attendance"
           value="password"
-          to="/user/attendance"
+          :to="`/class/${pathID}/attendance`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-school"
           title="Score Grading"
           value="profile"
-          to="/user/score-grading"
+          :to="`/class/${pathID}/score-grading`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-text-box-search-outline"
           title="Generate Report"
           value="notifications"
-          to="/user/generate-report"
+          :to="`/class/${pathID}/generate-report`"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-chevron-left"
@@ -58,7 +58,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-main style="height: 100vh">
-      <v-toolbar color="blue-blue-darken-3">
+      <v-toolbar color="white h-10">
         <v-btn
           v-if="rail"
           class="text-none"
@@ -70,19 +70,22 @@
         >
           <v-icon>mdi-menu</v-icon>
         </v-btn>
-        <span class="mx-5">Teacher Assistant Dashboard</span>
+        <h4 class="mx-5 text-gray">Welcome to Dashboard</h4>
 
         <v-spacer></v-spacer>
 
         <v-btn class="text-none" stacked>
-          <v-badge color="error" content="2">
-            <v-icon>mdi-bell-outline</v-icon>
-          </v-badge>
+          <v-icon>mdi-account-multiple-outline</v-icon>
         </v-btn>
 
         <v-btn class="text-none" stacked>
-          Import
+          <v-badge color="error" content="2">
+            <v-btn to="/admin/notification" variant="text"
+              ><v-icon>mdi-bell-outline</v-icon>
+            </v-btn>
+          </v-badge>
         </v-btn>
+        <profile-drop-down :user="user" />
       </v-toolbar>
       <breadcrumbs-cmpnt />
       <v-content app>
@@ -95,10 +98,16 @@
   </v-layout>
 </template>
 <script>
+import ProfileDropDown from "./components/ProfileDropDown.vue";
 import { ref } from "vue";
 // import BreadcrumbsCmpnt from "../";
 export default {
-  // components: { BreadcrumbsCmpnt },
+  components: { ProfileDropDown },
+  data() {
+    return {
+      pathID : this.$route.params.class_id
+    }
+  },
   setup() {
     const drawer = ref(true);
     const rail = ref(false);
