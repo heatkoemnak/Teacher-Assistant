@@ -85,7 +85,7 @@
             </v-btn>
           </v-badge>
         </v-btn>
-        <!-- <profile-drop-down :user="user" /> -->
+        <profile-drop-down :user="user" />
       </v-toolbar>
       <breadcrumbs-cmpnt />
       <v-content app>
@@ -98,11 +98,11 @@
   </v-layout>
 </template>
 <script>
-// import ProfileDropDown from "./components/ProfileDropDown.vue";
+import ProfileDropDown from "./components/ProfileDropDown.vue";
 import { ref } from "vue";
 // import BreadcrumbsCmpnt from "../";
 export default {
-  //components: { ProfileDropDown },
+  components: { ProfileDropDown },
   data() {
     return {
       pathID : this.$route.params.class_id
