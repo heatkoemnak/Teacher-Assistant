@@ -32,7 +32,7 @@
         mdi-pencil
       </v-icon> -->
       <EditStudentDialog :student="item"></EditStudentDialog>
-      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
+      <!-- <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon> -->
     </template>
   </v-data-table-server>
 </template>
@@ -224,6 +224,7 @@ export default {
   data: () => ({
     itemsPerPage: 5,
     headers: [
+    { title: "No.", key: "id" },
       { title: "Name", key: "name" },
       { title: "Gender", key: "gender" },
       { title: "Assignment", key: "assignment" },

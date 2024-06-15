@@ -200,7 +200,7 @@ export default {
       this.headers.push(newDate);
       this.dynamicHeaders.push(newDate);
     },
-    updateAttendance(item) {
+    async updateAttendance(item) {
       let presentCount = 0;
       let totalDays = 0;
 
@@ -218,15 +218,17 @@ export default {
       item.attendance = Math.round(attendancePercentage);
 
       // Instead of calling loadItems, update serverItems directly
-      const index = this.serverItems.findIndex((i) => i.id === item.id);
-      if (index !== -1) {
-        this.$set(this.serverItems, index, item);
+      // const index = this.serverItems.findIndex((i) => i.id === item.id);
+      // if (index !== -1) {
+      //   this.$set(this.serverItems, index, item);
+      // }
+      console.log(item.id)
+      try {
+        await axios.put(`http://localhost:4000/classes/${this.$route.params.class_id}/students/${item.id}`, item);
+        console.log("Attendance updated successfully");
+      } catch (error) {
+        console.error("Failed to update attendance:", error);
       }
-    },
-    updateAllAttendance() {
-      studentsData.forEach((item) => {
-        this.updateAttendance(item);
-      });
     },
   },
 };

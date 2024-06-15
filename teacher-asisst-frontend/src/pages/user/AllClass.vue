@@ -4,13 +4,14 @@
       <v-app-bar-title>Teacher's Assistant</v-app-bar-title>
 
       <v-spacer></v-spacer>
-      <v-avatar size="30">
+      <!-- <v-avatar size="30">
         <v-img
           alt="John"
           src="https://cdn.vuetifyjs.com/images/john.jpg"
         ></v-img>
       </v-avatar>
-      <v-btn icon="mdi-dots-vertical"></v-btn>
+      <v-btn icon="mdi-dots-vertical"></v-btn> -->
+      <profile-drop-down :user="user" />
     </v-app-bar>
 
     <v-main class="pt-0">
@@ -28,7 +29,7 @@
                   <v-img :src="classItem.image" alt="Class Image"></v-img>
                 </v-col>
                 <v-col cols="12" class="pt-2 d-flex justify-space-between align-center">
-                  <span>{{ classItem.name }}</span>
+                  <span>{{ classItem.class_name }}</span>
                   <v-btn variant="text" size="small" @click="viewClass(classItem.id)">View class</v-btn>
                 </v-col>
               </v-row>
@@ -70,8 +71,10 @@
 
 <script>
 import axios from 'axios';
+import ProfileDropDown from "./components/ProfileDropDown.vue";
 
 export default {
+  components: { ProfileDropDown },
   data() {
     return {
       searchText: '',
@@ -87,13 +90,14 @@ export default {
         // { id: 9, name: 'Biology-G8-A1', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
         // { id: 10, name: 'Chemistry-G7-A2', image: 'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' }
       ],
+      recentClasses: []
     };
   },
 
   computed: {
-    recentClasses() {
-      return this.classes.slice(0, 4);
-    },
+    // recentClasses() {
+    //   return this.classes.slice(0, 4);
+    // },
     filteredClasses() {
       const searchText = this.searchText.toLowerCase().trim();
       if (!searchText) {
@@ -108,6 +112,7 @@ export default {
 
   methods: {
     viewClass(classId) {
+      localStorage.setItem('recently', classId)
       this.$router.push(`/class/${classId}/dashboard`);
     },
     getClass(val) {
@@ -122,12 +127,15 @@ export default {
         newArrClass.push(thisclass)
       }
       this.classes = newArrClass
-    }
-    // filterClasses() {
-
-    // },
+    },
+    async onRecentClasses(val) {
+      const RecentlyCLass = await axios.get(`http://localhost:4000/classes/${val}`)
+      this.recentClasses.push(RecentlyCLass.data)
+    },
   },
   async mounted() {
+    const openedClass = localStorage.getItem('recently')
+    this.onRecentClasses(openedClass)
     const allclass = await axios.get('http://localhost:4000/classes')
     console.log(allclass.data)
     this.getClass(allclass.data)
