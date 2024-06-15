@@ -162,12 +162,12 @@ export default {
           icon: "mdi-school",
           route: "classes",
         },
-        {
-          id: 4,
-          title: "Attendance",
-          icon: "mdi-calendar-check",
-          route: "attendance",
-        },
+        // {
+        //   id: 4,
+        //   title: "Attendance",
+        //   icon: "mdi-calendar-check",
+        //   route: "attendance",
+        // },
         {
           id: 5,
           title: "Departments",

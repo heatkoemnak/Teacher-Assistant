@@ -17,10 +17,8 @@ export default createStore({
       commit("setUser", data.user);
       if (data.user.role_id === 1) {
         router.push("/admin/dashboard");
-      } else if (data.user.role_id === 2) {
-        router.push("/user/dashboard");
-      } else {
-        router.push("/teacher/dashboard");
+      }  else {
+        router.push("/home");
       }
     },
     async logout({ commit }) {

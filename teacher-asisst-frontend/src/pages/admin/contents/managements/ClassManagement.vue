@@ -266,8 +266,7 @@ export default {
     filteredClasses() {
       return this.classes.filter((cls) => {
         const matchesSearch =
-          cls.name.toLowerCase().includes(this.search.toLowerCase()) ||
-          cls.id.toLowerCase().includes(this.search.toLowerCase());
+          cls.name.toLowerCase().includes(this.search.toLowerCase())
 
         const matchesDep =
           this.selectedDep === "" || cls.department_id === this.selectedDep;

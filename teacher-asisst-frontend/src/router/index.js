@@ -42,6 +42,7 @@ const router = createRouter({
     {
       path: "/",
       name: "home-layout",
+      redirect: "/login",
       component: HomeLayout,
       meta: { requiresAuth: true },
     },
@@ -179,12 +180,13 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: import("../pages/user/AllClass.vue"),
+      meta: { requiresAuth: true, role: 3 },
     },
     {
       path: "/class/:class_id",
       name: "dashboard",
-      component: UserLayout,
       meta: { requiresAuth: true, role: 3 },
+      component: UserLayout,
       children: [
         {
           path: "dashboard",
@@ -236,8 +238,8 @@ router.beforeEach((to, from, next) => {
     } else if (to.meta.role && user.role_id !== to.meta.role) {
       if (user.role_id === 1) {
         next({ path: "/admin/dashboard" });
-      }else {
-        next({ path: "/user/dashboard" });
+      } else {
+        next({ path: "/home" });
       }
     } else {
       next();
@@ -247,7 +249,7 @@ router.beforeEach((to, from, next) => {
       if (user.role_id === 1) {
         next({ path: "/admin/dashboard" });
       } else {
-        next({ path: "/user/dashboard" });
+        next({ path: "/home" });
       }
     } else {
       next();
