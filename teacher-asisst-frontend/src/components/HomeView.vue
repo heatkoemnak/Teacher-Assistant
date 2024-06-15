@@ -18,3 +18,23 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.text-center {
+  text-align: center;
+}
+
+h2 {
+  color: #4caf50; 
+  font-size: 24px;
+}
+
+p {
+  color: #555;
+  font-size: 18px;
+}
+
+div {
+  margin-top: 50px;
+}
+</style>
