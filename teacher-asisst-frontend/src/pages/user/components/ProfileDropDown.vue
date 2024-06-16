@@ -6,7 +6,7 @@
           <template v-slot:activator="{ props: tooltip }">
             <v-list-item
               v-bind="mergeProps(menu, tooltip)"
-              title="Username"
+              :title="user.name"
               rounded="xl"
             >
               <template v-slot:append>
@@ -31,7 +31,7 @@
             <v-list-item-title>{{ item.text }}</v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-btn @click="handleLogout" variant='text' block> Logout</v-btn>
+            <v-btn @click="handleLogout" variant="text" block> Logout</v-btn>
           </v-list-item>
         </v-list>
       </v-card>
@@ -39,8 +39,7 @@
   </div>
 </template>
 <script>
-// import axios from "@/axios";
-// import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { mergeProps } from "vue";
 
 export default {
@@ -55,24 +54,24 @@ export default {
     ],
   }),
 
-  // computed: {
-  //   ...mapGetters(["isAuthenticated"]),
-  //   user() {
-  //     return this.$store.state.user;
-  //   },
-  // },
-  // created() {
-  //   if (!this.isAuthenticated) {
-  //     this.$router.push("/login"); // Adjust as needed
-  //   }
-  // },
+  computed: {
+    ...mapGetters(["isAuthenticated"]),
+    user() {
+      return this.$store.state.user;
+    },
+  },
+  created() {
+    if (!this.isAuthenticated) {
+      this.$router.push("/login"); // Adjust as needed
+    }
+  },
   methods: {
     mergeProps,
 
-    // ...mapActions(["logout"]),
+    ...mapActions(["logout"]),
     async handleLogout() {
       try {
-        // this.logout();
+        this.logout();
         this.$router.push("/login"); // Adjust as needed
       } catch (error) {
         console.error("Logout failed", error);
