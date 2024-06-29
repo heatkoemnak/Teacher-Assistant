@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Classes;
 use App\Models\Subject;
+use Illuminate\Support\Facades\Validator;
 
 class ClassController extends Controller
 {
     public function index()
     {
-        $classes = Classes::get();
+        $classes = Classes::with('student','teacher')->get();
          return response()->json($classes, 200);
     }
 
@@ -18,6 +19,31 @@ class ClassController extends Controller
             $class = Classes::with('subjects')->get();
             return response()->json($class, 200);
     }
+    public function createClass(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'teacher_id' => 'required|integer|exists:teacher,id',
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        try {
+
+            $class = Classes::create([
+                'name' => $request->name,
+                'class_id' => $request->teacher_id,
+                
+            ]);
+          
+            return response()->json([$class,'message'=>'class created successfully',], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Creation failed', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
 
     public function attachSubject(Request $request, $id){
 
@@ -33,7 +59,7 @@ class ClassController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            // 'teacher_id' => 'required|exists:teachers,id',
+            'teacher_id' => 'required|exists:teachers,id',
             'subjects' => 'array|exists:subjects,id',
         ]);
 

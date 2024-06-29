@@ -8,8 +8,22 @@
       @click="rail = false"
       class="overflow"
     >
-      <v-list-item class="pa-5" nav>
+      <!-- <v-list-item class="pa-5" nav>
         <h2>T . Assistant</h2>
+        <template v-slot:append>
+          <v-btn
+            icon="mdi-chevron-left"
+            variant="text"
+            @click.stop="rail = !rail"
+          ></v-btn>
+        </template>
+      </v-list-item> -->
+      <v-list-item
+        class="pa-5"
+        prepend-avatar="https://randomuser.me/api/portraits/men/86.jpg"
+        title="Mr. Koemnak"
+        nav
+      >
         <template v-slot:append>
           <v-btn
             icon="mdi-chevron-left"
@@ -21,7 +35,7 @@
       <v-divider></v-divider>
       <v-list density="compact" nav>
         <v-list-item
-          prepend-icon="mdi-home-city"
+          prepend-icon="mdi-view-dashboard"
           title="Dashboard"
           value="home"
           to="/admin/dashboard"
@@ -102,17 +116,15 @@
         <v-spacer></v-spacer>
 
         <v-btn class="text-none" stacked>
-          <v-icon>mdi-account-multiple-outline</v-icon>
-        </v-btn>
-
-        <v-btn class="text-none" stacked>
           <v-badge color="error" content="2">
             <v-btn to="/admin/notification" variant="text"
               ><v-icon>mdi-bell-outline</v-icon>
             </v-btn>
           </v-badge>
         </v-btn>
-        <profile-drop-down :user="user" />
+        <!-- <profile-drop-down :user="user" /> -->
+        <drop-down-menu :user="user" />
+
       </v-toolbar>
       <!-- <breadcrumbs-cmpnt /> -->
       <v-content app>
@@ -124,11 +136,12 @@
   </v-layout>
 </template>
 <script>
-import ProfileDropDown from "./components/ProfileDropDown.vue";
+// import ProfileDropDown from "./components/ProfileDropDown.vue";
+import DropDownMenu from "./components/DropDownMenu.vue";
 // import axios from "axios";
 import axios from "@/axios";
 export default {
-  components: { ProfileDropDown },
+  components: { DropDownMenu },
   data() {
     return {
       drawer: true,
@@ -184,7 +197,7 @@ export default {
           id: 7,
           title: "Teachers",
           icon: "mdi-account",
-          route: "sample",
+          route: "teachers",
         },
       ],
       user_managements: [

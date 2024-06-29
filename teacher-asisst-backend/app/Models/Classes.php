@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Subject;
 use App\Models\Teacher;
+use App\Models\Student;
 
 
 class Classes extends Model
@@ -18,8 +19,12 @@ class Classes extends Model
     {
         return $this->belongsToMany(Subject::class,'class_subject');
     }
-    public function teachers()
+    public function teacher()
     {
-        return $this->belongsToMany(Teacher::class);
+        return $this->belongsTo(Teacher::class);
+    }
+    public function student()
+    {
+        return $this->hasMany(Student::class,'class_id');
     }
 }

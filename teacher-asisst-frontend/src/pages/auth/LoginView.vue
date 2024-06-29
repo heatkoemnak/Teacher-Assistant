@@ -1,5 +1,12 @@
 <template>
   <div class="center-container">
+    <v-progress-linear
+              :active="IsLoading"
+              :indeterminate="IsLoading"
+              color="deep-purple-accent-4"
+              absolute
+              bottom
+            ></v-progress-linear>
     <ta-card class="card">
       <h1 class="title">
         <span class="teacher-title">Teacher</span>
@@ -72,6 +79,7 @@ export default {
   },
   data() {
     return {
+      IsLoading: false,
       valid: false,
       show: false,
       credentials: {
@@ -90,10 +98,13 @@ export default {
     ...mapActions(["login"]),
     async handleLogin() {
       try {
+        this.IsLoading = true;
         await this.login(this.credentials);
       } catch (error) {
         console.error("Login failed", error);
-      }
+      } finally {
+          this.IsLoading = false;
+        }
     },
     required: (value) => !!value || "Required.",
     counter: (value) => value.length >= 3 || "min 3 characters",

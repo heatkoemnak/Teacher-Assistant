@@ -1,18 +1,6 @@
 <template>
-  <div>
-    <v-app-bar extended color="#365BC2">
-      <v-app-bar-title>Teacher's Assistant</v-app-bar-title>
-
-      <v-spacer></v-spacer>
-      <!-- <v-avatar size="30">
-        <v-img
-          alt="John"
-          src="https://cdn.vuetifyjs.com/images/john.jpg"
-        ></v-img>
-      </v-avatar>
-      <v-btn icon="mdi-dots-vertical"></v-btn> -->
-      <profile-drop-down :user="user" />
-    </v-app-bar>
+  <layout>
+    
 
     <v-main class="pt-0">
       <v-container>
@@ -66,15 +54,15 @@
         </v-row>
       </v-container>
     </v-main>
-  </div>
+  </layout>
 </template>
 
 <script>
 import axios from 'axios';
-import ProfileDropDown from "./components/ProfileDropDown.vue";
+// import ProfileDropDown from "../../components/ProfileDropDown.vue";
 
 export default {
-  components: { ProfileDropDown },
+  // components: { ProfileDropDown },
   data() {
     return {
       searchText: '',
@@ -113,7 +101,7 @@ export default {
   methods: {
     viewClass(classId) {
       localStorage.setItem('recently', classId)
-      this.$router.push(`/class/${classId}/dashboard`);
+      this.$router.push(`/class-teacher/${classId}`);
     },
     getClass(val) {
       const newArrClass = []
@@ -139,7 +127,7 @@ export default {
     const allclass = await axios.get('http://localhost:4000/classes')
     console.log(allclass.data)
     this.getClass(allclass.data)
-    
+
   }
 };
 </script>

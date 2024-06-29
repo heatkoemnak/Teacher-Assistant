@@ -12,18 +12,21 @@ use App\Models\Profile;
 class TeacherController extends Controller
 {
     public function index(){
-        $teacher = Teacher::with('user')->get();
+        $teacher = Teacher::with('user','class')->get();
         return response()->json($teacher, 200);
     }
     public function store(Request $request)
     {
+
+
+
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'department_id' =>'required|integer|exists:departments,id'
         ]);
+
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -35,7 +38,7 @@ class TeacherController extends Controller
                 'name' => $fullName,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role_id'=>3
+                'role_id' => 2
             ]);
 
             $teacher = Teacher::create([
@@ -45,7 +48,6 @@ class TeacherController extends Controller
                 'dob' => $request->dob,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
-                'department_id'=>$request->department_id
             ]);
             $profile = Profile::create([
                 'first_name' => $request->first_name,

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Profile;
+use App\Models\Role;
 class AuthController extends Controller
 {
     public function adminRegister(Request $request)
@@ -28,11 +29,24 @@ class AuthController extends Controller
 
         try {
             $fullName = strtolower($request->first_name . '' . $request->last_name);
+            $roles = Role::all();
+            if($roles->isEmpty()
+            ){
+            $role = Role::create(
+                [
+                'name' => 'admin',
+                ]
+                );
+            }
+
             $user = User::create([
                 'name' => $fullName,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role_id'=>1
+                'role_id' => Role::where(
+                    'name',
+                    'admin'
+                )->first()->id
             ]);
             $profile = Profile::create([
                 'first_name' => $request->first_name,

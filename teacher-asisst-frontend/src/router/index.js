@@ -2,7 +2,7 @@ import HomeLayout from "@/pages/HomeLayout.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
 import AdminLayout from "@/pages/admin/AdminLayout.vue";
 import UserLayout from "@/pages/user/UserLayout.vue";
-import AttendanceManage from "../pages/user/contents/AttendanceManage2.vue";
+// import AttendanceManage from "../pages/user/contents/AttendanceManage2.vue";
 import DashboardContent from "@/pages/admin/contents/DashboardContent.vue";
 import TeacherContent from "@/pages/admin/contents/managements/TeacherContent.vue";
 import StudentContent from "@/pages/admin/contents/managements/StudentContent.vue";
@@ -29,7 +29,6 @@ import PersonalDetails from "@/pages/admin/contents/profile/personal_info/Person
 import SubjectBelong from "@/pages/admin/contents/profile/personal_info/SubjectBelong.vue";
 
 import ChangeUserPassword from "@/pages/admin/contents/profile/account/ChangeUserPassword.vue";
-import SampleTable from "@/pages/admin/contents/SampleTable.vue";
 import DepartmentCards from "@/pages/admin/components/DepartmentCards.vue";
 import Notification from "@/pages/admin/components/Notification.vue";
 
@@ -132,10 +131,6 @@ const router = createRouter({
               component: PermissionsManagement,
             },
             {
-              path: "sample",
-              component: SampleTable,
-            },
-            {
               path: "subjects",
               component: SubjectContent,
             },
@@ -180,12 +175,69 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: import("../pages/user/AllClass.vue"),
-      meta: { requiresAuth: true, role: 3 },
+      meta: { requiresAuth: true, role: 2 },
+    },
+    {
+      path: "/lay-teacher",
+      name: "layout-teacher",
+      component: import("../pages/user/LayoutTeacher.vue"),
+      meta: { requiresAuth: true, role: 2 },
+      children: [
+        {
+          path: "/board",
+          name: "board",
+          component: import("../pages/user/contents/DashboardContent.vue"),
+
+        },
+        {
+          path: "/cal",
+          name: "calendar",
+          component: import("../pages/user/components/CalendarView.vue"),
+          meta: {
+            RouteName: "cal",
+          },
+        },
+        {
+          path: "/classes",
+          name: "classes",
+          component: import("../pages/user/AllClass.vue"),
+        },
+        {
+          path: "/class-teacher/:class_id",
+          name: "class",
+          component: import("../pages/user/ClassLayout.vue"),
+          children:[
+            {
+              path: "add-student",
+              name: "add-student",
+              component: import("../pages/user/contents/AddStudent.vue"),
+            },
+            {
+              path: "class-attendance",
+              name: "class-attendance",
+              component: import("../pages/user/contents/AttendanceManage.vue"),
+           
+            },
+            {
+              path: "class-students",
+              name: "class-students",
+              component: import("../pages/user/contents/StudentManage.vue"),
+           
+            },
+          ]
+        },
+        {
+          path: "/classes/class/:class_id",
+          name: "user",
+          component: UserLayout,
+
+        }
+      ],
     },
     {
       path: "/class/:class_id",
       name: "dashboard",
-      meta: { requiresAuth: true, role: 3 },
+      meta: { requiresAuth: true, role: 2 },
       component: UserLayout,
       children: [
         {
@@ -199,7 +251,7 @@ const router = createRouter({
         {
           path: "attendance",
           name: "attendance",
-          component: AttendanceManage,
+          component: import("../pages/user/contents/AttendanceManage.vue"),
           meta: {
             RouteName: "Attendance",
           },

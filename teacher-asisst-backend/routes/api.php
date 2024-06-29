@@ -12,6 +12,7 @@ use App\Http\Controllers\Dashboard\UserController1;
 use App\Http\Controllers\Dashboard\TeacherController1;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\StudentController;
 
 
 /*
@@ -38,6 +39,7 @@ Route::group(['middleware' => ['api']], function () {
     //class routes
     Route::get('/classes', [ClassController::class, 'index']);
     Route::get('/classes/{id}', [ClassController::class, 'show']);
+    Route::post('/classes', [ClassController::class, 'createClass']);
     Route::get('/class/subjects', [ClassController::class, 'classWithSubject']);
     Route::post('/class/attach/subject/{id}', [ClassController::class, 'attachSubject']);
 
@@ -92,6 +94,11 @@ Route::group(['middleware' => ['api']], function () {
     Route::post('/register-teacher', [TeacherController::class, 'store']);
     Route::put('/update-teacher/{id}', [TeacherController::class, 'updateTeacher']);
     Route::delete('/delete-teacher/{id}', [TeacherController::class, 'deleteTeacher']);
+    
+    //student routes
+    
+    Route::get('/students', [StudentController::class, 'index']);
+    Route::post('/students', [StudentController::class, 'store']);
 
 
 });

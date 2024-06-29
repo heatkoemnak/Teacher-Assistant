@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('teachers', function (Blueprint $table) {
-            $table->foreignId('department_id')->constrained();
+        Schema::create('events', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('teachers', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('events');
     }
 };

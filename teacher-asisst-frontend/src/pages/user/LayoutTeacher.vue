@@ -4,9 +4,10 @@
       v-model="drawer"
       :rail="rail"
       permanent
-      color="blue-darken-2"
-      @click="rail = false"
+      color="blue-darken-3"
+      @click="rail = true"
       class="overflow"
+
     >
       <v-list-item
         class="pa-5"
@@ -24,37 +25,28 @@
       </v-list-item>
 
       <v-divider></v-divider>
-      <v-list density="compact" nav>
-        <v-list-item
-          prepend-icon="mdi-view-dashboard"
-          title="Dashboard"
-          value="home"
-          :to="`/class/${pathID}/dashboard`"
-        ></v-list-item>
-        <v-list-item
-          prepend-icon="mdi-list-status"
-          title="Attendance"
-          value="password"
-          :to="`/class/${pathID}/attendance`"
-        ></v-list-item>
+      <v-list  >
+        <div >
+          <v-list-item
+            prepend-icon="mdi-view-dashboard"
+            title="Dashboard"
+            value="board"
+            to="/board"
+          ></v-list-item>
+        </div>
         <v-list-item
           prepend-icon="mdi-school"
-          title="Score Grading"
-          value="profile"
-          :to="`/class/${pathID}/score-grading`"
+          title="Classes"
+          value="class"
+          to="/classes"
         ></v-list-item>
         <v-list-item
-          prepend-icon="mdi-text-box-search-outline"
-          title="Generate Report"
-          value="notifications"
-          :to="`/class/${pathID}/generate-report`"
+          prepend-icon="mdi-calendar"
+          title="Calendar"
+          value="calendar"
+          to="/cal"
         ></v-list-item>
-        <v-list-item
-          prepend-icon="mdi-chevron-left"
-          title="Back to all Class"
-          value="hey"
-          to="/home"
-        ></v-list-item>
+
       </v-list>
     </v-navigation-drawer>
     <v-main style="height: 100vh">
@@ -87,12 +79,10 @@
         </v-btn>
         <ProfileDropDown :user="user" />
       </v-toolbar>
-      <breadcrumbs-cmpnt />
       <v-content app>
         <v-container fluid style="height: 84%">
           <router-view></router-view>
         </v-container>
-        <v-divider></v-divider>
       </v-content>
     </v-main>
   </v-layout>
@@ -110,8 +100,8 @@ export default {
   },
   setup() {
     const drawer = ref(true);
-    const rail = ref(false);
-    const expend = ref(false);
+    const rail = ref(true);
+    const expend = ref(true);
 
     const managements = ref([
       {

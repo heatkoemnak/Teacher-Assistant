@@ -21,7 +21,6 @@ class Teacher extends Model
         'phone',
         'dob',
         'gender',
-        'department_id',
     ];
 
     protected $casts = [
@@ -34,18 +33,18 @@ class Teacher extends Model
         return $this->belongsTo(User::class)->withDefault();
     }
 
-    public function classes()
+    public function class()
     {
-        return $this->belongsToMany(Classes::class);
+        return $this->hasMany(Classes::class,'teacher_id');
     }
     public function subject()
     {
         return $this->belongsTo(Subject::class);
     }
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
+    // public function department()
+    // {
+    //     return $this->belongsTo(Department::class);
+    // }
 
 
 
