@@ -13,6 +13,7 @@ class ClassController extends Controller
     public function index()
     {
         $classes = ClassModel::with('teacher','students.user.profile')->get();
+
          return response()->json($classes, 200);
     }
 
@@ -45,7 +46,7 @@ class ClassController extends Controller
     public function show($id)
     {
         try {
-            $class = ClassModel::with('teacher','students')->findOrFail($id);
+            $class = ClassModel::with('teacher','students.user.profile')->findOrFail($id);
             return response()->json($class, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Class not found', 'message' => $e->getMessage()], 404);

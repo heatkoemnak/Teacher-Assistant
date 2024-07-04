@@ -112,8 +112,7 @@ Route::group(['middleware' => ['api']], function () {
     Route::post('/students/create', [StudentController::class, 'store']);
     Route::put('/students/{id}/edit', [StudentController::class, 'update']);
     Route::delete('/students/{id}/delete', [StudentController::class, 'destroy']);
-
-
+    Route::get('/students/{class}/students', [StudentController::class, 'showStudentViaClass']);
 
 });
 

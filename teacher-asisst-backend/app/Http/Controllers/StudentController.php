@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ClassModel;
 use App\Models\StudentModel;
 use App\Models\User;
 use App\Models\Role;
@@ -23,6 +24,15 @@ class StudentController extends Controller
             return response()->json(['error' => 'Student not found'], 404);
         }
         return response()->json($student, 200);
+    }
+    public function showStudentViaClass(ClassModel $class){
+
+        $class = ClassModel::FindOrFail($class->id);
+        // $student = StudentModel::with('user.profile','classes')->where('user_id', $class->students)->first();
+        // if (!$student) {
+        //     return response()->json(['error' => 'Student not found'], 404);
+        // }
+        return response()->json($class, 200);
     }
 
     public function store(Request $request)
