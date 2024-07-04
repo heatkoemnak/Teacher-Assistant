@@ -201,10 +201,21 @@ const router = createRouter({
 
             },
             {
+              path: "score-grading",
+              name: "score-grading",
+              component: import("../pages/user/contents/ScoreGrading.vue"),
+
+            },
+            {
               path: "class-students",
               name: "class-students",
               component: import("../pages/user/contents/StudentManage.vue"),
 
+            },
+            {
+              path: "class-report",
+              name: "class-report",
+              component: import("../pages/user/contents/GenerateReport.vue")
             },
           ]
         },

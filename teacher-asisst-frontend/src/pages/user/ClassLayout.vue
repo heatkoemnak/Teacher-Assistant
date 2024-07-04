@@ -3,7 +3,7 @@
     <SidebarCompo :items="sidebarItems" :pathID="pathID" />
     <v-main style="height: 100vh">
       <v-content app>
-        <v-container fluid style="height: 84%">
+        <v-container  class="grey-lighten-5">
           <router-view></router-view>
         </v-container>
       </v-content>
@@ -46,7 +46,7 @@ export default {
         {
           title: "Generate Report",
           icon: "mdi-text-box-search-outline",
-          route: `/class/${this.$route.params.slug}/${ this.$route.params.id}/generate-report`,
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/class-report`,
         },
         {
           title: "Back to all Class",

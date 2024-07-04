@@ -1,17 +1,16 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="filteredstudents"
-    class="elevation-1 cursor-pointer"
+    :items="filteredStudents"
+    class="cursor-pointer"
     item-value="name"
     show-select
     :loading="loading"
-    height="450"
   >
     <template v-slot:top>
       <v-card-title>students</v-card-title>
 
-      <v-toolbar flat>
+      <v-toolbar color="grey-lighten-5">
         <v-text-field
           v-model="search"
           density="compact"
@@ -39,7 +38,7 @@
           variant="flat"
           @click="openCreateDialog"
         >
-          New Teacher
+          Add students
         </v-btn>
       </v-toolbar>
 
@@ -164,95 +163,86 @@
             <v-form ref="createForm" v-model="valid" lazy-validation>
               <v-container>
                 <v-toolbar-title class="mb-10"
-                  >Create New Teacher</v-toolbar-title
+                  >Add student</v-toolbar-title
                 >
                 <v-row>
-                  <v-col cols="6">
-                    <v-text-field
-                      v-model="newStudent.first_name"
-                      :rules="[required, counter]"
-                      label="First name"
-                      density="compact"
-                      variant="outlined"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="newStudent.last_name"
-                      :rules="[required, counter]"
-                      label="Last name"
-                      density="compact"
-                      variant="outlined"
-                    ></v-text-field>
-                  </v-col>
 
-                  <v-col cols="6">
-                    <v-menu
-                    v-model="menu"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="290px"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="newStudent.dob"
-                        label="Date of Birth"
-                        prepend-icon="mdi-calendar"
-                        v-bind="attrs"
-                        v-on="on"
-                          variant="outlined"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="newStudent.dob"
-                      @input="menu = false"
-                      locale="en-us"
-                    ></v-date-picker>
-                  </v-menu>
+                  <v-text-field
+                  v-model="search"
+                  density="compact"
+                  label="Search by Name or ID"
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
+                  hide-details
+                  class="mb-4"
+                ></v-text-field>
+
+                </v-row>
+                <v-row>
+
                     <v-select
-                      v-model="newStudent.gender"
-                      :items="genderOptions"
-                      label="Gender"
-                      density="compact"
-                      variant="outlined"
-                    ></v-select>
+                    v-model="selectedStudents"
+                    :items="studentOptions"
+                    label="Select students"
+                    item-title="name"
+                    item-value="id"
+                    multiple
+                    variant="outlined"
+                  >
+                    <template v-slot:prepend-item>
+                      <v-list-item
+                        ripple
+                        @mousedown.prevent
+                        @click="toggle"
+                      >
+                        <v-list-item-action>
+                          <v-icon :color="selectedStudents.length > 0 ? 'indigo darken-4' : ''">
+                            {{ icon }}
+                          </v-icon>
+                        </v-list-item-action>
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            Select All
+                          </v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider class="mt-2"></v-divider>
+                    </template>
+                    <template v-slot:append-item>
+                      <v-divider class="mb-2"></v-divider>
+                      <v-list-item disabled>
+                        <v-list-item-avatar color="grey lighten-3">
+                          <v-icon>
+                            mdi-food-apple
+                          </v-icon>
+                        </v-list-item-avatar>
 
-                  </v-col>
+                        <v-list-item-content v-if="likesAllFruit">
+                          <v-list-item-title>
+                            All students has been selected.
+                          </v-list-item-title>
+                        </v-list-item-content>
+
+                        <v-list-item-content v-else-if="likesSomeFruit">
+                          <v-list-item-title>
+                            Student Count
+                          </v-list-item-title>
+                          <v-list-item-subtitle>
+                            {{ selectedStudents.length }}
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+
+                        <v-list-item-content v-else>
+                          <v-list-item-subtitle>
+                            Go ahead, make a selection above!
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </template>
+                  </v-select>
+
                 </v-row>
 
-                <v-text-field
-                  v-model="newStudent.email"
-                  prepend-inner-icon="mdi-email"
-                  :rules="[required, isEmail]"
-                  label="Email Address"
-                  density="compact"
-                  variant="outlined"
-                ></v-text-field>
-
-                <v-text-field
-                  v-model="newStudent.phone"
-                  label="Phone"
-                  density="compact"
-                  variant="outlined"
-                ></v-text-field>
-                <div class="d-flex align-items-center">
-                  <v-text-field
-                    v-model="newStudent.password"
-                    :rules="passwordRules"
-                    :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                    label="Password"
-                    hint="Minimum 8 characters"
-                    density="compact"
-                    variant="outlined"
-                    counter
-                    :type="show ? 'text' : 'password'"
-                    @click:append-inner="show = !show"
-                  ></v-text-field>
-                  <v-btn @click="generatePassword" class="text-none mx-2" color="primary">
-                    Generate
-                    <v-icon class="ml-2" style="cursor: pointer;">mdi-refresh</v-icon>
-                  </v-btn>
-                </div>
                 <v-card-actions>
                   <v-btn
                     color="blue-darken-1"
@@ -265,8 +255,8 @@
                     color="green"
                     :disabled="!valid"
                     class="mr-4"
-                    @click="createItemConfirm"
-                    >Create</v-btn
+                    @click="displaySelectedStudent"
+                    >Add</v-btn
                   >
                 </v-card-actions>
               </v-container>
@@ -327,6 +317,8 @@
 import axios from "@/axios";
 export default {
   data: () => ({
+
+
     headers: [
   { title: "Name", value: "fullname" },
   { title: "ID", value: "id" },
@@ -343,9 +335,7 @@ export default {
     loading: true,
     students: [],
     search: "",
-    deps: [],
     selectedGender: "",
-    selectedDep: "",
     flow : ["month", "year", "calendar"],
     genderOptions: [
       { title: "All", value: "" },
@@ -353,7 +343,8 @@ export default {
       { title: "Female", value: "female" },
       { title: "Other", value: "other" },
     ],
-    DepOptions: [],
+    studentLists:[],
+    selectedStudents: [],
     studentToDelete: null,
     studentToEdit: null,
     newStudent: {
@@ -366,6 +357,7 @@ export default {
       password: "",
       password_confirmation: "",
     },
+    displayStudents:[],
     menu: false,
     modal: false,
     menuEdit: false,
@@ -386,11 +378,11 @@ export default {
   }),
 
   created() {
-    this.fetchData();
+    this.fetchStudentsFromClassId();
   },
   computed: {
 
-    filteredstudents() {
+    filteredStudents() {
       return this.students.filter((student) => {
         const matchesGender = this.selectedGender
           ? student.user.profile.gender === this.selectedGender
@@ -402,7 +394,28 @@ export default {
         return matchesGender && matchesSearch
       });
     },
+    studentOptions () {
+      return this.studentLists.map(fruit => ({
+        id: fruit.id,
+        name: fruit.user.name
+      }));
+    },
+      likesAllFruit () {
+        return this.selectedStudents.length === this.studentOptions.length
+      },
+      likesSomeFruit () {
+        return this.selectedStudents.length > 0 && !this.likesAllFruit
+      },
+      icon () {
+        if (this.likesAllFruit) return 'mdi-close-box'
+        if (this.likesSomeFruit) return 'mdi-minus-box'
+        return 'mdi-checkbox-blank-outline'
+      },
 
+
+  },
+  mounted() {
+    this.registeredStudents();
   },
   watch: {
     dialogDelete(val) {
@@ -414,18 +427,26 @@ export default {
     dialogCreate(val) {
       val || this.closeCreateDialog();
     },
+    selectedStudents(val) {
+      console.log("Selected students", val);
+    },
   },
   methods: {
-    allowedDates(val) {
-      // Example: Disable weekends
-      const date = new Date(val);
-      return date.getDay() !== 0 && date.getDay() !== 6;
-    },
-    async fetchData() {
+    toggle () {
+        this.$nextTick(() => {
+          if (this.likesAllFruit) {
+            this.selectedStudents = []
+          } else {
+            this.selectedStudents = this.studentOptions.map(fruit => fruit.id);
+          }
+        })
+      },
+
+    async fetchStudentsFromClassId() {
       try {
         this.loading = true;
-        const response = await axios.get("/students");
-        this.students = response.data
+        const response = await axios.get(`classes/${this.$route.params.id}`);
+        this.students = response.data.students
         .map((student) => ({
           ...student,
           fullname: student.user.name,
@@ -436,6 +457,21 @@ export default {
         }));
       } catch (error) {
         console.error("Error fetching data:", error);
+        this.showErrorSnackbar = true;
+        this.errorMessage = "Error fetching data.";
+      } finally {
+        this.loading = false;
+      }
+    },
+    async registeredStudents() {
+      try {
+        this.loading = true;
+        const response = await axios.get("students");
+        this.studentLists= response.data;
+        console.log(this.studentLists);
+
+      } catch (error) {
+        console.error("Error fetching student list:", error);
         this.showErrorSnackbar = true;
         this.errorMessage = "Error fetching data.";
       } finally {
@@ -524,6 +560,14 @@ export default {
           this.errorMessage = "Error creating teacher.";
         }
       }
+    },
+    displaySelectedStudent() {
+      this.displayStudents = this.selectedStudents.map(id => {
+        return this.studentOptions.find(fruit => fruit.id === id);
+      });
+      // console.log(this.displayStudents.map((student)=>{
+      //   return student.id
+      // }));
     },
     generatePassword() {
       const length = 12;
