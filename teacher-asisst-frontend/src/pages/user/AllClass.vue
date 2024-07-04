@@ -174,6 +174,7 @@ export default {
       widgets: false,
       searchText: "",
       classes:[],
+      teacher:"",
       recentClasses: [],
       loading: false,
       valid: false,
@@ -195,7 +196,8 @@ export default {
       );
     },
   },
-  created(){
+  mounted(){
+    this.fetchTeacher();
     this.fetchClasses();
   },
 
@@ -207,40 +209,42 @@ export default {
     async handleCreateClass() {
       try {
         if (this.$refs.form.validate()) {
-          await axios.post("classes", this.classData);
+          await axios.post("classes/create", this.classData);
           this.dialog = false;
+          this.fetchClasses();
           this.resetForm();
         }
       } catch (error) {
         console.error(error);
       }
     },
-    async fetchClasses() {
+
+    async fetchTeacher() {
       try {
-          const response = await axios.get("classes");
+          const response = await axios.get(`teachers/${this.$store.state.user.id}/user`);
+          const data = response.data
+          this.teacher =data.teacher;
+          this.classData.teacher_id =data.teacher.id;
+          this.fetchClasses(this.teacher.id);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async fetchClasses(teacher) {
+      try {
+          const response = await axios.get(`classes/${teacher}/classes`);
           this.classes =response.data;
       } catch (error) {
         console.error(error);
       }
     },
-    // async fetchTeacher() {
-    //   try {
-    //       const response = await axios.get("teachers");
-    //       const data = response.data.map((teacher)=>{
-    //         teacher.user_id === this.this.$store.state.user.id
-    //       })
-    //       console.log(data);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // },
 
     resetForm() {
       this.classData = {
         name: "",
         slug: "",
         desc: "",
-        teacher_id: this.$store.state.user.teacher.id,
+        teacher_id: this.teacher.id,
         image: null,
       };
       this.valid = false;
