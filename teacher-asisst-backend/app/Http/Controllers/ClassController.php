@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ClassModel;
+use App\Models\Teacher;
 use App\Models\StudentModel;
 
 class ClassController extends Controller
@@ -44,8 +45,18 @@ class ClassController extends Controller
     public function show($id)
     {
         try {
-            $class = ClassModel::with('teacher','student')->findOrFail($id);
+            $class = ClassModel::with('teacher','students')->findOrFail($id);
             return response()->json($class, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Class not found', 'message' => $e->getMessage()], 404);
+        }
+    }
+    public function showClassWhereTeacherID(Teacher $teacher)
+    {
+        try {
+            $teacher = Teacher::FindOrFail($teacher->id);
+            $classes = ClassModel::with('teacher','students')->where('teacher_id', $teacher->id)->get();
+            return response()->json($classes, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Class not found', 'message' => $e->getMessage()], 404);
         }

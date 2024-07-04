@@ -80,6 +80,26 @@ class TeacherController extends Controller
 
         return response()->json($teacher, 200);
     }
+    public function showTeacherWithUserID(User $user)
+{
+    // Get the user with the given ID
+    $user = User::findOrFail($user->id);
+
+    // Get the teacher associated with this user
+    $teacher = Teacher::with('user.profile', 'classes')->where('user_id', $user->id)->first();
+
+    // Check if the teacher exists
+    if (!$teacher) {
+        return response()->json(['error' => 'Teacher not found'], 404);
+    }
+
+    // Return the user and teacher details
+    return response()->json([
+        'user' => $user,
+        'teacher' => $teacher
+    ], 200);
+}
+
 
     public function update(Request $request, $id)
     {

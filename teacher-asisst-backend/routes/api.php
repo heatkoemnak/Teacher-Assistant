@@ -40,10 +40,11 @@ Route::group(['middleware' => ['api']], function () {
     //class routes
     Route::get('/classes', [ClassController::class, 'index']);
     Route::get('/classes/{id}', [ClassController::class, 'show']);
-    Route::post('/classes', [ClassController::class, 'store']);
+    Route::post('/classes/create', [ClassController::class, 'store']);
     Route::put('/classes/{id}', [ClassController::class, 'update']);
     Route::delete('/classes/{id}', [ClassController::class, 'destroy']);
     Route::post('classes/{id}/students', [ClassController::class, 'addStudents']);
+    Route::get('classes/{teacher}/classes', [ClassController::class, 'showClassWhereTeacherID']);
 
 
     //subject routes
@@ -102,6 +103,7 @@ Route::group(['middleware' => ['api']], function () {
     Route::post('/teachers/create', [TeacherController::class, 'store']);
     Route::put('/teachers/{id}/edit', [TeacherController::class, 'update']);
     Route::delete('/teachers/{id}/delete', [TeacherController::class, 'destroy']);
+    Route::get('/teachers/{user}/user', [TeacherController::class, 'showTeacherWithUserID']);
 
     //student routes
 
