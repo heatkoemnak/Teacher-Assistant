@@ -5,132 +5,160 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Teacher;
 use App\Models\Profile;
+use App\Models\Role;
+
 class TeacherController extends Controller
 {
-    public function index(){
-        $teacher = Teacher::with('user','class')->get();
-        return response()->json($teacher, 200);
+    public function index()
+    {
+        $teachers = Teacher::with('user.profile','classes.students.user.profile')->get();
+        return response()->json($teachers, 200);
     }
+
     public function store(Request $request)
     {
-
-
-
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'dob' => 'nullable|date',
+            'phone' => 'nullable|string|max:15',
+            'gender' => 'nullable|string|in:male,female,other',
+            'photo' => 'nullable|string|max:255',
         ]);
-
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
         try {
-            $fullName = strtolower($request->first_name . '' . $request->last_name);
+            $role = Role::firstOrCreate(['name' => 'teacher']);
+
+            $full_name = ucfirst(strtolower($request->first_name)) . ' ' . ucfirst(strtolower($request->last_name));
             $user = User::create([
-                'name' => $fullName,
+                'name' => $full_name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role_id' => 2
+                'role_id' => $role->id
             ]);
 
             $teacher = Teacher::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
                 'user_id' => $user->id,
-                'dob' => $request->dob,
-                'phone' => $request->phone,
-                'gender' => $request->gender,
             ]);
+
             $profile = Profile::create([
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
+                'photo' => $request->photo,
                 'user_id' => $user->id,
                 'dob' => $request->dob,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
             ]);
-            return response()->json([$user,$teacher,$profile,'message'=>'register success',], 201);
+
+            if ($user && $teacher) {
+                $teacher->user;
+                $teacher->user->profile;
+                return response()->json([$teacher,'message' => 'Teacher created successfully.'], 201);
+            }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
         }
     }
-    public function showTeacher($id)
+
+    public function show($id)
     {
-        try {
-            $teacher = Teacher::with('user')->findOrFail($id);
-            return response()->json($teacher, 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Teacher not found', 'message' => $e->getMessage()], 404);
+        $teacher = Teacher::with('user.profile', 'classes')->find($id);
+
+        if (!$teacher) {
+            return response()->json(['error' => 'Teacher not found'], 404);
         }
-    }
-    public function updateTeacher(Request $request, $id)
-    {
-        // $validator = Validator::make($request->all(), [
-        //     'first_name' => 'sometimes|required|string|max:255',
-        //     'last_name' => 'sometimes|required|string|max:255',
-        //     'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
-        //     'phone' => 'sometimes|required|string|max:15',
-        //     'address' => 'sometimes|required|string|max:255',
-        //     'dob' => 'sometimes|required|date',
-        //     'gender' => 'sometimes|required|string|max:10',
-        // ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json($validator->errors(), 422);
-        // }
+        return response()->json($teacher, 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'sometimes|required|string|max:255',
+            'last_name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
+            'password' => 'sometimes|nullable|string|min:8|confirmed',
+            'dob' => 'nullable|date',
+            'phone' => 'nullable|string|max:15',
+            'gender' => 'nullable|string|in:male,female,other',
+            'photo' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
 
         try {
-            // Find the teacher and associated user
-            $teacher = Teacher::findOrFail($id);
-            $user = User::findOrFail($teacher->user_id);
+            $teacher = Teacher::find($id);
 
-            // Update the user
-            if ($request->has('first_name') || $request->has('last_name')) {
-                $fullName = strtolower($request->first_name . '' . $request->last_name);
-                $user->name = $fullName;
+            if (!$teacher) {
+                return response()->json(['error' => 'Teacher not found'], 404);
             }
-            if ($request->has('email')) {
-                $user->email = $request->email;
+
+            $user = User::find($teacher->user_id);
+            $profile = Profile::where('user_id', $user->id)->first();
+
+            $teacher->update([
+                'user_id' => $user->id,
+            ]);
+
+            $user->name = $request->get('first_name', $user->name) . ' ' . $request->get('last_name', '');
+            $user->email = $request->get('email', $user->email);
+            if ($request->has('password') && !empty($request->password)) {
+                $user->password = Hash::make($request->password);
             }
             $user->save();
 
-            // Update the teacher
-            $teacher->update($request->only([
-                'first_name',
-                'last_name',
-                'email',
-                'dob',
-                'phone',
-                'gender',
-                'department_id'
-            ]));
+            $profile->update([
+                'first_name' => $request->get('first_name', $profile->first_name),
+                'last_name' => $request->get('last_name', $profile->last_name),
+                'photo' => $request->get('photo', $profile->photo),
+                'dob' => $request->get('dob', $profile->dob),
+                'phone' => $request->get('phone', $profile->phone),
+                'gender' => $request->get('gender', $profile->gender),
+            ]);
 
-
-            return response()->json(['user' => $user, 'teacher' => $teacher], 200);
+            return response()->json([$teacher, 'message' => 'Teacher updated successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed', 'message' => $e->getMessage()], 500);
         }
     }
-    public function deleteTeacher($id)
+
+    public function destroy($id)
     {
         try {
-            $teacher = Teacher::findOrFail($id);
-            $user = User::findOrFail($teacher->user_id);
-            $teacher->delete();
-            $user->delete();
+            $teacher = Teacher::find($id);
 
-            return response()->json(['message' => 'Teacher and associated user deleted successfully'], 200);
+            if (!$teacher) {
+                return response()->json(['error' => 'Teacher not found'], 404);
+            }
+
+            $user = User::find($teacher->user_id);
+            $profile = Profile::where('user_id', $user->id)->first();
+
+            if ($user) {
+                $user->delete();
+            }
+
+            if ($profile) {
+                $profile->delete();
+            }
+
+            $teacher->delete();
+
+            return response()->json(['message' => 'Teacher deleted successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Deletion failed', 'message' => $e->getMessage()], 500);
         }
     }
-
 }

@@ -8,7 +8,7 @@ use App\Models\Role;
 class UserController extends Controller
 {
     public function index(){
-        $users = User::with('role','profile')->get();
+        $users = User::with('role','profile','teacher','student')->get();
         return response()->json($users, 200);
     }
     public function getUsersWithRoleId($id)

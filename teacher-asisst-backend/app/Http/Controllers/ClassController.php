@@ -3,110 +3,102 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Classes;
-use App\Models\Subject;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ClassModel;
+use App\Models\StudentModel;
 
 class ClassController extends Controller
 {
     public function index()
     {
-        $classes = Classes::with('student','teacher')->get();
+        $classes = ClassModel::with('teacher','students.user.profile')->get();
          return response()->json($classes, 200);
     }
 
-    public function classWithSubject(){
-            $class = Classes::with('subjects')->get();
-            return response()->json($class, 200);
-    }
-    public function createClass(Request $request){
+    public function store(Request $request){
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'teacher_id' => 'required|integer|exists:teacher,id',
+            'teacher_id' => 'required|exists:teachers,id',
         ]);
-
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         try {
 
-            $class = Classes::create([
+            $class = ClassModel::create([
                 'name' => $request->name,
-                'class_id' => $request->teacher_id,
-                
+                'slug' => $request->slug,
+                'image' => $request->image,
+                'desc' => $request->desc,
+                'teacher_id' => $request->teacher_id,
             ]);
-          
+
             return response()->json([$class,'message'=>'class created successfully',], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Creation failed', 'message' => $e->getMessage()], 500);
         }
     }
-
-
-
-    public function attachSubject(Request $request, $id){
-
-        $class = Classes::findOrFail($id);
-        $subject = Subject::findOrFail($request->subject_id);
-
-        $class->subjects()->syncWithoutDetaching($subject);
-
-        return response()->json(['message' => 'Subject attached to class successfully',$class]);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'teacher_id' => 'required|exists:teachers,id',
-            'subjects' => 'array|exists:subjects,id',
-        ]);
-
-        $class = Classes::create($request->only('name' ));
-        $class->subjects()->attach($request->subjects);
-        if(!$class){
-            return response()->json('error', 'Something went wrong.');
-        }
-        return response()->json($classes, 200);
-
-    }
-
     public function show($id)
     {
-        $class = Classes::with('subjects')->findOrFail($id);
-        return $class;
-    }
-
-    public function edit($id)
-    {
-        $class = Classes::with('subjects')->findOrFail($id);
-        $subjects = Subject::all();
-        return view('classes.edit', compact('class', 'subjects'));
+        try {
+            $class = ClassModel::with('teacher','student')->findOrFail($id);
+            return response()->json($class, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Class not found', 'message' => $e->getMessage()], 404);
+        }
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
-            'teacher_id' => 'required|exists:teachers,id',
-            'subjects' => 'array|exists:subjects,id',
+            'name' => 'sometimes|required|string|max:255',
+            'teacher_id' => 'sometimes|required|exists:teachers,id',
         ]);
 
-        $class = Classes::findOrFail($id);
-        $class->update($request->only('name', 'teacher_id'));
-        $class->subjects()->sync($request->subjects);
+        try {
+            $class = ClassModel::findOrFail($id);
+            $class->update($request->all());
 
-        return redirect()->route('classes.index')->with('success', 'Class updated successfully.');
+            return response()->json([$class, 'message' => 'Class updated successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy($id)
     {
-        $class = Classes::findOrFail($id);
-        $class->subjects()->detach();
-        $class->delete();
+        try {
+            $class = ClassModel::findOrFail($id);
+            $class->delete();
 
-        return redirect()->route('classes.index')->with('success', 'Class deleted successfully.');
+            return response()->json(['message' => 'Class deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Deletion failed', 'message' => $e->getMessage()], 500);
+        }
     }
+    public function addStudents(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'student_ids' => 'required|array',
+        'student_ids.*' => 'exists:student_models,id',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
+
+    try {
+        $class = ClassModel::findOrFail($id);
+        $class->students()->attach($request->student_ids);
+
+        return response()->json(['message' => 'Students added successfully'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to add students', 'message' => $e->getMessage()], 500);
+    }
+}
+
 }
 

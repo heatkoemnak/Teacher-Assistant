@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('photo')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('phone')->nullable();
+            $table->string('address')->nullable();
             $table->date('dob')->nullable();
             $table->string('gender')->nullable();
             $table->timestamps();

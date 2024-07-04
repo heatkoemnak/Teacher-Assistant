@@ -13,10 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('class_subject', function (Blueprint $table) {
+        Schema::create('admin_models', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('classes_id')->constrained();
-            $table->foreignId('subject_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('class_subject');
+        Schema::dropIfExists('admin_models');
     }
 };

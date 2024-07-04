@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Teacher;
 use App\Models\Profile;
+use App\Models\StudentModel;
 
 class User extends Authenticatable
 {
@@ -21,12 +22,8 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role_id'
-    ];
+
+    protected $guarded =[];
 
 
     /**
@@ -60,7 +57,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Teacher::class);
     }
-
+    public function student()
+    {
+        return $this->hasOne(StudentModel::class);
+    }
+   
     public function isAdmin()
     {
         return $this->role === 1;

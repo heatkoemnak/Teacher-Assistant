@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\StudentModel;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use App\Models\AdminModel;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Profile;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
-class StudentController extends Controller
+class AdminController extends Controller
 {
     public function index(){
-        $students = StudentModel::with('user.profile',"classes")->get();
-        return response()->json($students, 200);
+        $admins = AdminModel::with('user.profile')->get();
+        return response()->json($admins, 200);
     }
 
     public function show($id){
-        $student = StudentModel::with('user.profile')->find($id);
-        if (!$student) {
-            return response()->json(['error' => 'Student not found'], 404);
+        $admin = AdminModel::with('user.profile')->find($id);
+        if (!$admin) {
+            return response()->json(['error' => 'Admin not found'], 404);
         }
-        return response()->json($student, 200);
+        return response()->json($admin, 200);
     }
 
     public function store(Request $request)
@@ -39,7 +39,7 @@ class StudentController extends Controller
         }
 
         try {
-            $role = Role::firstOrCreate(['name' => 'student']);
+            $role = Role::firstOrCreate(['name' => 'admin']);
 
             $full_name = ucfirst(strtolower($request->first_name)) . ' ' . ucfirst(strtolower($request->last_name));
             $user = User::create([
@@ -49,9 +49,7 @@ class StudentController extends Controller
                 'role_id' => $role->id
             ]);
 
-            $student = StudentModel::create([
-                'user_id' => $user->id,
-            ]);
+            $admin = AdminModel::create(['user_id' => $user->id]);
 
             $profile = Profile::create([
                 'first_name' => $request->first_name,
@@ -62,12 +60,12 @@ class StudentController extends Controller
                 'phone' => $request->phone,
                 'gender' => $request->gender,
             ]);
-            if ($user && $student) {
-                $student->user;
-                $student->user->profile;
-                return response()->json([$student,'message' => 'Student created successfully.'], 201);
+
+            if ($user && $admin) {
+                $admin->user;
+                $admin->user->profile;
+                return response()->json([$admin,'message' => 'Admin created successfully.'], 201);
             }
-            return response()->json([$student, 'message' => 'Student added successfully.'], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
         }
@@ -87,12 +85,12 @@ class StudentController extends Controller
         }
 
         try {
-            $student = StudentModel::with('user.profile')->find($id);
-            if (!$student) {
-                return response()->json(['error' => 'Student not found'], 404);
+            $admin = AdminModel::with('user.profile')->find($id);
+            if (!$admin) {
+                return response()->json(['error' => 'Admin not found'], 404);
             }
 
-            $user = $student->user;
+            $user = $admin->user;
             if ($request->has('first_name')) {
                 $user->profile->first_name = $request->first_name;
                 $user->name = ucfirst(strtolower($request->first_name)) . ' ' . ucfirst(strtolower($request->last_name ?? $user->profile->last_name));
@@ -122,9 +120,8 @@ class StudentController extends Controller
 
             $user->save();
             $user->profile->save();
-            $student->save();
 
-            return response()->json([$user->load('profile'), 'message' => 'Student updated successfully.'], 200);
+            return response()->json([$user->load('profile'), 'message' => 'Admin updated successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Update failed', 'message' => $e->getMessage()], 500);
         }
@@ -133,13 +130,13 @@ class StudentController extends Controller
     public function destroy($id)
     {
         try {
-            $student = StudentModel::find($id);
-            if (!$student) {
-                return response()->json(['error' => 'Student not found'], 404);
+            $admin = AdminModel::find($id);
+            if (!$admin) {
+                return response()->json(['error' => 'Admin not found'], 404);
             }
 
-            $user = User::find($student->user_id);
-            $profile = Profile::where('user_id', $student->user_id)->first();
+            $user = User::find($admin->user_id);
+            $profile = Profile::where('user_id', $admin->user_id)->first();
 
             if ($profile) {
                 $profile->delete();
@@ -148,8 +145,8 @@ class StudentController extends Controller
                 $user->delete();
             }
 
-            $student->delete();
-            return response()->json(['message' => 'Student deleted successfully.'], 200);
+            $admin->delete();
+            return response()->json(['message' => 'Admin deleted successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Deletion failed', 'message' => $e->getMessage()], 500);
         }

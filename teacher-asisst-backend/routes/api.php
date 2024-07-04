@@ -13,6 +13,7 @@ use App\Http\Controllers\Dashboard\TeacherController1;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AdminController;
 
 
 /*
@@ -39,9 +40,10 @@ Route::group(['middleware' => ['api']], function () {
     //class routes
     Route::get('/classes', [ClassController::class, 'index']);
     Route::get('/classes/{id}', [ClassController::class, 'show']);
-    Route::post('/classes', [ClassController::class, 'createClass']);
-    Route::get('/class/subjects', [ClassController::class, 'classWithSubject']);
-    Route::post('/class/attach/subject/{id}', [ClassController::class, 'attachSubject']);
+    Route::post('/classes', [ClassController::class, 'store']);
+    Route::put('/classes/{id}', [ClassController::class, 'update']);
+    Route::delete('/classes/{id}', [ClassController::class, 'destroy']);
+    Route::post('classes/{id}/students', [ClassController::class, 'addStudents']);
 
 
     //subject routes
@@ -62,12 +64,18 @@ Route::group(['middleware' => ['api']], function () {
     Route::put('/deps/{id}/edit', [DepartmentController::class, 'update']);
     Route::delete('/deps/{id}/delete', [DepartmentController::class, 'destroy']);
 
-    //register user routes
+
+    //admin routes
+    Route::get('/admins', [AdminController::class, 'index']);
+    Route::get('/admins/{id}', [AdminController::class, 'show']);
+    Route::post('/admins/create', [AdminController::class, 'store']);
+    Route::put('/admins/{id}/edit', [AdminController::class, 'update']);
+    Route::delete('/admins/{id}/delete', [AdminController::class, 'destroy']);
+
+    //login user routes
 
 
-    Route::post('user-register', [AuthController::class, 'userRegister']);
-    Route::post('admin-register', [AuthController::class, 'adminRegister']);
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login']);
 
 
     //role routes
@@ -90,15 +98,19 @@ Route::group(['middleware' => ['api']], function () {
 
 
     Route::get('/teachers', [TeacherController::class, 'index']);
-    Route::get('/teacher/{id}', [TeacherController::class, 'showTeacher']);
-    Route::post('/register-teacher', [TeacherController::class, 'store']);
-    Route::put('/update-teacher/{id}', [TeacherController::class, 'updateTeacher']);
-    Route::delete('/delete-teacher/{id}', [TeacherController::class, 'deleteTeacher']);
-    
+    Route::get('/teachers/{id}', [TeacherController::class, 'show']);
+    Route::post('/teachers/create', [TeacherController::class, 'store']);
+    Route::put('/teachers/{id}/edit', [TeacherController::class, 'update']);
+    Route::delete('/teachers/{id}/delete', [TeacherController::class, 'destroy']);
+
     //student routes
-    
+
     Route::get('/students', [StudentController::class, 'index']);
-    Route::post('/students', [StudentController::class, 'store']);
+    Route::get('/students/{id}', [StudentController::class, 'show']);
+    Route::post('/students/create', [StudentController::class, 'store']);
+    Route::put('/students/{id}/edit', [StudentController::class, 'update']);
+    Route::delete('/students/{id}/delete', [StudentController::class, 'destroy']);
+
 
 
 });
