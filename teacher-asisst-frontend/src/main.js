@@ -9,16 +9,16 @@ import { registerPlugins } from "@/plugins";
 
 // Components
 import App from "./App.vue";
-import store from "@/store/index";
+import store from "@/store/auth";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 // Composables
 import { createApp } from "vue";
-import apiClient from "./axios";
+import Axios from "./axios";
 
 const token = localStorage.getItem("token");
 if (token) {
-  apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 }
 const app = createApp(App);
 app.component('VueDatePicker', VueDatePicker);

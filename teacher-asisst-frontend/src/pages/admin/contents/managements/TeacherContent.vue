@@ -10,7 +10,7 @@
   >
     <template v-slot:top>
       <v-card-title>Teachers</v-card-title>
-     
+
       <v-toolbar flat>
         <v-text-field
           v-model="search"
@@ -80,8 +80,8 @@
           </v-toolbar>
           <v-card-text>
             <v-progress-linear
-              :active="IsLoadingUpdate"
-              :indeterminate="IsLoadingUpdate"
+              :active="IsLoading"
+              :indeterminate="IsLoading"
               color="deep-purple-accent-4"
               absolute
               bottom
@@ -154,6 +154,13 @@
       <v-dialog v-model="dialogCreate" max-width="700px">
         <v-card>
           <v-card-text>
+            <v-progress-linear
+              :active="IsLoading"
+              :indeterminate="IsLoading"
+              color="deep-purple-accent-4"
+              absolute
+              bottom
+            ></v-progress-linear>
             <v-form ref="createForm" v-model="valid" lazy-validation>
               <v-container>
                 <v-toolbar-title class="mb-10"
@@ -164,46 +171,50 @@
                     <v-text-field
                       v-model="newTeacher.first_name"
                       :rules="[required, counter]"
-                      label="First Name"
+                      label="First name"
                       density="compact"
+                      variant="outlined"
                     ></v-text-field>
                     <v-text-field
                       v-model="newTeacher.last_name"
                       :rules="[required, counter]"
-                      label="Last Name"
+                      label="Last name"
                       density="compact"
+                      variant="outlined"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="6">
                     <v-menu
-                      v-model="menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="newTeacher.dob"
-                          label="Date of Birth"
-                          prepend-icon="mdi-calendar"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
                         v-model="newTeacher.dob"
-                        @input="menu = false"
-                        locale="en-us"
-                      ></v-date-picker>
-                    </v-menu>
+                        label="Date of Birth"
+                        prepend-icon="mdi-calendar"
+                        v-bind="attrs"
+                        v-on="on"
+                          variant="outlined"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="newTeacher.dob"
+                      @input="menu = false"
+                      locale="en-us"
+                    ></v-date-picker>
+                  </v-menu>
                     <v-select
                       v-model="newTeacher.gender"
                       :items="genderOptions"
                       label="Gender"
                       density="compact"
+                      variant="outlined"
                     ></v-select>
 
                   </v-col>
@@ -213,37 +224,35 @@
                   v-model="newTeacher.email"
                   prepend-inner-icon="mdi-email"
                   :rules="[required, isEmail]"
-                  label="Email"
+                  label="Email Address"
                   density="compact"
+                  variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="newTeacher.phone"
                   label="Phone"
                   density="compact"
+                  variant="outlined"
                 ></v-text-field>
-
-                <v-text-field
-                  v-model="newTeacher.password"
-                  :rules="passwordRules"
-                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                  prepend-icon="mdi-lock"
-                  label="Password"
-                  hint="Minimum 8 characters"
-                  density="compact"
-                  counter
-                  :type="show ? 'text' : 'password'"
-                  @click:append="show = !show"
-                ></v-text-field>
-                <v-text-field
-                  v-model="newTeacher.password_confirmation"
-                  :rules="[(v) => !!v || 'Confirm Password is required']"
-                  label="Confirm Password"
-                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="show ? 'text' : 'password'"
-                  density="compact"
-                  @click:append="show = !show"
-                ></v-text-field>
+                <div class="d-flex align-items-center">
+                  <v-text-field
+                    v-model="newTeacher.password"
+                    :rules="passwordRules"
+                    :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                    label="Password"
+                    hint="Minimum 8 characters"
+                    density="compact"
+                    variant="outlined"
+                    counter
+                    :type="show ? 'text' : 'password'"
+                    @click:append-inner="show = !show"
+                  ></v-text-field>
+                  <v-btn @click="generatePassword" class="text-none mx-2" color="primary">
+                    Generate
+                    <v-icon class="ml-2" style="cursor: pointer;">mdi-refresh</v-icon>
+                  </v-btn>
+                </div>
                 <v-card-actions>
                   <v-btn
                     color="blue-darken-1"
@@ -296,7 +305,7 @@
     </template>
 
     <template v-slot:item.actions="{ item }" >
-      {{ console.log("item",item) }}
+      {{console.log(item)}}
       <div class="d-flex align-center justify-end">
           <v-chip color="blue" class="ma-2" :to="`/admin/profile/basic-info/${item.user_id}/personal-details`">views</v-chip>
         <v-icon
@@ -312,7 +321,6 @@
         </v-icon>
       </div>
     </template>
-   
   </v-data-table>
 </template>
 <script>
@@ -338,6 +346,7 @@ export default {
     deps: [],
     selectedGender: "",
     selectedDep: "",
+    flow : ["month", "year", "calendar"],
     genderOptions: [
       { title: "All", value: "" },
       { title: "Male", value: "male" },
@@ -347,23 +356,23 @@ export default {
     DepOptions: [],
     teacherToDelete: null,
     teacherToEdit: null,
-    // date: new Date().toISOString().substr(0, 10),
     newTeacher: {
       first_name: "",
       last_name: "",
       email: "",
-      dob: new Date().toISOString().substr(0, 10),
+      dob:new Date().toISOString().substr(0, 10),
       phone: "",
       gender: "",
       password: "",
       password_confirmation: "",
     },
     menu: false,
+    modal: false,
     menuEdit: false,
     valid: false,
     isValidated: true,
     show: false,
-    IsLoadingUpdate: false,
+    IsLoading: false,
     showSuccessSnackbar: false,
     showErrorSnackbar: false,
     successMessage: "",
@@ -380,10 +389,11 @@ export default {
     this.fetchData();
   },
   computed: {
+
     filteredTeachers() {
       return this.teachers.filter((teacher) => {
         const matchesGender = this.selectedGender
-          ? teacher.gender === this.selectedGender
+          ? teacher.user.profile.gender === this.selectedGender
           : true;
 
         const matchesSearch =
@@ -392,6 +402,7 @@ export default {
         return matchesGender && matchesSearch
       });
     },
+
   },
   watch: {
     dialogDelete(val) {
@@ -405,20 +416,24 @@ export default {
     },
   },
   methods: {
+    allowedDates(val) {
+      // Example: Disable weekends
+      const date = new Date(val);
+      return date.getDay() !== 0 && date.getDay() !== 6;
+    },
     async fetchData() {
       try {
         this.loading = true;
         const response = await axios.get("/teachers");
-        this.teachers = response.data.map((teacher) => ({
+        this.teachers = response.data
+        .map((teacher) => ({
           ...teacher,
-          fullname: `${teacher.first_name} ${teacher.last_name}`,
+          fullname: teacher.user.name,
           email: teacher.user.email,
-          dob: teacher.dob || "N/A", // Handle null value for DOB
-          phone: teacher.phone || "N/A", // Handle null value for phone
-          gender: teacher.gender || "N/A",
+          dob: teacher.user.profile.dob || "N/A", // Handle null value for DOB
+          phone: teacher.user.profile.phone || "N/A", // Handle null value for phone
+          gender: teacher.user.profile.gender || "N/A",
         }));
-
-        // console.log(this.teachers);
       } catch (error) {
         console.error("Error fetching data:", error);
         this.showErrorSnackbar = true;
@@ -442,7 +457,7 @@ export default {
     async deleteItemConfirm() {
       if (this.teacherToDelete) {
         try {
-          await axios.delete(`/delete-teacher/${this.teacherToDelete.id}`);
+          await axios.delete(`/teachers/${this.teacherToDelete.id}/delete`);
           this.closeDeleteDialog();
           this.fetchData(); // Refresh the data after deletion
           this.showSuccessSnackbar = true;
@@ -466,9 +481,9 @@ export default {
     async editItemConfirm() {
       if (this.$refs.editForm.validate()) {
         try {
-          this.IsLoadingUpdate = true;
+          this.IsLoading = true;
           await axios.put(
-            `/update-teacher/${this.teacherToEdit.id}`,
+            `/teachers/${this.teacherToEdit.id}/edit`,
             this.teacherToEdit
           );
           this.closeEditDialog();
@@ -480,7 +495,7 @@ export default {
           this.showErrorSnackbar = true;
           this.errorMessage = "Error editing teacher.";
         } finally {
-          this.IsLoadingUpdate = false;
+          this.IsLoading = false;
         }
       }
     },
@@ -491,30 +506,14 @@ export default {
 
     closeCreateDialog() {
       this.dialogCreate = false;
-      // this.newTeacher = {
-      //   first_name: "",
-      //   last_name: "",
-      //   email: "",
-      //   dob: "",
-      //   phone: "",
-      //   gender: "",
-      //   password: "",
-      // };
     },
-    validate() {
-      if (this.isValidated == false) return;
-      else alert("Now you can sign in!");
-    },
-
     async createItemConfirm() {
       if (this.$refs.createForm.validate()) {
-        this.validate();
         try {
-          const response = await axios.post(
-            "/register-teacher",
+          await axios.post(
+            "/teachers/create",
             this.newTeacher
           );
-          console.log(response);
           this.closeCreateDialog();
           this.fetchData(); // Refresh the data after creation
           this.showSuccessSnackbar = true;
@@ -526,6 +525,18 @@ export default {
         }
       }
     },
+    generatePassword() {
+      const length = 12;
+      const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=';
+      let generatedPassword = '';
+      for (let i = 0, n = charset.length; i < length; ++i) {
+        generatedPassword += charset.charAt(Math.floor(Math.random() * n));
+      }
+      this.newTeacher.password = generatedPassword;
+      this.newTeacher.password_confirmation = generatedPassword;
+
+    },
+
     //validation rules
 
     required: (value) => !!value || "Required.",

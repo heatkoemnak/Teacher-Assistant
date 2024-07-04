@@ -21,32 +21,32 @@ export default {
   },
   data() {
     return {
-      pathID: this.$route.params.class_id,
+      pathID: this.$route.params.id,
       sidebarItems: [
         {
           title: "Assignments",
           icon: "mdi-view-dashboard",
-          route: `/class-teacher/${this.$route.params.class_id}/add-student`,
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/add-student`,
         },
         {
           title: "Attendance",
           icon: "mdi-list-status",
-          route: `/class-teacher/${this.$route.params.class_id}/class-attendance`,
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/class-attendance`,
         },
         {
           title: "Grades",
           icon: "mdi-school",
-          route: `/class-teacher/${this.$route.params.class_id}/score-grading`,
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/score-grading`,
         },
         {
           title: "Students",
           icon: "mdi-account-group",
-          route: `/class-teacher/${this.$route.params.class_id}/class-students`,
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/class-students`,
         },
         {
           title: "Generate Report",
           icon: "mdi-text-box-search-outline",
-          route: `/class/${this.$route.params.class_id}/generate-report`,
+          route: `/class/${this.$route.params.slug}/${ this.$route.params.id}/generate-report`,
         },
         {
           title: "Back to all Class",

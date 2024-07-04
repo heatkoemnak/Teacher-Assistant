@@ -19,6 +19,7 @@
           lazy-validation
           class="login-form"
         >
+        <v-alert v-if="errorMessage" type="error">{{ errorMessage }}</v-alert>
           <div class="form-group">
 
             <div class="text-field">
@@ -70,7 +71,7 @@
 <script>
 import taBtn from "@/components/taBtn.vue";
 import taCard from "@/components/taCard.vue";
-import { mapActions } from "vuex";
+import { mapActions,mapGetters } from "vuex";
 
 export default {
   components: {
@@ -93,6 +94,9 @@ export default {
       ],
      
     };
+  },
+  computed: {
+    ...mapGetters(['errorMessage']),
   },
   methods: {
     ...mapActions(["login"]),

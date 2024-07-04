@@ -1,3 +1,4 @@
+import { createRouter, createWebHistory } from "vue-router";
 import HomeLayout from "@/pages/HomeLayout.vue";
 import PageNotFound from "@/pages/PageNotFound.vue";
 import AdminLayout from "@/pages/admin/AdminLayout.vue";
@@ -7,10 +8,6 @@ import DashboardContent from "@/pages/admin/contents/DashboardContent.vue";
 import TeacherContent from "@/pages/admin/contents/managements/TeacherContent.vue";
 import StudentContent from "@/pages/admin/contents/managements/StudentContent.vue";
 import ProfileContent from "@/pages/admin/contents/ProfileContent.vue";
-import LoginViewAdmin from "@/pages/auth/adminScreen/LoginViewAdmin.vue";
-import LoginViewUser from "@/pages/auth/userScreen/LoginViewUser.vue";
-import SignupViewAdmin from "@/pages/auth/adminScreen/SignupViewAdmin.vue";
-import { createRouter, createWebHistory } from "vue-router";
 import ManagementLayout from "@/pages/admin/contents/managements/ManagementLayout.vue";
 import DepartmentContent from "@/pages/admin/contents/managements/DepartmentContent.vue";
 import ClassManagement from "@/pages/admin/contents/managements/ClassManagement.vue";
@@ -46,23 +43,8 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/admin/signup",
-      name: "signup",
-      component: SignupViewAdmin,
-    },
-    {
-      path: "/admin/login",
-      name: "loginAdmin",
-      component: LoginViewAdmin,
-    },
-    {
-      path: "/user/login",
-      name: "loginUser",
-      component: LoginViewUser,
-    },
-    {
       path: "/login",
-      name: "login-User",
+      name: "login",
       component: LoginPage,
       meta: { guest: true },
     },
@@ -203,7 +185,7 @@ const router = createRouter({
           component: import("../pages/user/AllClass.vue"),
         },
         {
-          path: "/class-teacher/:class_id",
+          path: "/class-teacher/:slug/:id",
           name: "class",
           component: import("../pages/user/ClassLayout.vue"),
           children:[
@@ -216,13 +198,13 @@ const router = createRouter({
               path: "class-attendance",
               name: "class-attendance",
               component: import("../pages/user/contents/AttendanceManage.vue"),
-           
+
             },
             {
               path: "class-students",
               name: "class-students",
               component: import("../pages/user/contents/StudentManage.vue"),
-           
+
             },
           ]
         },
@@ -288,20 +270,20 @@ router.beforeEach((to, from, next) => {
     if (!isAuthenticated) {
       next({ path: "/login" });
     } else if (to.meta.role && user.role_id !== to.meta.role) {
-      if (user.role_id === 1) {
+      if (user.role.name === 'admin') {
         next({ path: "/admin/dashboard" });
       } else {
-        next({ path: "/home" });
+        next({ path: "/lay-teacher" });
       }
     } else {
       next();
     }
   } else if (to.matched.some((record) => record.meta.guest)) {
     if (isAuthenticated) {
-      if (user.role_id === 1) {
+      if (user.role.name === 'admin') {
         next({ path: "/admin/dashboard" });
       } else {
-        next({ path: "/home" });
+        next({ path: "/lay-teacher" });
       }
     } else {
       next();

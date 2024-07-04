@@ -7,7 +7,7 @@
             <v-btn icon="mdi-menu-down" size="small" variant="text"></v-btn>
           </template>
         </v-list-item>
-      
+
       </template>
 
       <v-card min-width="250" >
@@ -68,8 +68,7 @@ export default {
         link: "https://google.com",
       },
     ],
-    username: "Username",
-    userEmail: "user@example.com",
+
   }),
   computed: {
     ...mapGetters(["isAuthenticated"]),
@@ -89,12 +88,11 @@ export default {
     async handleLogout() {
       try {
         await this.logout();
-        this.$router.push("/login"); // Adjust as needed
       } catch (error) {
         console.error("Logout failed", error);
       }
     },
   },
-  
+
 };
 </script>

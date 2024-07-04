@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn :color="color" rounded="xl" size="x-large" block> {{ label }}</v-btn>
+    <v-btn color="#E84D72" rounded="xl" size="large" class="text-none" block> {{ label }}</v-btn>
   </div>
 </template>
 
