@@ -2,7 +2,7 @@
   <v-data-table
     :headers="headers"
     :items="filteredClasses"
-    class="elevation-1 cursor-pointer"
+    class="cursor-pointer"
     item-value="name"
     show-select
     :loading="loading"
@@ -25,7 +25,7 @@
         <v-select
           v-model="selectedDep"
           :items="DepOptions"
-          label="Filter by Department"
+          label="Filter by teacher"
           class="md-6 mr-4 w-15 grey-lighten-2"
           density="compact"
           hide-details="auto"
@@ -95,15 +95,7 @@
                     density="compact"
                   ></v-text-field>
                 </v-col>
-
-                <v-col cols="6">
-                  <v-select
-                    v-model="classToEdit.department_id"
-                    :items="DepOptions"
-                    label="Department"
-                    density="compact"
-                  ></v-select>
-                </v-col>
+                
               </v-row>
             </v-form>
           </v-card-text>
@@ -131,14 +123,7 @@
                       density="compact"
                     ></v-text-field>
                   </v-col>
-
                   <v-col cols="6">
-                    <v-select
-                      v-model="newClass.department_id"
-                      :items="DepOptions"
-                      label="Department"
-                      density="compact"
-                    ></v-select>
                     <v-select
                       v-model="newClass.teacher"
                       :items="FilteredTeacherOptions"
@@ -224,7 +209,9 @@ export default {
     headers: [
       { title: "Name", value: "name" },
       { title: "ID", value: "id" },
-      { title: "Department", value: "department_id" },
+      { title: "Sub name", value: "slug" },
+      { title: "Created by", value: "created_by" },
+      { title: "Total students", value: "total_students" },
       { title: "Created at", value: "created_at" },
       { title: "Actions", value: "actions", filterable: false, sortable: false, align: "end" },
     ],
@@ -290,6 +277,9 @@ export default {
           ...item,
           created_at: item.created_at || "N/A", // Handle null value for phone
           department_id: item.department_id || "N/A",
+          created_by: item.teacher.user.email || "N/A",
+          slug: item.slug || "N/A",
+          total_students: item.students.length || "N/A",
         }));
         console.log(this.classes);
       } catch (error) {

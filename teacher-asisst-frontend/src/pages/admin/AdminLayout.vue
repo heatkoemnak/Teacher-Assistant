@@ -181,18 +181,18 @@ export default {
         //   icon: "mdi-calendar-check",
         //   route: "attendance",
         // },
-        {
-          id: 5,
-          title: "Departments",
-          icon: "mdi-domain",
-          route: "departments",
-        },
-        {
-          id: 6,
-          title: "Subjects",
-          icon: "mdi-book-open-variant",
-          route: "subjects",
-        },
+        // {
+        //   id: 5,
+        //   title: "Departments",
+        //   icon: "mdi-domain",
+        //   route: "departments",
+        // },
+        // {
+        //   id: 6,
+        //   title: "Subjects",
+        //   icon: "mdi-book-open-variant",
+        //   route: "subjects",
+        // },
         {
           id: 7,
           title: "Teachers",

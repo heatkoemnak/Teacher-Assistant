@@ -43,8 +43,9 @@ Route::group(['middleware' => ['api']], function () {
     Route::post('/classes/create', [ClassController::class, 'store']);
     Route::put('/classes/{id}', [ClassController::class, 'update']);
     Route::delete('/classes/{id}', [ClassController::class, 'destroy']);
-    Route::post('classes/{id}/students', [ClassController::class, 'addStudents']);
+    Route::post('classes/{class}/attach', [ClassController::class, 'addStudents']);
     Route::get('classes/{teacher}/classes', [ClassController::class, 'showClassWhereTeacherID']);
+    Route::delete('classes/{class}/detach', [ClassController::class, 'removeStudents']);
 
 
     //subject routes

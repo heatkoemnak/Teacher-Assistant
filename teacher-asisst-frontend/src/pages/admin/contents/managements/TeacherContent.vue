@@ -11,7 +11,7 @@
     <template v-slot:top>
       <v-card-title>Teachers</v-card-title>
 
-      <v-toolbar flat>
+      <v-toolbar color="light-blue-darken-4">
         <v-text-field
           v-model="search"
           density="compact"

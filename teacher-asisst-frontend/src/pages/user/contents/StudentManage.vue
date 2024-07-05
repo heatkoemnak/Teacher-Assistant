@@ -53,7 +53,7 @@
             Confirm Delete
           </v-toolbar>
           <v-card-text>
-            Are you sure you want to delete this teacher?
+            Are you sure you want to delete this Student?
           </v-card-text>
           <v-card-actions>
             <v-btn
@@ -67,7 +67,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialogEdit" max-width="700px">
+      <!-- <v-dialog v-model="dialogEdit" max-width="700px">
         <v-card>
           <v-toolbar
             dense
@@ -132,7 +132,6 @@
                     label="Gender"
                     density="compact"
                   ></v-select>
-
                 </v-col>
               </v-row>
               <v-text-field
@@ -149,7 +148,7 @@
             <v-btn color="green" @click="editItemConfirm">Edit</v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog> -->
       <v-dialog v-model="dialogCreate" max-width="700px">
         <v-card>
           <v-card-text>
@@ -162,25 +161,25 @@
             ></v-progress-linear>
             <v-form ref="createForm" v-model="valid" lazy-validation>
               <v-container>
-                <v-toolbar-title class="mb-10"
-                  >Add student</v-toolbar-title
-                >
-                <v-row>
-
+                <v-toolbar-title class="mb-10">Add student</v-toolbar-title>
+                <!-- <v-row>
+                  <template v-slot:prepend-item>
                   <v-text-field
-                  v-model="search"
-                  density="compact"
-                  label="Search by Name or ID"
-                  prepend-inner-icon="mdi-magnify"
-                  variant="outlined"
-                  hide-details
-                  class="mb-4"
-                ></v-text-field>
+                    v-model="search"
+                    density="compact"
+                    label="Search by Name or ID"
+                    prepend-inner-icon="mdi-magnify"
+                    variant="outlined"
+                    hide-details
+                    class="mb-4"
+                    ripple @mousedown.prevent
+                    @click="toggle"
+                  ></v-text-field>
 
-                </v-row>
+                </template>
+                </v-row> -->
                 <v-row>
-
-                    <v-select
+                  <v-select
                     v-model="selectedStudents"
                     :items="studentOptions"
                     label="Select students"
@@ -190,20 +189,20 @@
                     variant="outlined"
                   >
                     <template v-slot:prepend-item>
-                      <v-list-item
-                        ripple
-                        @mousedown.prevent
-                        @click="toggle"
-                      >
+                      <v-list-item ripple @mousedown.prevent @click="toggle">
                         <v-list-item-action>
-                          <v-icon :color="selectedStudents.length > 0 ? 'indigo darken-4' : ''">
+                          <v-icon
+                            :color="
+                              selectedStudents.length > 0
+                                ? 'indigo darken-4'
+                                : ''
+                            "
+                          >
                             {{ icon }}
                           </v-icon>
                         </v-list-item-action>
                         <v-list-item-content>
-                          <v-list-item-title>
-                            Select All
-                          </v-list-item-title>
+                          <v-list-item-title> Select All </v-list-item-title>
                         </v-list-item-content>
                       </v-list-item>
                       <v-divider class="mt-2"></v-divider>
@@ -212,21 +211,17 @@
                       <v-divider class="mb-2"></v-divider>
                       <v-list-item disabled>
                         <v-list-item-avatar color="grey lighten-3">
-                          <v-icon>
-                            mdi-food-apple
-                          </v-icon>
+                          <v-icon> mdi-food-apple </v-icon>
                         </v-list-item-avatar>
 
-                        <v-list-item-content v-if="likesAllFruit">
+                        <v-list-item-content v-if="likesAllStudents">
                           <v-list-item-title>
                             All students has been selected.
                           </v-list-item-title>
                         </v-list-item-content>
 
-                        <v-list-item-content v-else-if="likesSomeFruit">
-                          <v-list-item-title>
-                            Student Count
-                          </v-list-item-title>
+                        <v-list-item-content v-else-if="likesSomeStudents">
+                          <v-list-item-title> Student Count </v-list-item-title>
                           <v-list-item-subtitle>
                             {{ selectedStudents.length }}
                           </v-list-item-subtitle>
@@ -240,7 +235,6 @@
                       </v-list-item>
                     </template>
                   </v-select>
-
                 </v-row>
 
                 <v-card-actions>
@@ -294,21 +288,24 @@
       </v-overlay>
     </template>
 
-    <template v-slot:item.actions="{ item }" >
+    <template v-slot:item.actions="{ item }">
       {{console.log(item)}}
       <div class="d-flex align-center justify-end">
-          <v-chip color="blue" class="ma-2" :to="`/admin/profile/basic-info/${item.user_id}/personal-details`">views</v-chip>
-        <v-icon
+        <v-chip
           color="blue"
-          class="me-2"
-          size="small"
-          @click="openEditDialog(item)"
+          class="ma-2"
+          :to="`/admin/profile/basic-info/${item.user_id}/personal-details`"
+          >views</v-chip
         >
-          mdi-pencil
-        </v-icon>
-        <v-icon color="red" size="small" @click="openDeleteDialog(item)">
+        <v-chip
+          color="red"
+          class="ma-2"
+          @click="openDeleteDialog(item)"
+          >Detach</v-chip
+        >
+        <!-- <v-icon color="red" size="small" @click="openDeleteDialog(item)">
           mdi-delete
-        </v-icon>
+        </v-icon> -->
       </div>
     </template>
   </v-data-table>
@@ -317,17 +314,21 @@
 import axios from "@/axios";
 export default {
   data: () => ({
-
-
     headers: [
-  { title: "Name", value: "fullname" },
-  { title: "ID", value: "id" },
-  { title: "Email", value: "email" },
-  { title: "DOB", value: "dob" },
-  { title: "Phone", value: "phone" },
-  { title: "Gender", value: "gender" },
-  { title: "Action", value: "actions", filterable: false, sortable: false, align: "end" },
-],
+      { title: "Name", value: "fullname" },
+      { title: "ID", value: "id" },
+      { title: "Email", value: "email" },
+      { title: "DOB", value: "dob" },
+      { title: "Phone", value: "phone" },
+      { title: "Gender", value: "gender" },
+      {
+        title: "Action",
+        value: "actions",
+        filterable: false,
+        sortable: false,
+        align: "end",
+      },
+    ],
 
     dialogEdit: false,
     dialogDelete: false,
@@ -336,28 +337,29 @@ export default {
     students: [],
     search: "",
     selectedGender: "",
-    flow : ["month", "year", "calendar"],
+    flow: ["month", "year", "calendar"],
     genderOptions: [
       { title: "All", value: "" },
       { title: "Male", value: "male" },
       { title: "Female", value: "female" },
       { title: "Other", value: "other" },
     ],
-    studentLists:[],
+    studentLists: [],
     selectedStudents: [],
-    studentToDelete: null,
+    studentIdToDelete: [],
     studentToEdit: null,
     newStudent: {
       first_name: "",
       last_name: "",
       email: "",
-      dob:new Date().toISOString().substr(0, 10),
+      dob: new Date().toISOString().substr(0, 10),
       phone: "",
       gender: "",
       password: "",
       password_confirmation: "",
     },
-    displayStudents:[],
+    student_ids: [],
+    displayStudents: [],
     menu: false,
     modal: false,
     menuEdit: false,
@@ -381,7 +383,6 @@ export default {
     this.fetchStudentsFromClassId();
   },
   computed: {
-
     filteredStudents() {
       return this.students.filter((student) => {
         const matchesGender = this.selectedGender
@@ -391,28 +392,26 @@ export default {
         const matchesSearch =
           student.fullname.toLowerCase().includes(this.search.toLowerCase()) ||
           student.id.toString().includes(this.search);
-        return matchesGender && matchesSearch
+        return matchesGender && matchesSearch;
       });
     },
-    studentOptions () {
-      return this.studentLists.map(fruit => ({
-        id: fruit.id,
-        name: fruit.user.name
+    studentOptions() {
+      return this.studentLists.map((student) => ({
+        id: student.id,
+        name: student.user.email,
       }));
     },
-      likesAllFruit () {
-        return this.selectedStudents.length === this.studentOptions.length
-      },
-      likesSomeFruit () {
-        return this.selectedStudents.length > 0 && !this.likesAllFruit
-      },
-      icon () {
-        if (this.likesAllFruit) return 'mdi-close-box'
-        if (this.likesSomeFruit) return 'mdi-minus-box'
-        return 'mdi-checkbox-blank-outline'
-      },
-
-
+    likesAllStudents() {
+      return this.selectedStudents.length === this.studentOptions.length;
+    },
+    likesSomeStudents() {
+      return this.selectedStudents.length > 0 && !this.likesAllStudents;
+    },
+    icon() {
+      if (this.likesAllStudents) return "mdi-close-box";
+      if (this.likesSomeStudents) return "mdi-minus-box";
+      return "mdi-checkbox-blank-outline";
+    },
   },
   mounted() {
     this.registeredStudents();
@@ -428,26 +427,27 @@ export default {
       val || this.closeCreateDialog();
     },
     selectedStudents(val) {
-      console.log("Selected students", val);
+      this.student_ids = val;
     },
   },
   methods: {
-    toggle () {
-        this.$nextTick(() => {
-          if (this.likesAllFruit) {
-            this.selectedStudents = []
-          } else {
-            this.selectedStudents = this.studentOptions.map(fruit => fruit.id);
-          }
-        })
-      },
+    toggle() {
+      this.$nextTick(() => {
+        if (this.likesAllStudents) {
+          this.selectedStudents = [];
+        } else {
+          this.selectedStudents = this.studentOptions.map(
+            (student) => student.id
+          );
+        }
+      });
+    },
 
     async fetchStudentsFromClassId() {
       try {
         this.loading = true;
         const response = await axios.get(`classes/${this.$route.params.id}`);
-        this.students = response.data.students
-        .map((student) => ({
+        this.students = response.data.students.map((student) => ({
           ...student,
           fullname: student.user.name,
           email: student.user.email,
@@ -467,9 +467,7 @@ export default {
       try {
         this.loading = true;
         const response = await axios.get("students");
-        this.studentLists= response.data;
-        console.log(this.studentLists);
-
+        this.studentLists = response.data;
       } catch (error) {
         console.error("Error fetching student list:", error);
         this.showErrorSnackbar = true;
@@ -480,30 +478,33 @@ export default {
     },
 
 
-    openDeleteDialog(item) {
-      this.studentToDelete = item;
-      this.dialogDelete = true;
-    },
 
     closeDeleteDialog() {
       this.dialogDelete = false;
-      this.studentToDelete = null;
+      this.studentIdToDelete = null;
+    },
+
+
+    openDeleteDialog(item) {
+      const ItemID=[];
+      ItemID.push(item.id);
+      this.student_ids=ItemID;
+      this.dialogDelete = true;
     },
 
     async deleteItemConfirm() {
-      if (this.studentToDelete) {
+      console.log(this.student_ids);
         try {
-          await axios.delete(`/students/${this.studentToDelete.id}/delete`);
+          await axios.delete(`classes/${this.$route.params.id}/detach`,{student_ids:this.student_ids},);
           this.closeDeleteDialog();
-          this.fetchData(); // Refresh the data after deletion
+          this.fetchStudentsFromClassId(); //
           this.showSuccessSnackbar = true;
-          this.successMessage = "Teacher deleted successfully.";
+          this.successMessage = "Student deleted successfully.";
         } catch (error) {
           console.error("Error deleting data:", error);
           this.showErrorSnackbar = true;
-          this.errorMessage = "Error deleting teacher.";
+          this.errorMessage = "Error deleting Student.";
         }
-      }
     },
 
     openEditDialog(item) {
@@ -523,13 +524,13 @@ export default {
             this.studentToEdit
           );
           this.closeEditDialog();
-          this.fetchData(); // Refresh the data after edit
+          this.registeredStudents();
           this.showSuccessSnackbar = true;
-          this.successMessage = "Teacher edited successfully.";
+          this.successMessage = "Student edited successfully.";
         } catch (error) {
           console.error("Error updating data:", error);
           this.showErrorSnackbar = true;
-          this.errorMessage = "Error editing teacher.";
+          this.errorMessage = "Error editing Student.";
         } finally {
           this.IsLoading = false;
         }
@@ -543,53 +544,61 @@ export default {
     closeCreateDialog() {
       this.dialogCreate = false;
     },
+    displaySelectedStudent() {
+      this.student_ids = this.selectedStudents;
+      console.log(this.student_ids);
+      this.createItemConfirm();
+      // this.displayStudents = this.selectedStudents.map((id) => {
+      //   return this.studentOptions.find((student) => student.id === id);
+      // });
+      // const studentIds = this.displayStudents.map((student) => {
+      //   return student.id;
+      // });
+      // this.student_ids = studentIds;
+      // this.createItemConfirm();
+    },
     async createItemConfirm() {
       if (this.$refs.createForm.validate()) {
         try {
-          await axios.post(
-            "/students/create",
-            this.newStudent
-          );
+          this.IsLoading = true;
+          await axios.post(`classes/${this.$route.params.id}/attach`, {
+            student_ids: this.student_ids,
+          });
           this.closeCreateDialog();
-          this.fetchData(); // Refresh the data after creation
+          this.fetchStudentsFromClassId(); // Refresh the student list in the class
           this.showSuccessSnackbar = true;
-          this.successMessage = "Teacher created successfully.";
+          this.successMessage = "Students added successfully.";
         } catch (error) {
           console.error("Error creating data:", error);
           this.showErrorSnackbar = true;
-          this.errorMessage = "Error creating teacher.";
+          this.errorMessage = "Error adding students.";
+        } finally {
+          this.IsLoading = false;
         }
       }
     },
-    displaySelectedStudent() {
-      this.displayStudents = this.selectedStudents.map(id => {
-        return this.studentOptions.find(fruit => fruit.id === id);
-      });
-      // console.log(this.displayStudents.map((student)=>{
-      //   return student.id
-      // }));
-    },
-    generatePassword() {
-      const length = 12;
-      const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=';
-      let generatedPassword = '';
-      for (let i = 0, n = charset.length; i < length; ++i) {
-        generatedPassword += charset.charAt(Math.floor(Math.random() * n));
-      }
-      this.newStudent.password = generatedPassword;
-      this.newStudent.password_confirmation = generatedPassword;
+  },
 
-    },
+  generatePassword() {
+    const length = 12;
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+    let generatedPassword = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
+      generatedPassword += charset.charAt(Math.floor(Math.random() * n));
+    }
+    this.newStudent.password = generatedPassword;
+    this.newStudent.password_confirmation = generatedPassword;
+  },
 
-    //validation rules
+  //validation rules
 
-    required: (value) => !!value || "Required.",
-    counter: (value) => value.length >= 3 || "min 3 characters",
-    isEmail: (value) => {
-      const pattern =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return pattern.test(value) || "Invalid e-mail.";
-    },
+  required: (value) => !!value || "Required.",
+  counter: (value) => value.length >= 3 || "min 3 characters",
+  isEmail: (value) => {
+    const pattern =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return pattern.test(value) || "Invalid e-mail.";
   },
 };
 </script>
