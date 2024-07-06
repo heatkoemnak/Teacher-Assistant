@@ -1,202 +1,267 @@
 <template>
-  <div>
-    <v-data-table-server
-      :headers="headers"
-      :items="serverItems"
-      :items-length="totalItems"
-      :loading="loading"
-      :search="search"
-      item-value="name"
-      @update:options="loadItems"
-      fixed-header
-      height="420"
-      disable-pagination
-      disable-sort
-      hide-default-footer
-    >
-      <template v-slot:item.March="{ item }">
-        <div class="d-flex justify-start align-center">
-          <v-autocomplete
-            variant="underlined"
-            :items="['Present', 'Permission', 'Absent']"
-            v-model="attendStatus"
-          ></v-autocomplete>
-        </div>
-      </template>
-      <template v-slot:top>
-        <div class="d-flex align-center">
-          <v-text-field
-            v-model="name"
-            class="ma-2"
-            density="compact"
-            placeholder="Search name..."
-            hide-details
-            width="20"
-            variant="outlined"
-          ></v-text-field>
-          <v-spacer></v-spacer>
-          <addDateDiol @get-date="onAddDate" />
-        </div>
-      </template>
-    </v-data-table-server>
-  </div>
+  <v-data-table
+    :headers="combinedHeaders"
+    :items="filteredStudents"
+    class="cursor-pointer"
+    item-value="name"
+    show-select
+    :loading="loading"
+  >
+    <template v-slot:top>
+      <v-card-title>Students</v-card-title>
+
+      <v-toolbar color="grey-lighten-5">
+        <v-text-field
+          v-model="search"
+          density="compact"
+          label="Search by Name or ID"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          hide-details
+          class="ml-4"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+
+        <v-select
+          v-model="selectedGender"
+          :items="genderOptions"
+          label="Filter by Gender"
+          class="md-6 mr-4 w-15 grey-lighten-2"
+          density="compact"
+          hide-details="auto"
+          variant="solo"
+        ></v-select>
+        <addDateDiol @get-date="onAddDate" />
+        <v-btn
+          class="text-none text-subtitle-1 mr-2"
+          color="#F3797E"
+          variant="flat"
+          @click="ImpPDF"
+        >
+          PDF
+        </v-btn>
+        <v-btn
+          class="text-none text-subtitle-1 mr-2"
+          color="#F3797E"
+          variant="flat"
+          @click="ExpCSV()"
+        >
+          EXCEL
+        </v-btn>
+      </v-toolbar>
+    </template>
+
+    <template v-slot:progress>
+      <v-overlay :value="loading">
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
+    </template>
+
+    <template v-slot:item.attendance="{ item }">
+      {{ item.attendance }}
+    </template>
+
+    <template v-for="header in dynamicHeaders" v-slot:[`item.${header.key}`]="{ item }">
+      <div class="d-flex justify-start align-center">
+        <v-autocomplete
+          variant="underlined"
+          :items="attendanceStatuses"
+          v-model="item.attendanceDates[header.key]"
+          @update:model-value="updateAttendance(item)"
+        ></v-autocomplete>
+      </div>
+    </template>
+  </v-data-table>
 </template>
+
 <script>
+import axios from "@/axios";
+import { toRaw } from 'vue';
 import addDateDiol from "../components/addDateDiol.vue";
-
-function generateData() {
-  const data = [];
-  const genders = [
-    "",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-    "Male",
-    "Female",
-  ];
-  const desserts = [
-    "",
-    "Frozen Yogurt",
-    "Jelly bean",
-    "KitKat",
-    "Eclair",
-    "Gingerbread",
-    "Ice cream sandwich",
-    "Lollipop",
-    "Cupcake",
-    "Honeycomb",
-    "Donut",
-    "Honeycomb",
-    "Donut",
-  ];
-
-  for (let i = 1; i <= 12; i++) {
-    // const randomGenderIndex = Math.floor(Math.random() * genders.length);
-    const student_id = i * 12;
-    const name = desserts[i];
-    const gender = genders[i];
-    const edit = "Edit";
-    const del = "Delete";
-
-    data.push({
-      id: i,
-      name,
-      student_id,
-      gender,
-      edit,
-      delete: del,
-    });
-  }
-  return data;
-}
-
-const FakeAPI = {
-  async fetch({ page, itemsPerPage, sortBy, search }) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const items = generateData()
-          .slice()
-          .filter((item) => {
-            if (
-              search.name &&
-              !item.name.toLowerCase().includes(search.name.toLowerCase())
-            ) {
-              return false;
-            }
-
-            if (
-              search.student_id &&
-              !(item.student_id >= Number(search.student_id))
-            ) {
-              return false;
-            }
-
-            return true;
-          });
-
-        if (sortBy.length) {
-          const sortKey = sortBy[0].key;
-          const sortOrder = sortBy[0].order;
-          items.sort((a, b) => {
-            const aValue = a[sortKey];
-            const bValue = b[sortKey];
-            return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
-          });
-        }
-
-        const paginated = items.slice(start, end);
-
-        resolve({ items: paginated, total: items.length });
-      }, 500);
-    });
-  },
-};
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default {
-  components: {
-    addDateDiol,
-  },
+  components: { addDateDiol },
   data: () => ({
-    itemsPerPage: 10,
     headers: [
-      { title: "No.", key: "id" },
-      { title: "Name", key: "name" },
-      { title: "Student ID", key: "student_id" },
-      { title: "Gender", key: "gender" },
-      { title: "Attendance", key: "attendance" },
+      { title: "Name", value: "fullname" },
+      { title: "ID", value: "id" },
+      { title: "Gender", value: "gender" },
+      { title: "Attendance", value: "attendance" }, // Ensure attendance is part of headers
     ],
-    generatedData: [],
-    serverItems: [],
+    attendanceStatuses: ["Present", "Absent"],
+    dynamicHeaders: [],
     loading: true,
-    totalItems: 0,
-    name: "",
-    student_id: 0,
+    students: [],
     search: "",
-    attendStatus: null,
+    selectedGender: "",
+    genderOptions: [
+      { title: "All", value: "" },
+      { title: "Male", value: "male" },
+      { title: "Female", value: "female" },
+      { title: "Other", value: "other" },
+    ],
   }),
-  watch: {
-    name() {
-      this.search = String(Date.now());
-    },
-    student_id() {
-      this.search = String(Date.now());
-    },
-    attendStatus(newVal) {
-      console.log(newVal);
-    },
+
+  created() {
+    this.fetchStudentsFromClassId();
   },
 
-  mounted() {
-    console.log(this.student_id);
+  computed: {
+    filteredStudents() {
+      return this.students.filter((student) => {
+        const matchesGender = this.selectedGender
+          ? student.user.profile.gender === this.selectedGender
+          : true;
+
+        const matchesSearch =
+          student.fullname.toLowerCase().includes(this.search.toLowerCase()) ||
+          student.id.toString().includes(this.search);
+        return matchesGender && matchesSearch;
+      });
+    },
+    combinedHeaders() {
+      return [...this.headers, ...this.dynamicHeaders];
+    },
   },
 
   methods: {
-    loadItems({ page, itemsPerPage, sortBy }) {
-      this.loading = true;
-      FakeAPI.fetch({
-        page,
-        itemsPerPage,
-        sortBy,
-        search: { name: this.name, student_id: this.student_id },
-      }).then(({ items, total }) => {
-        this.serverItems = items;
-        this.totalItems = total;
+    ExpCSV() {
+      const studentList = toRaw(this.students);
+      const simplifiedStudents = studentList.map(student => {
+        const studentData = {
+          id: student.id,
+          fullname: student.fullname,
+          email: student.email,
+          gender: student.gender,
+          attendance: this.calculateAttendance(student),
+        };
+        this.dynamicHeaders.forEach(header => {
+          studentData[header.title] = student.attendanceDates[header.key];
+        });
+        return studentData;
+      });
+
+      const csvContent = this.convertToCSV(simplifiedStudents);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'export_data.csv');
+      link.click();
+    },
+
+    ImpPDF() {
+      const studentList = toRaw(this.students);
+      const simplifiedStudents = studentList.map(student => {
+        const studentData = {
+          id: student.id,
+          fullname: student.fullname,
+          email: student.email,
+          gender: student.gender,
+          attendance: this.calculateAttendance(student),
+        };
+        this.dynamicHeaders.forEach(header => {
+          studentData[header.title] = student.attendanceDates[header.key];
+        });
+        return studentData;
+      });
+
+      let info = [];
+      simplifiedStudents.forEach(element => {
+        const row = [
+          element.id,
+          element.fullname,
+          element.email,
+          element.gender,
+          element.attendance,
+        ];
+        this.dynamicHeaders.forEach(header => {
+          row.push(element[header.title]);
+        });
+        info.push(row);
+      });
+
+      let doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text('Student list', 14, 22);
+      const tableHeader = [
+        'id', 'Fullname', 'email', 'gender', 'attendance',
+        ...this.dynamicHeaders.map(header => header.title),
+      ];
+      doc.autoTable({
+        startY: 30,
+        head: [tableHeader],
+        body: info,
+      });
+      doc.save('export_Data.pdf');
+    },
+
+    convertToCSV(data) {
+      const headers = Object.keys(data[0]);
+      const rows = data.map(obj => headers.map(header => obj[header]));
+      const headerRow = headers.join(',');
+      const csvRows = [headerRow, ...rows.map(row => row.join(','))];
+      return csvRows.join('\n');
+    },
+
+    calculateAttendance(student) {
+      const totalDates = this.dynamicHeaders.length;
+      if (totalDates === 0) return "0%";
+      const presentCount = Object.values(student.attendanceDates).filter(status => status === "Present").length;
+      return `${((presentCount / totalDates) * 100).toFixed(2)}%`;
+    },
+
+    async fetchStudentsFromClassId() {
+      try {
+        this.loading = true;
+        const response = await axios.get(`classes/${this.$route.params.id}`);
+        this.students = response.data.students.map(student => {
+          const attendanceDates = this.initializeAttendanceDates();
+          return {
+            ...student,
+            fullname: student.user.name,
+            email: student.user.email,
+            gender: student.user.profile.gender || "N/A",
+            attendanceDates: attendanceDates,
+            attendance: this.calculateAttendance({
+              ...student,
+              attendanceDates
+            })
+          };
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
         this.loading = false;
+      }
+    },
+
+    initializeAttendanceDates() {
+      const attendanceDates = {};
+      this.dynamicHeaders.forEach(header => {
+        attendanceDates[header.key] = "Absent";
+      });
+      return attendanceDates;
+    },
+    
+    updateAttendance(student) {
+      student.attendance = this.calculateAttendance(student);
+    },
+    
+    onAddDate(date) {
+      const key = date.replace(/\//g, "_");
+      this.dynamicHeaders.push({ title: date, key: key });
+      this.students.forEach(student => {
+        this.$set(student.attendanceDates, key, "Absent");
+        student.attendance = this.calculateAttendance(student); // Recalculate attendance
       });
     },
-    onAddDate(val) {
-      const newDate = {
-        title: `${val}`,
-        key: "March",
-      };
-      this.headers.push(newDate);
+    
+    openDeleteDialog(item) {
+      console.log("Deleting student:", item);
+      // Implement delete logic as needed
     },
   },
 };

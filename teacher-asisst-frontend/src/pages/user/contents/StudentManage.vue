@@ -33,8 +33,7 @@
         ></v-select>
         <v-btn
           class="text-none text-subtitle-1"
-          color="#5865f2"
-          size="small"
+          color="#F3797E"
           variant="flat"
           @click="openCreateDialog"
         >
@@ -60,95 +59,12 @@
               color="blue-darken-1"
               variant="text"
               @click="closeDeleteDialog"
-              >Cancel</v-btn
-            >
+              > Cancel </v-btn>
             <v-spacer></v-spacer>
             <v-btn color="red" @click="deleteItemConfirm">Delete</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <!-- <v-dialog v-model="dialogEdit" max-width="700px">
-        <v-card>
-          <v-toolbar
-            dense
-            flat
-            class="body-2 font-weight-bold px-5"
-            color="grey lighten-2"
-          >
-            Confirm Edit
-          </v-toolbar>
-          <v-card-text>
-            <v-progress-linear
-              :active="IsLoading"
-              :indeterminate="IsLoading"
-              color="deep-purple-accent-4"
-              absolute
-              bottom
-            ></v-progress-linear>
-            <v-form ref="editForm" v-model="valid" lazy-validation>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="studentToEdit.first_name"
-                    :rules="[required, counter]"
-                    label="First Name"
-                    density="compact"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="studentToEdit.last_name"
-                    :rules="[required, counter]"
-                    label="Last Name"
-                    density="compact"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-menu
-                    v-model="menu"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="290px"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="studentToEdit.dob"
-                        label="Date of Birth"
-                        prepend-icon="mdi-calendar"
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="studentToEdit.dob"
-                      @input="menu = false"
-                      locale="en-us"
-                    ></v-date-picker>
-                  </v-menu>
-                  <v-select
-                    v-model="studentToEdit.gender"
-                    :items="genderOptions"
-                    label="Gender"
-                    density="compact"
-                  ></v-select>
-                </v-col>
-              </v-row>
-              <v-text-field
-                v-model="studentToEdit.phone"
-                label="Phone"
-              ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="blue-darken-1" variant="text" @click="closeEditDialog"
-              >Cancel</v-btn
-            >
-            <v-spacer></v-spacer>
-            <v-btn color="green" @click="editItemConfirm">Edit</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog> -->
       <v-dialog v-model="dialogCreate" max-width="700px">
         <v-card>
           <v-card-text>
@@ -162,22 +78,6 @@
             <v-form ref="createForm" v-model="valid" lazy-validation>
               <v-container>
                 <v-toolbar-title class="mb-10">Add student</v-toolbar-title>
-                <!-- <v-row>
-                  <template v-slot:prepend-item>
-                  <v-text-field
-                    v-model="search"
-                    density="compact"
-                    label="Search by Name or ID"
-                    prepend-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    hide-details
-                    class="mb-4"
-                    ripple @mousedown.prevent
-                    @click="toggle"
-                  ></v-text-field>
-
-                </template>
-                </v-row> -->
                 <v-row>
                   <v-select
                     v-model="selectedStudents"
@@ -301,7 +201,7 @@
           color="red"
           class="ma-2"
           @click="openDeleteDialog(item)"
-          >Detach</v-chip
+          >Delete</v-chip
         >
         <!-- <v-icon color="red" size="small" @click="openDeleteDialog(item)">
           mdi-delete
@@ -372,7 +272,6 @@ export default {
     successMessage: "",
     errorMessage: "",
     timeout: 3000,
-
     passwordRules: [
       (v) => !!v || "Password ist needed",
       (v) => v.length >= 8 || "Password is to short",
@@ -546,16 +445,8 @@ export default {
     },
     displaySelectedStudent() {
       this.student_ids = this.selectedStudents;
-      console.log(this.student_ids);
+      // console.log(this.student_ids);
       this.createItemConfirm();
-      // this.displayStudents = this.selectedStudents.map((id) => {
-      //   return this.studentOptions.find((student) => student.id === id);
-      // });
-      // const studentIds = this.displayStudents.map((student) => {
-      //   return student.id;
-      // });
-      // this.student_ids = studentIds;
-      // this.createItemConfirm();
     },
     async createItemConfirm() {
       if (this.$refs.createForm.validate()) {

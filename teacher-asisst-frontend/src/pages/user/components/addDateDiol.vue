@@ -1,7 +1,7 @@
 <template>
   <v-dialog max-width="500" persistent>
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn v-bind="activatorProps" color="#F3797E" variant="flat">
+      <v-btn v-bind="activatorProps" class="mr-2" color="#F3797E" variant="flat">
         <v-icon dark>mdi-plus</v-icon>Add Date
       </v-btn>
     </template>
