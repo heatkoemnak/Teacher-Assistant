@@ -14,6 +14,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AttendanceController;
 
 
 /*
@@ -107,13 +108,17 @@ Route::group(['middleware' => ['api']], function () {
     Route::get('/teachers/{user}/user', [TeacherController::class, 'showTeacherWithUserID']);
 
     //student routes
-
     Route::get('/students', [StudentController::class, 'index']);
     Route::get('/students/{id}', [StudentController::class, 'show']);
     Route::post('/students/create', [StudentController::class, 'store']);
     Route::put('/students/{id}/edit', [StudentController::class, 'update']);
     Route::delete('/students/{id}/delete', [StudentController::class, 'destroy']);
     Route::get('/students/{class}/students', [StudentController::class, 'showStudentViaClass']);
+
+    //attendance
+    Route::get('/attendance', [AttendanceController::class, 'index']);
+    Route::post('/attendance/create', [AttendanceController::class, 'store']);
+    Route::put('/attendance/{student}', [AttendanceController::class, 'update']);
 
 });
 
