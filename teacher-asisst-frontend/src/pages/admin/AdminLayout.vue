@@ -21,7 +21,7 @@
       <v-list-item
         class="pa-5"
         prepend-avatar="https://randomuser.me/api/portraits/men/86.jpg"
-        title="Mr. Koemnak"
+        title="Admin Panel"
         nav
       >
         <template v-slot:append>

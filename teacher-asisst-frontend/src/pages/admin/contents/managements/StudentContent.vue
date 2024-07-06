@@ -39,7 +39,7 @@
           variant="flat"
           @click="openCreateDialog"
         >
-          New Teacher
+          New Student
         </v-btn>
       </v-toolbar>
 
@@ -164,7 +164,7 @@
             <v-form ref="createForm" v-model="valid" lazy-validation>
               <v-container>
                 <v-toolbar-title class="mb-10"
-                  >Create New Teacher</v-toolbar-title
+                  >Create New Student</v-toolbar-title
                 >
                 <v-row>
                   <v-col cols="6">
@@ -348,10 +348,8 @@ export default {
     selectedDep: "",
     flow : ["month", "year", "calendar"],
     genderOptions: [
-      { title: "All", value: "" },
       { title: "Male", value: "male" },
       { title: "Female", value: "female" },
-      { title: "Other", value: "other" },
     ],
     DepOptions: [],
     studentToDelete: null,
