@@ -164,6 +164,7 @@ const router = createRouter({
       name: "layout-teacher",
       component: import("../pages/user/LayoutTeacher.vue"),
       meta: { requiresAuth: true, role: 2 },
+      redirect: '/board',
       children: [
         {
           path: "/board",
@@ -232,6 +233,7 @@ const router = createRouter({
       name: "dashboard",
       meta: { requiresAuth: true, role: 2 },
       component: UserLayout,
+      redirect: '/dashboard',
       children: [
         {
           path: "dashboard",

@@ -23,10 +23,10 @@ export default {
     return {
       pathID: this.$route.params.id,
       sidebarItems: [
-        {
-          title: "Assignments",
-          icon: "mdi-view-dashboard",
-          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/add-student`,
+      {
+          title: "Students",
+          icon: "mdi-account-group",
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/class-students`,
         },
         {
           title: "Attendance",
@@ -34,14 +34,15 @@ export default {
           route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/class-attendance`,
         },
         {
+          title: "Assignments",
+          icon: "mdi-view-dashboard",
+          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/add-student`,
+        },
+        
+        {
           title: "Grades",
           icon: "mdi-school",
           route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/score-grading`,
-        },
-        {
-          title: "Students",
-          icon: "mdi-account-group",
-          route: `/class-teacher/${this.$route.params.slug}/${ this.$route.params.id}/class-students`,
         },
         {
           title: "Generate Report",

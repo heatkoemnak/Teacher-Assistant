@@ -40,12 +40,6 @@
           value="class"
           to="/classes"
         ></v-list-item>
-        <v-list-item
-          prepend-icon="mdi-calendar"
-          title="Calendar"
-          value="calendar"
-          to="/cal"
-        ></v-list-item>
 
       </v-list>
     </v-navigation-drawer>

@@ -17,6 +17,7 @@
     "html2canvas": "^1.4.1",
     "json-serve": "^0.1.0",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "roboto-fontface": "*",
     "vue": "^3.3.0",
     "vuetify": "^3.0.0",

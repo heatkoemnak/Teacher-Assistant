@@ -27,15 +27,17 @@
               class="mx-auto cursor-pointer"
               :subtitle="classItem.desc"
               :title="classItem.slug"
-              :to="{ name: 'class', params: { slug: classItem.slug,id:classItem.id } }"
+              
             >
-              <div class="pa-5 d-flex justify-space-between">
+              <div class="pa-5 d-flex">
                 <v-avatar color="red">
                   <span class="text-h5 pa-5">{{ classItem.name }}</span>
                 </v-avatar>
-                <v-menu bottom left>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon v-bind="attrs" v-on="on">mdi-dots-vertical</v-icon>
+                
+                <v-spacer></v-spacer>
+                <v-menu>
+                  <template v-slot:activator="{ props }">
+                    <v-btn variant="flate" icon="mdi-dots-vertical" v-bind="props"></v-btn>
                   </template>
                   <v-list>
                     <v-list-item @click="editClass(classItem.id)">
@@ -48,11 +50,10 @@
                 </v-menu>
               </div>
               <template v-slot:append>
-                <v-avatar color="blue-darken-2" rounded="0">
-                  <v-icon icon="mdi-alarm"></v-icon>
-                </v-avatar>
+                <v-btn variant="text":to="{ name: 'class', params: { slug: classItem.slug,id:classItem.id } }">view class</v-btn>
               </template>
             </v-card>
+            
         </v-col>
       </v-row>
     </template>
@@ -117,7 +118,7 @@
 
         <v-card>
           <v-card-title>
-            <span class="text-h5">Create class</span>
+            <span class="text-h5">Class Info</span>
           </v-card-title>
           <v-card-text>
             <v-form ref="form" v-model="valid" lazy-validation>
@@ -138,7 +139,6 @@
               <v-textarea
                 v-model="classData.desc"
                 label="Class description * (Optional)"
-                :rules="[(v) => !!v || 'Description is required']"
                 variant="outlined"
               ></v-textarea>
               <v-file-input
@@ -173,12 +173,14 @@ export default {
       sound: true,
       widgets: false,
       searchText: "",
-      classes:[],
-      teacher:"",
+      classes: [],
+      teacher: "",
       recentClasses: [],
       loading: false,
       valid: false,
+      isEditMode: false,
       classData: {
+        id: null,
         name: "",
         slug: "",
         desc: "",
@@ -195,23 +197,26 @@ export default {
         classItem.name.toLowerCase().includes(searchText)
       );
     },
+    dialogTitle() {
+      return this.isEditMode ? "Edit Class" : "Create Class";
+    },
   },
-  mounted(){
+
+  mounted() {
     this.fetchTeacher();
-    this.fetchClasses();
   },
 
   methods: {
-    // viewClass(classId) {
-    //   this.$router.push({ name: 'class-teacher', params: { id: classId } });
-    // },
-
     async handleCreateClass() {
       try {
         if (this.$refs.form.validate()) {
-          await axios.post("classes/create", this.classData);
+          if (this.isEditMode) {
+            await axios.put(`classes/${this.classData.id}`, this.classData);
+          } else {
+            await axios.post("classes/create", this.classData);
+          }
           this.dialog = false;
-          this.fetchClasses();
+          this.fetchClasses(this.classData.teacher_id);
           this.resetForm();
         }
       } catch (error) {
@@ -221,19 +226,20 @@ export default {
 
     async fetchTeacher() {
       try {
-          const response = await axios.get(`teachers/${this.$store.state.user.id}/user`);
-          const data = response.data
-          this.teacher =data.teacher;
-          this.classData.teacher_id =data.teacher.id;
-          this.fetchClasses(this.teacher.id);
+        const response = await axios.get(`teachers/${this.$store.state.user.id}/user`);
+        const data = response.data;
+        this.teacher = data.teacher;
+        this.classData.teacher_id = data.teacher.id;
+        this.fetchClasses(this.teacher.id);
       } catch (error) {
         console.error(error);
       }
     },
-    async fetchClasses(teacher) {
+
+    async fetchClasses(teacherId) {
       try {
-          const response = await axios.get(`classes/${teacher}/classes`);
-          this.classes =response.data;
+        const response = await axios.get(`classes/${teacherId}/classes`);
+        this.classes = response.data;
       } catch (error) {
         console.error(error);
       }
@@ -241,6 +247,7 @@ export default {
 
     resetForm() {
       this.classData = {
+        id: null,
         name: "",
         slug: "",
         desc: "",
@@ -248,6 +255,47 @@ export default {
         image: null,
       };
       this.valid = false;
+      this.isEditMode = false;
+    },
+
+    openCreateDialog() {
+      this.resetForm();
+      this.dialog = true;
+    },
+
+    async editClass(classId) {
+      try {
+        const response = await axios.get(`classes/${classId}`);
+        const classData = response.data;
+        this.classData = {
+          id: classData.id,
+          name: classData.name,
+          slug: classData.slug,
+          desc: classData.desc,
+          teacher_id: classData.teacher_id,
+          image: classData.image,
+        };
+        this.isEditMode = true;
+        this.dialog = true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async deleteClass(classId) {
+      try {
+        const confirmDelete = confirm("Are you sure you want to delete this class?");
+        if (confirmDelete) {
+          await axios.delete(`classes/${classId}`);
+          this.fetchClasses(this.teacher.id); // Refresh the class list
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    saveClass() {
+      this.handleCreateClass();
     },
   },
 };
